@@ -1,97 +1,185 @@
+import fs from "fs";
+
 class ProductManager {
+  static #path = "./mock/products.json";
   constructor() {
     this.products = [];
+    ProductManager.#path;
   }
 
   _getNextId = () => {
-    const count = this.products.length;
-    const nextId = count > 0 ? this.products[count - 1].id + 1 : 1;
+    const data = fs.readFileSync(ProductManager.#path);
+    const products = JSON.parse(data);
+
+    const count = products.length;
+    const nextId = count > 0 ? products[count - 1].id + 1 : 1;
 
     return nextId;
   };
 
-  addProduct = (title, description, price, thumbnail, code, stock) => {
-    const products = this.getProducts();
+  _getLocaleTime = () => {
+    const time = new Date().toLocaleTimeString();
+    return time;
+  };
 
-    const product = {
-      id: this._getNextId(),
-      title,
-      description,
-      price,
-      thumbnail,
-      code,
-      stock,
-    };
+  addProduct = async (title, description, price, thumbnail, code, stock) => {
+    const products = await this.getProducts();
 
-    if (products.find((product) => product.code === code)) {
-      return `Product with code ${product.code} already exists\n`;
+    try {
+      const product = {
+        id: this._getNextId(),
+        title,
+        description,
+        price,
+        thumbnail,
+        code,
+        stock,
+      };
+
+      if (products.find((product) => product.code === code)) {
+        return `Product with code ${
+          product.code
+        } already exists - ${this._getLocaleTime()}`;
+      } else {
+        products.push(product);
+        await fs.promises.writeFile(
+          ProductManager.#path,
+          JSON.stringify(products, null, 2)
+        );
+
+        return `Product was loaded successfully - ${this._getLocaleTime()}`;
+      }
+    } catch (err) {
+      console.log(err);
+      return err;
     }
-
-    this.products.push(product);
-
-    return "Product was loaded successfully\n";
   };
 
-  getProducts = () => {
-    return this.products;
-  };
+  getProducts = async () => {
+    try {
+      if (fs.existsSync(ProductManager.#path)) {
+        const data = await fs.promises.readFile(ProductManager.#path, "utf-8");
+        const products = JSON.parse(data);
 
-  getProductById = (productId) => {
-    const products = this.getProducts();
-
-    const [searchedProduct] = products.filter(
-      (product) => product.id === productId
-    );
-
-    if (!searchedProduct) {
-      return "Not found\n";
+        return products;
+      } else {
+        return `[] - ${this._getLocaleTime()}`;
+      }
+    } catch (err) {
+      return err;
     }
-
-    return searchedProduct;
   };
+
+  getProductById = async (id) => {
+    const products = await this.getProducts();
+
+    try {
+      const product = Object.values(products).find((i) => i.id === id);
+
+      if (product === undefined) {
+        return `Not found - ${this._getLocaleTime()}`;
+      }
+
+      return product;
+    } catch (err) {
+      return err;
+    }
+  };
+
+  updateProduct = async (id, props) => {
+    const products = await this.getProducts();
+    try {
+      const ix = await products.findIndex((product) => product.id === id);
+
+      if (ix === -1) {
+        return "Product does not exist";
+      } else if (props.hasOwnProperty("id") || props.hasOwnProperty("code")) {
+        return "Cannot update 'id' or 'code' property";
+      }
+
+      Object.assign(products[ix], props);
+      const updatedProduct = products[ix];
+      await fs.promises.writeFile(
+        ProductManager.#path,
+        JSON.stringify(products, null, 2)
+      );
+
+      return updatedProduct;
+    } catch (err) {
+      return err;
+    }
+  };
+
+  deleteProduct = async (id) => {
+    let products = await this.getProducts();
+
+    try {
+      const product = Object.values(products).find((i) => i.id === id);
+
+      if (product !== undefined) {
+        products = products.filter((i) => i.id !== id);
+        await fs.promises.writeFile(
+          ProductManager.#path,
+          JSON.stringify(products, null, 2)
+        );
+
+        return `Product removed - ${this._getLocaleTime()}`;
+      }
+
+      return `Product does not exist - ${this._getLocaleTime()}`;
+    } catch (err) {
+      return err;
+    }
+  };
+
+  /* saveData = async (data) => {
+    try {
+      await fs.writeFile(
+        ProductManager.#path,
+        JSON.stringify(data, null, 2)
+      );
+    } catch (error) {
+      console.log(err);
+    }
+  }; */
 }
 
-// Se instancia la Clase
 const productManager = new ProductManager();
 
-// Primera consulta de productos
-console.info("Primera consulta de productos")
-console.log(productManager.getProducts());
+const consulta = async () => {
+  console.log("----------Consulta de productos----------");
+  const queryProducts = await productManager.getProducts();
+  console.log(queryProducts);
+};
+consulta();
 
-// Carga primer producto
-console.info("Carga primer producto")
-console.log(
-  productManager.addProduct(
-    (title = "producto prueba 1"),
-    (description = "lorem ipsum"),
-    (price = 9),
-    (thumbnail = "https://picsum.photos/200"),
-    (code = "abc123"),
-    (stock = 1)
-  )
-);
+/* const carga = async () => {
+  console.log("----------Carga de producto----------");
+  const product1 = await productManager.addProduct(
+    "Producto prueba2",
+    "Este es un producto prueba2",
+    200,
+    "Sin imagen2",
+    "abc123",
+    1
+  );
+};
+carga(); */
 
-// Segunda consulta de productos
-console.info("Segunda consulta de productos")
-console.log(productManager.getProducts());
+/* const consultaPorId = async () => {
+  console.log("----------Consulta de producto por id----------");
+  const idProduct = await productManager.getProductById(1);
+};
+consultaPorId(); */
 
-// Carga segundo producto
-console.info("Carga segundo producto")
-console.log(
-  productManager.addProduct(
-    (title = "producto prueba 2"),
-    (description = "lorem ipsum"),
-    (price = 9),
-    (thumbnail = "https://picsum.photos/300"),
-    (code = "abc123"),
-    (stock = 1)
-  )
-);
+/* const actualizar = async () => {
+  console.log("----------Actualizacion de producto----------");
+  const productUpdate1 = await productManager.updateProduct(1, { title: "producto prueba modificado", description: "Lorem Ipsum modificado", stock: 50 });
+};
+actualizar(); */
 
-// Consulta producto existente
-console.info("Consulta producto existente")
-console.log(productManager.getProductById(1));
-
-// Consulta producto no existente
-console.info("Consulta producto no existente")
-console.log(productManager.getProductById(5));
+/* const borrar = async () => {
+  console.log("----------Borra producto por id----------");
+  const idDelete = await productManager.deleteProduct(11);
+};
+borrar(); */
