@@ -44,10 +44,7 @@ class ProductManager {
         );
       } else {
         products.push(product);
-        await fs.promises.writeFile(
-          ProductManager.#path,
-          JSON.stringify(products, null, 2)
-        );
+        await this._saveData(products);
 
         console.log(
           `Product was loaded successfully - ${this._getLocaleTime()}`
@@ -62,8 +59,7 @@ class ProductManager {
   getProducts = async () => {
     try {
       if (fs.existsSync(ProductManager.#path)) {
-        const data = await fs.promises.readFile(ProductManager.#path, "utf-8");
-        const products = JSON.parse(data);
+        const products = await this._readData()
 
         return products;
       } else {
@@ -104,10 +100,7 @@ class ProductManager {
       } else {
         Object.assign(products[ix], props);
         const updatedProduct = products[ix];
-        await fs.promises.writeFile(
-          ProductManager.#path,
-          JSON.stringify(products, null, 2)
-        );
+        await this._saveData(products);
 
         console.log(updatedProduct);
       }
@@ -125,10 +118,7 @@ class ProductManager {
 
       if (product !== undefined) {
         products = products.filter((i) => i.id !== id);
-        await fs.promises.writeFile(
-          ProductManager.#path,
-          JSON.stringify(products, null, 2)
-        );
+        await this._saveData(products);
 
         console.log(`Product removed - ${this._getLocaleTime()}`);
       } else {
@@ -140,16 +130,26 @@ class ProductManager {
     }
   };
 
-  /* saveData = async (data) => {
+  _saveData = async (data) => {
     try {
-      await fs.writeFile(
+      await fs.promises.writeFile(
         ProductManager.#path,
         JSON.stringify(data, null, 2)
       );
     } catch (error) {
       console.log(err);
     }
-  }; */
+  };
+
+  _readData = async () => {
+    try {
+      const data = await fs.promises.readFile(ProductManager.#path, "utf-8");
+      const products = JSON.parse(data);
+      return products;
+    } catch (error) {
+      console.log(err);
+    }
+  };
 }
 
 const productManager = new ProductManager();
