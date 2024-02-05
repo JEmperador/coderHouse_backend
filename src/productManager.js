@@ -37,9 +37,11 @@ class ProductManager {
       };
 
       if (products.find((product) => product.code === code)) {
-        return `Product with code ${
-          product.code
-        } already exists - ${this._getLocaleTime()}`;
+        console.log(
+          `Product with code ${
+            product.code
+          } already exists - ${this._getLocaleTime()}`
+        );
       } else {
         products.push(product);
         await fs.promises.writeFile(
@@ -47,7 +49,9 @@ class ProductManager {
           JSON.stringify(products, null, 2)
         );
 
-        return `Product was loaded successfully - ${this._getLocaleTime()}`;
+        console.log(
+          `Product was loaded successfully - ${this._getLocaleTime()}`
+        );
       }
     } catch (err) {
       console.log(err);
@@ -63,9 +67,10 @@ class ProductManager {
 
         return products;
       } else {
-        return `[] - ${this._getLocaleTime()}`;
+        console.log(`[] - ${this._getLocaleTime()}`);
       }
     } catch (err) {
+      console.log(err);
       return err;
     }
   };
@@ -77,11 +82,12 @@ class ProductManager {
       const product = Object.values(products).find((i) => i.id === id);
 
       if (product === undefined) {
-        return `Not found - ${this._getLocaleTime()}`;
+        console.log(`Not found - ${this._getLocaleTime()}`);
+      } else {
+        console.log(product);
       }
-
-      return product;
     } catch (err) {
+      console.log(err);
       return err;
     }
   };
@@ -92,20 +98,21 @@ class ProductManager {
       const ix = await products.findIndex((product) => product.id === id);
 
       if (ix === -1) {
-        return "Product does not exist";
+        console.log("Product does not exist");
       } else if (props.hasOwnProperty("id") || props.hasOwnProperty("code")) {
-        return "Cannot update 'id' or 'code' property";
+        console.log("Cannot update 'id' or 'code' property");
+      } else {
+        Object.assign(products[ix], props);
+        const updatedProduct = products[ix];
+        await fs.promises.writeFile(
+          ProductManager.#path,
+          JSON.stringify(products, null, 2)
+        );
+
+        console.log(updatedProduct);
       }
-
-      Object.assign(products[ix], props);
-      const updatedProduct = products[ix];
-      await fs.promises.writeFile(
-        ProductManager.#path,
-        JSON.stringify(products, null, 2)
-      );
-
-      return updatedProduct;
     } catch (err) {
+      console.log(err);
       return err;
     }
   };
@@ -123,11 +130,12 @@ class ProductManager {
           JSON.stringify(products, null, 2)
         );
 
-        return `Product removed - ${this._getLocaleTime()}`;
+        console.log(`Product removed - ${this._getLocaleTime()}`);
+      } else {
+        console.log(`Product does not exist - ${this._getLocaleTime()}`);
       }
-
-      return `Product does not exist - ${this._getLocaleTime()}`;
     } catch (err) {
+      console.log(err);
       return err;
     }
   };
@@ -146,12 +154,12 @@ class ProductManager {
 
 const productManager = new ProductManager();
 
-const consulta = async () => {
+/* const consulta = async () => {
   console.log("----------Consulta de productos----------");
   const queryProducts = await productManager.getProducts();
   console.log(queryProducts);
 };
-consulta();
+consulta(); */
 
 /* const carga = async () => {
   console.log("----------Carga de producto----------");
@@ -168,13 +176,13 @@ carga(); */
 
 /* const consultaPorId = async () => {
   console.log("----------Consulta de producto por id----------");
-  const idProduct = await productManager.getProductById(1);
+  const idProduct = await productManager.getProductById(11);
 };
 consultaPorId(); */
 
 /* const actualizar = async () => {
   console.log("----------Actualizacion de producto----------");
-  const productUpdate1 = await productManager.updateProduct(1, { title: "producto prueba modificado", description: "Lorem Ipsum modificado", stock: 50 });
+  const productUpdate1 = await productManager.updateProduct(11, { title: "producto prueba modificado", description: "Lorem Ipsum modificado", stock: 50 });
 };
 actualizar(); */
 
