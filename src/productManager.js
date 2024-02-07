@@ -22,10 +22,47 @@ class ProductManager {
     return time;
   };
 
-  addProduct = async (title, description, price, thumbnail, code, stock) => {
-    const products = await this.getProducts();
-
+  _createFile = async () => {
     try {
+      await fs.promises.access(ProductManager.#path);
+    } catch (error) {
+      await fs.promises.writeFile(ProductManager.#path, "[]");
+
+      console.log(`File created successfully.`);
+    }
+  };
+
+  _saveData = async (data) => {
+    try {
+      await fs.promises.writeFile(
+        ProductManager.#path,
+        JSON.stringify(data, null, 2)
+      );
+    } catch (error) {
+      console.log(err);
+    }
+  };
+
+  _readData = async () => {
+    try {
+      const data = await fs.promises.readFile(ProductManager.#path, "utf-8");
+      const products = JSON.parse(data);
+      return products;
+    } catch (error) {
+      console.log(err);
+    }
+  };
+
+  addProduct = async (title, description, price, thumbnail, code, stock) => {
+    try {
+      const fileExist = fs.existsSync(ProductManager.#path);
+
+      if (!fileExist) {
+        await this._createFile();
+      }
+
+      const products = await this.getProducts();
+
       const product = {
         id: this._getNextId(),
         title,
@@ -58,12 +95,16 @@ class ProductManager {
 
   getProducts = async () => {
     try {
-      if (fs.existsSync(ProductManager.#path)) {
-        const products = await this._readData()
+      const fileExist = fs.existsSync(ProductManager.#path);
+
+      if (!fileExist) {
+        await this._createFile();
+
+        console.log(`[] - ${this._getLocaleTime()}`);
+      } else {
+        const products = await this._readData();
 
         return products;
-      } else {
-        console.log(`[] - ${this._getLocaleTime()}`);
       }
     } catch (err) {
       console.log(err);
@@ -72,9 +113,8 @@ class ProductManager {
   };
 
   getProductById = async (id) => {
-    const products = await this.getProducts();
-
     try {
+      const products = await this.getProducts();
       const product = Object.values(products).find((i) => i.id === id);
 
       if (product === undefined) {
@@ -89,8 +129,9 @@ class ProductManager {
   };
 
   updateProduct = async (id, props) => {
-    const products = await this.getProducts();
     try {
+      const products = await this.getProducts();
+
       const ix = await products.findIndex((product) => product.id === id);
 
       if (ix === -1) {
@@ -111,9 +152,9 @@ class ProductManager {
   };
 
   deleteProduct = async (id) => {
-    let products = await this.getProducts();
-
     try {
+      let products = await this.getProducts();
+
       const product = Object.values(products).find((i) => i.id === id);
 
       if (product !== undefined) {
@@ -127,27 +168,6 @@ class ProductManager {
     } catch (err) {
       console.log(err);
       return err;
-    }
-  };
-
-  _saveData = async (data) => {
-    try {
-      await fs.promises.writeFile(
-        ProductManager.#path,
-        JSON.stringify(data, null, 2)
-      );
-    } catch (error) {
-      console.log(err);
-    }
-  };
-
-  _readData = async () => {
-    try {
-      const data = await fs.promises.readFile(ProductManager.#path, "utf-8");
-      const products = JSON.parse(data);
-      return products;
-    } catch (error) {
-      console.log(err);
     }
   };
 }
