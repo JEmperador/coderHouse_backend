@@ -79,6 +79,7 @@ class ProductManager {
             product.code
           } already exists - ${this._getLocaleTime()}`
         );
+        return undefined;
       } else {
         products.push(product);
         await this._saveData(products);
@@ -86,6 +87,11 @@ class ProductManager {
         console.log(
           `Product was loaded successfully - ${this._getLocaleTime()}`
         );
+
+        const Reproducts = await this.getProducts();
+
+        console.log(Reproducts);
+        return Reproducts;
       }
     } catch (err) {
       console.log(err);
@@ -101,11 +107,12 @@ class ProductManager {
         await this._createFile();
 
         console.log(`[] - ${this._getLocaleTime()}`);
-      } else {
-        const products = await this._readData();
-
-        return products;
+        return undefined;
       }
+
+      const products = await this._readData();
+
+      return products;
     } catch (err) {
       console.log(err);
       return err;
@@ -119,8 +126,10 @@ class ProductManager {
 
       if (product === undefined) {
         console.log(`Not found - ${this._getLocaleTime()}`);
+        return undefined;
       } else {
         console.log(product);
+        return product;
       }
     } catch (err) {
       console.log(err);
@@ -135,15 +144,20 @@ class ProductManager {
       const ix = await products.findIndex((product) => product.id === id);
 
       if (ix === -1) {
-        console.log("Product does not exist");
+        console.log(`Product does not exist - ${this._getLocaleTime()}`);
+        return undefined;
       } else if (props.hasOwnProperty("id") || props.hasOwnProperty("code")) {
-        console.log("Cannot update 'id' or 'code' property");
+        console.log(
+          `Cannot update 'id' or 'code' property - ${this._getLocaleTime()}`
+        );
+        return false;
       } else {
         Object.assign(products[ix], props);
         const updatedProduct = products[ix];
         await this._saveData(products);
 
         console.log(updatedProduct);
+        return updatedProduct;
       }
     } catch (err) {
       console.log(err);
@@ -159,11 +173,13 @@ class ProductManager {
 
       if (product !== undefined) {
         products = products.filter((i) => i.id !== id);
-        await this._saveData(products);
+        const save = await this._saveData(products);
 
         console.log(`Product removed - ${this._getLocaleTime()}`);
+        return true;
       } else {
         console.log(`Product does not exist - ${this._getLocaleTime()}`);
+        return undefined;
       }
     } catch (err) {
       console.log(err);
@@ -172,42 +188,4 @@ class ProductManager {
   };
 }
 
-const productManager = new ProductManager();
-
-/* const consulta = async () => {
-  console.log("----------Consulta de productos----------");
-  const queryProducts = await productManager.getProducts();
-  console.log(queryProducts);
-};
-consulta(); */
-
-/* const carga = async () => {
-  console.log("----------Carga de producto----------");
-  const product1 = await productManager.addProduct(
-    "Producto prueba2",
-    "Este es un producto prueba2",
-    200,
-    "Sin imagen2",
-    "abc123",
-    1
-  );
-};
-carga(); */
-
-/* const consultaPorId = async () => {
-  console.log("----------Consulta de producto por id----------");
-  const idProduct = await productManager.getProductById(11);
-};
-consultaPorId(); */
-
-/* const actualizar = async () => {
-  console.log("----------Actualizacion de producto----------");
-  const productUpdate1 = await productManager.updateProduct(11, { title: "producto prueba modificado", description: "Lorem Ipsum modificado", stock: 50 });
-};
-actualizar(); */
-
-/* const borrar = async () => {
-  console.log("----------Borra producto por id----------");
-  const idDelete = await productManager.deleteProduct(11);
-};
-borrar(); */
+export default ProductManager;
