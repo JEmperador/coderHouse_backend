@@ -53,7 +53,15 @@ class ProductManager {
     }
   };
 
-  addProduct = async (title, description, price, thumbnail, code, stock) => {
+  addProduct = async (
+    title,
+    description,
+    price,
+    thumbnail,
+    code,
+    stock,
+    status = true
+  ) => {
     try {
       const fileExist = fs.existsSync(ProductManager.#path);
 
@@ -71,9 +79,13 @@ class ProductManager {
         thumbnail,
         code,
         stock,
+        status,
       };
 
-      if (products.find((product) => product.code === code)) {
+      if (!title || !description || !price || !code || !stock) {
+        console.log(`All fields are required - ${this._getLocaleTime()}`);
+        return false;
+      } else if (products.find((product) => product.code === code)) {
         console.log(
           `Product with code ${
             product.code
