@@ -1,4 +1,7 @@
 import fs from "fs";
+import ProductManager from "./productManager.js";
+
+const productManager = new ProductManager();
 
 class CartManager {
   static #path = "./mock/carts.json";
@@ -115,6 +118,7 @@ class CartManager {
     try {
       const carts = await this.getCarts();
 
+      const product = await productManager.getProductById(idP);
       const cart = await carts.find((cart) => cart.id === idC);
 
       if (cart === undefined) {
@@ -123,10 +127,11 @@ class CartManager {
         return undefined;
       }
 
-      const produtExist = cart.products.find((product) => product.id === idP);
+      const productExist = cart.products.find((product) => product.id === idP);
 
-      if (produtExist) {
-        produtExist.quantity += quantity;
+      if (productExist) {
+        productExist.quantity += quantity;
+        product.stock -= quantity;
       } else {
         cart.products.push({
           id: idP,
@@ -134,7 +139,10 @@ class CartManager {
         });
       }
 
+      const newStock = product.stock;
+
       await this._saveData(carts);
+      await productManager.updateProduct(idP, { stock: newStock });
 
       return cart;
     } catch (err) {
