@@ -53,15 +53,7 @@ class ProductManager {
     }
   };
 
-  addProduct = async (
-    title,
-    description,
-    price,
-    thumbnail,
-    code,
-    stock,
-    status = true
-  ) => {
+  addProduct = async (title, description, price, thumbnail, code, stock) => {
     try {
       const fileExist = fs.existsSync(ProductManager.#path);
 
@@ -79,10 +71,10 @@ class ProductManager {
         thumbnail,
         code,
         stock,
-        status,
+        status: stock > 0 ? true : false,
       };
 
-      if (!title || !description || !price || !code || !stock) {
+      if (!title || !description || !price || !code || stock === undefined) {
         console.log(`All fields are required - ${this._getLocaleTime()}`);
         return false;
       } else if (products.find((product) => product.code === code)) {
