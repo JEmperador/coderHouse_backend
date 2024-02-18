@@ -5,7 +5,7 @@ const productManager = new ProductManager();
 const router = Router();
 
 router.post("/", async (req, res) => {
-  const { title, description, price, code, stock } = req.body;
+  const { title, description, price, code, stock, category } = req.body;
   const thumbnail = req.body.thumbnail ? req.body.thumbnail : [];
 
   try {
@@ -15,7 +15,8 @@ router.post("/", async (req, res) => {
       price,
       thumbnail,
       code,
-      stock
+      stock,
+      category
     );
 
     if (createProduct === false) {

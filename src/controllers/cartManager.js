@@ -89,6 +89,12 @@ class CartManager {
 
       const carts = await this._readData();
 
+      if (carts.length < 1) {
+        console.log(`[] - ${this._getLocaleTime()}`);
+
+        return undefined;
+      }
+
       return carts;
     } catch (err) {
       console.log(err);
@@ -104,10 +110,10 @@ class CartManager {
       if (cart === undefined) {
         console.log(`Not found - ${this._getLocaleTime()}`);
         return undefined;
-      } else {
-        console.log(cart);
-        return cart;
       }
+
+      console.log(cart);
+      return cart;
     } catch (err) {
       console.log(err);
       return err;
@@ -127,12 +133,19 @@ class CartManager {
         return undefined;
       }
 
+      if (quantity > product.stock) {
+        console.log(`Exceeds available stock - ${this._getLocaleTime()}`);
+
+        return false;
+      }
+
       const productExist = cart.products.find((product) => product.id === idP);
 
       if (productExist) {
-        productExist.quantity += quantity;
         product.stock -= quantity;
+        productExist.quantity += quantity;
       } else {
+        product.stock -= quantity;
         cart.products.push({
           id: idP,
           quantity,
@@ -140,9 +153,14 @@ class CartManager {
       }
 
       const newStock = product.stock;
+      const newStatus =
+        newStock === 0 ? (product.status = false) : (product.status = true);
 
+      await productManager.updateProduct(idP, {
+        stock: newStock,
+        status: newStatus,
+      });
       await this._saveData(carts);
-      await productManager.updateProduct(idP, { stock: newStock });
 
       return cart;
     } catch (err) {
@@ -157,16 +175,16 @@ class CartManager {
 
       const cart = Object.values(carts).find((i) => i.id === id);
 
-      if (cart !== undefined) {
-        carts = carts.filter((i) => i.id !== id);
-        const save = await this._saveData(carts);
-
-        console.log(`Cart removed - ${this._getLocaleTime()}`);
-        return true;
-      } else {
+      if (cart === undefined) {
         console.log(`Cart does not exist - ${this._getLocaleTime()}`);
         return undefined;
       }
+
+      carts = carts.filter((i) => i.id !== id);
+      const save = await this._saveData(carts);
+
+      console.log(`Cart removed - ${this._getLocaleTime()}`);
+      return true;
     } catch (err) {
       console.log(err);
       return err;
