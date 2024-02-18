@@ -48,12 +48,20 @@ class ProductManager {
       const data = await fs.promises.readFile(ProductManager.#path, "utf-8");
       const products = JSON.parse(data);
       return products;
-    } catch (error) {
+    } catch (err) {
       console.log(err);
     }
   };
 
-  addProduct = async (title, description, price, thumbnail, code, stock) => {
+  addProduct = async (
+    title,
+    description,
+    price,
+    thumbnail,
+    code,
+    stock,
+    category
+  ) => {
     try {
       const fileExist = fs.existsSync(ProductManager.#path);
 
@@ -71,32 +79,39 @@ class ProductManager {
         thumbnail,
         code,
         stock,
+        category,
         status: stock > 0 ? true : false,
       };
 
-      if (!title || !description || !price || !code || stock === undefined) {
+      if (
+        !title ||
+        !description ||
+        !price ||
+        !code ||
+        stock === undefined ||
+        !category
+      ) {
         console.log(`All fields are required - ${this._getLocaleTime()}`);
         return false;
-      } else if (products.find((product) => product.code === code)) {
+      }
+
+      if (products.find((product) => product.code === code)) {
         console.log(
           `Product with code ${
             product.code
           } already exists - ${this._getLocaleTime()}`
         );
         return undefined;
-      } else {
-        products.push(product);
-        await this._saveData(products);
-
-        console.log(
-          `Product was loaded successfully - ${this._getLocaleTime()}`
-        );
-
-        const Reproducts = await this.getProducts();
-
-        console.log(Reproducts);
-        return Reproducts;
       }
+
+      products.push(product);
+      await this._saveData(products);
+
+      console.log(`Product was loaded successfully - ${this._getLocaleTime()}`);
+
+      const Reproducts = await this.getProducts();
+
+      return Reproducts;
     } catch (err) {
       console.log(err);
       return err;
@@ -111,10 +126,17 @@ class ProductManager {
         await this._createFile();
 
         console.log(`[] - ${this._getLocaleTime()}`);
+
         return undefined;
       }
 
       const products = await this._readData();
+
+      if (products.length < 1) {
+        console.log(`[] - ${this._getLocaleTime()}`);
+
+        return undefined;
+      }
 
       return products;
     } catch (err) {
@@ -131,10 +153,10 @@ class ProductManager {
       if (product === undefined) {
         console.log(`Not found - ${this._getLocaleTime()}`);
         return undefined;
-      } else {
-        console.log(product);
-        return product;
       }
+
+      console.log(product);
+      return product;
     } catch (err) {
       console.log(err);
       return err;
@@ -150,19 +172,24 @@ class ProductManager {
       if (ix === -1) {
         console.log(`Product does not exist - ${this._getLocaleTime()}`);
         return undefined;
-      } else if (props.hasOwnProperty("id") || props.hasOwnProperty("code")) {
+      }
+
+      if (props.hasOwnProperty("id") || props.hasOwnProperty("code")) {
         console.log(
           `Cannot update 'id' or 'code' property - ${this._getLocaleTime()}`
         );
         return false;
-      } else {
-        Object.assign(products[ix], props);
-        const updatedProduct = products[ix];
-        await this._saveData(products);
-
-        console.log(updatedProduct);
-        return updatedProduct;
       }
+
+      Object.assign(products[ix], props);
+      const updatedProduct = products[ix];
+      updatedProduct.stock === 0
+        ? (updatedProduct.status = false)
+        : (updatedProduct.status = true);
+      await this._saveData(products);
+
+      console.log(updatedProduct);
+      return updatedProduct;
     } catch (err) {
       console.log(err);
       return err;
@@ -175,16 +202,16 @@ class ProductManager {
 
       const product = Object.values(products).find((i) => i.id === id);
 
-      if (product !== undefined) {
-        products = products.filter((i) => i.id !== id);
-        const save = await this._saveData(products);
-
-        console.log(`Product removed - ${this._getLocaleTime()}`);
-        return true;
-      } else {
+      if (product === undefined) {
         console.log(`Product does not exist - ${this._getLocaleTime()}`);
         return undefined;
       }
+
+      products = products.filter((i) => i.id !== id);
+      const save = await this._saveData(products);
+
+      console.log(`Product removed - ${this._getLocaleTime()}`);
+      return true;
     } catch (err) {
       console.log(err);
       return err;

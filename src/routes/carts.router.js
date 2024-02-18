@@ -35,6 +35,8 @@ router.post("/:cid/product/:pid", async (req, res) => {
 
     if (updatedCart === undefined) {
       res.status(404).json("Not found");
+    } else if (updatedCart === false) {
+      res.status(400).json("Exceeds available stock");
     } else {
       res.status(200).json("Product was added correctly");
     }
