@@ -13,15 +13,6 @@ router.post("/", async (req, res) => {
   }
 });
 
-router.get("/", async (req, res) => {
-  try {
-    const carts = await cartManager.getCarts();
-    res.status(200).json(carts);
-  } catch (err) {
-    res.status(500).json(err);
-  }
-});
-
 router.post("/:cid/product/:pid", async (req, res) => {
   const { cid, pid } = req.params;
   const quantity = req.body.quantity || 1;
@@ -40,6 +31,15 @@ router.post("/:cid/product/:pid", async (req, res) => {
     } else {
       res.status(200).json("Product was added correctly");
     }
+  } catch (err) {
+    res.status(500).json(err);
+  }
+});
+
+router.get("/", async (req, res) => {
+  try {
+    const carts = await cartManager.getCarts();
+    res.status(200).json(carts);
   } catch (err) {
     res.status(500).json(err);
   }
