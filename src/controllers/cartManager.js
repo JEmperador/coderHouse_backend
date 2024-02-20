@@ -112,7 +112,6 @@ class CartManager {
         return undefined;
       }
 
-      console.log(cart);
       return cart;
     } catch (err) {
       console.log(err);
