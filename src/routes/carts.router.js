@@ -37,9 +37,22 @@ router.post("/:cid/product/:pid", async (req, res) => {
 });
 
 router.get("/", async (req, res) => {
+  const { limit } = req.query;
+
   try {
     const carts = await cartManager.getCarts();
-    res.status(200).json(carts);
+
+    if(carts === undefined) {
+      res.status(200).json([]);
+    }
+
+    if (!limit || limit < 1) {
+      res.status(200).json(carts);
+    } else {
+      const limitedCarts = carts.slice(0, limit);
+      res.status(206).json(limitedCarts);
+    }
+
   } catch (err) {
     res.status(500).json(err);
   }

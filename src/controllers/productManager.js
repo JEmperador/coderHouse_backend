@@ -1,4 +1,11 @@
 import fs from "fs";
+import {
+  getNextId,
+  getLocaleTime,
+  createFile,
+  saveData,
+  readData,
+} from "../utils.js";
 
 class ProductManager {
   static #path = "./mock/products.json";
@@ -6,52 +13,6 @@ class ProductManager {
     this.products = [];
     ProductManager.#path;
   }
-
-  _getNextId = () => {
-    const data = fs.readFileSync(ProductManager.#path);
-    const products = JSON.parse(data);
-
-    const count = products.length;
-    const nextId = count > 0 ? products[count - 1].id + 1 : 1;
-
-    return nextId;
-  };
-
-  _getLocaleTime = () => {
-    const time = new Date().toLocaleTimeString();
-    return time;
-  };
-
-  _createFile = async () => {
-    try {
-      await fs.promises.access(ProductManager.#path);
-    } catch (error) {
-      await fs.promises.writeFile(ProductManager.#path, "[]");
-
-      console.log(`File created successfully.`);
-    }
-  };
-
-  _saveData = async (data) => {
-    try {
-      await fs.promises.writeFile(
-        ProductManager.#path,
-        JSON.stringify(data, null, 2)
-      );
-    } catch (error) {
-      console.log(err);
-    }
-  };
-
-  _readData = async () => {
-    try {
-      const data = await fs.promises.readFile(ProductManager.#path, "utf-8");
-      const products = JSON.parse(data);
-      return products;
-    } catch (err) {
-      console.log(err);
-    }
-  };
 
   addProduct = async (
     title,
@@ -66,13 +27,13 @@ class ProductManager {
       const fileExist = fs.existsSync(ProductManager.#path);
 
       if (!fileExist) {
-        await this._createFile();
+        await createFile(ProductManager.#path);
       }
 
       const products = await this.getProducts();
 
       const product = {
-        id: this._getNextId(),
+        id: getNextId(ProductManager.#path),
         title,
         description,
         price,
@@ -91,7 +52,7 @@ class ProductManager {
         stock === undefined ||
         !category
       ) {
-        console.log(`All fields are required - ${this._getLocaleTime()}`);
+        console.log(`All fields are required - ${getLocaleTime()}`);
         return false;
       }
 
@@ -99,15 +60,15 @@ class ProductManager {
         console.log(
           `Product with code ${
             product.code
-          } already exists - ${this._getLocaleTime()}`
+          } already exists - ${getLocaleTime()}`
         );
         return undefined;
       }
 
       products.push(product);
-      await this._saveData(products);
+      await saveData(products, ProductManager.#path);
 
-      console.log(`Product was loaded successfully - ${this._getLocaleTime()}`);
+      console.log(`Product was loaded successfully - ${getLocaleTime()}`);
 
       const Reproducts = await this.getProducts();
 
@@ -123,17 +84,17 @@ class ProductManager {
       const fileExist = fs.existsSync(ProductManager.#path);
 
       if (!fileExist) {
-        await this._createFile();
+        await createFile(ProductManager.#path);
 
-        console.log(`[] - ${this._getLocaleTime()}`);
+        console.log(`[] - ${getLocaleTime()}`);
 
         return undefined;
       }
 
-      const products = await this._readData();
+      const products = await readData(ProductManager.#path);
 
       if (products.length < 1) {
-        console.log(`[] - ${this._getLocaleTime()}`);
+        console.log(`[] - ${getLocaleTime()}`);
 
         return undefined;
       }
@@ -151,7 +112,7 @@ class ProductManager {
       const product = Object.values(products).find((i) => i.id === id);
 
       if (product === undefined) {
-        console.log(`Not found - ${this._getLocaleTime()}`);
+        console.log(`Not found - ${getLocaleTime()}`);
         return undefined;
       }
 
@@ -170,13 +131,13 @@ class ProductManager {
       const ix = await products.findIndex((product) => product.id === id);
 
       if (ix === -1) {
-        console.log(`Product does not exist - ${this._getLocaleTime()}`);
+        console.log(`Product does not exist - ${getLocaleTime()}`);
         return undefined;
       }
 
       if (props.hasOwnProperty("id") || props.hasOwnProperty("code")) {
         console.log(
-          `Cannot update 'id' or 'code' property - ${this._getLocaleTime()}`
+          `Cannot update 'id' or 'code' property - ${getLocaleTime()}`
         );
         return false;
       }
@@ -186,7 +147,7 @@ class ProductManager {
       updatedProduct.stock === 0
         ? (updatedProduct.status = false)
         : (updatedProduct.status = true);
-      await this._saveData(products);
+      await saveData(products, ProductManager.#path);
 
       console.log(updatedProduct);
       return updatedProduct;
@@ -203,14 +164,14 @@ class ProductManager {
       const product = Object.values(products).find((i) => i.id === id);
 
       if (product === undefined) {
-        console.log(`Product does not exist - ${this._getLocaleTime()}`);
+        console.log(`Product does not exist - ${getLocaleTime()}`);
         return undefined;
       }
 
       products = products.filter((i) => i.id !== id);
-      const save = await this._saveData(products);
+      const save = await saveData(products, ProductManager.#path);
 
-      console.log(`Product removed - ${this._getLocaleTime()}`);
+      console.log(`Product removed - ${getLocaleTime()}`);
       return true;
     } catch (err) {
       console.log(err);
