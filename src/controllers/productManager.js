@@ -178,6 +178,28 @@ class ProductManager {
       return err;
     }
   };
+
+  logicalDeleteProduct = async (id) => {
+    try {
+      let products = await this.getProducts();
+
+      const productIdx = Object.values(products).findIndex((i) => i.id === id);
+
+      if (productIdx === -1) {
+        console.log(`Product does not exist - ${getLocaleTime()}`);
+        return undefined;
+      }
+
+      products[productIdx].status = false;
+      const save = await saveData(products, ProductManager.#path);
+
+      console.log(`Product removed - ${getLocaleTime()}`);
+      return true;
+    } catch (err) {
+      console.log(err);
+      return err;
+    }
+  };
 }
 
 export default ProductManager;

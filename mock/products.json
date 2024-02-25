@@ -108,5 +108,16 @@
     "stock": 10,
     "category": "MOTHER",
     "status": true
+  },
+  {
+    "id": 11,
+    "title": "9",
+    "description": "9",
+    "price": 9,
+    "thumbnail": [],
+    "code": "9",
+    "stock": 9,
+    "category": "9",
+    "status": false
   }
 ]
