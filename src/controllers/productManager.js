@@ -53,7 +53,7 @@ class ProductManager {
         !category
       ) {
         console.log(`All fields are required - ${getLocaleTime()}`);
-        return false;
+        throw new Error("All fields are required");
       }
 
       if (products.find((product) => product.code === code)) {
@@ -62,7 +62,7 @@ class ProductManager {
             product.code
           } already exists - ${getLocaleTime()}`
         );
-        return undefined;
+        throw new Error(`Product with code ${product.code} already exists`);
       }
 
       products.push(product);
@@ -74,8 +74,7 @@ class ProductManager {
 
       return Reproducts;
     } catch (err) {
-      console.log(err);
-      return err;
+      throw err;
     }
   };
 
@@ -112,15 +111,14 @@ class ProductManager {
       const product = Object.values(products).find((i) => i.id === id);
 
       if (product === undefined) {
-        console.log(`Not found - ${getLocaleTime()}`);
-        return undefined;
+        console.log(`Not found Product - ${getLocaleTime()}`);
+        throw new Error("Not found Product");
       }
 
       console.log(product);
       return product;
     } catch (err) {
-      console.log(err);
-      return err;
+      throw err;
     }
   };
 
@@ -132,14 +130,14 @@ class ProductManager {
 
       if (ix === -1) {
         console.log(`Product does not exist - ${getLocaleTime()}`);
-        return undefined;
+        throw new Error("Product does not exist");
       }
 
       if (props.hasOwnProperty("id") || props.hasOwnProperty("code")) {
         console.log(
           `Cannot update 'id' or 'code' property - ${getLocaleTime()}`
         );
-        return false;
+        throw new Error("Cannot update 'id' or 'code' property");
       }
 
       Object.assign(products[ix], props);
@@ -152,8 +150,7 @@ class ProductManager {
       console.log(updatedProduct);
       return updatedProduct;
     } catch (err) {
-      console.log(err);
-      return err;
+      throw err;
     }
   };
 
@@ -165,7 +162,7 @@ class ProductManager {
 
       if (product === undefined) {
         console.log(`Product does not exist - ${getLocaleTime()}`);
-        return undefined;
+        throw new Error("Product does not exist");
       }
 
       products = products.filter((i) => i.id !== id);
@@ -174,8 +171,7 @@ class ProductManager {
       console.log(`Product removed - ${getLocaleTime()}`);
       return true;
     } catch (err) {
-      console.log(err);
-      return err;
+      throw err;
     }
   };
 
@@ -187,7 +183,7 @@ class ProductManager {
 
       if (productIdx === -1) {
         console.log(`Product does not exist - ${getLocaleTime()}`);
-        return undefined;
+        throw new Error("Product does not exist");
       }
 
       products[productIdx].status = false;
@@ -196,8 +192,7 @@ class ProductManager {
       console.log(`Product removed - ${getLocaleTime()}`);
       return true;
     } catch (err) {
-      console.log(err);
-      return err;
+      throw err;
     }
   };
 }

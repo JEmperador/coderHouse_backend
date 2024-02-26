@@ -76,34 +76,24 @@ class CartManager {
       const cart = Object.values(carts).find((i) => i.id === id);
 
       if (cart === undefined) {
-        console.log(`Not found - ${getLocaleTime()}`);
-        return undefined;
+        console.log(`Not found Cart - ${getLocaleTime()}`);
+        throw new Error("Not found Cart");
       }
 
       return cart;
     } catch (err) {
-      console.log(err);
-      return err;
+      throw err;
     }
   };
 
   updateCart = async (idC, idP, quantity) => {
     try {
-      const carts = await this.getCarts();
-
+      const cart = await this.getCartById(idC);
       const product = await productManager.getProductById(idP);
-      const cart = await carts.find((cart) => cart.id === idC);
-
-      if (cart === undefined || product === undefined) {
-        console.log(`Not found - ${getLocaleTime()}`);
-
-        return undefined;
-      }
 
       if (quantity > product.stock) {
         console.log(`Exceeds available stock - ${getLocaleTime()}`);
-
-        return false;
+        throw new Error("Exceeds available stock");
       }
 
       const productExist = cart.products.find((product) => product.id === idP);
@@ -131,8 +121,7 @@ class CartManager {
 
       return cart;
     } catch (err) {
-      console.log(err);
-      return err;
+      throw err;
     }
   };
 
@@ -144,7 +133,7 @@ class CartManager {
 
       if (cart === undefined) {
         console.log(`Cart does not exist - ${getLocaleTime()}`);
-        return undefined;
+        throw new Error("Cart does not exist");
       }
 
       carts = carts.filter((i) => i.id !== id);
@@ -153,8 +142,7 @@ class CartManager {
       console.log(`Cart removed - ${getLocaleTime()}`);
       return true;
     } catch (err) {
-      console.log(err);
-      return err;
+      throw err;
     }
   };
 }
