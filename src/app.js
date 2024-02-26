@@ -2,8 +2,8 @@ import express from "express";
 import router from "./routes/index.js";
 import handlebars from "express-handlebars";
 import { Server } from "socket.io";
-//const ProductManager = require("./managers/product/productManager");
 import ProductManager from "./controllers/productManager.js";
+import { isEmptyArray } from "./utils.js";
 const productManager = new ProductManager();
 
 const app = express();
@@ -16,7 +16,14 @@ app.use(express.urlencoded({ extended: true }));
 
 //Navegador
 app.use("/static", express.static("./src/public"));
-app.engine("handlebars", handlebars.engine());
+app.engine(
+  "handlebars",
+  handlebars.engine({
+    helpers: {
+      isEmptyArray: isEmptyArray,
+    },
+  })
+);
 app.set("view engine", "handlebars");
 app.set("views", "./src/views");
 
@@ -61,8 +68,8 @@ io.on("connection", (socket) => {
   });
 
   //Recibe del front
-  socket.on("cliente:deleteProduct", async (data) => {
-    const id = data;
+  socket.on("client:deleteProduct", async (data) => {
+    const id = Number(data);
 
     console.log(id);
 

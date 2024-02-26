@@ -34,11 +34,19 @@ formCreate.addEventListener("submit", (e) => {
 formDelete.addEventListener("submit", (e) => {
   e.preventDefault();
 
-  const id = Number(document.querySelector("input[name=id]").value);
+  const id = document.querySelector("input[name=id]").value;
 
-  socket.emit("cliente:deleteProduct", id);
+  socket.emit("client:deleteProduct", id);
 
   formDelete.reset();
+});
+
+//Envia el front
+document.addEventListener("click", (event) => {
+  if (event.target.classList.contains("delete")) {
+    const id = event.target.getAttribute("id");
+    socket.emit("client:deleteProduct", id);
+  }
 });
 
 //Respuesta del back
@@ -46,14 +54,20 @@ socket.on("server:list", (data) => {
   const divList = document.getElementById("list");
   let cards = "";
   data.forEach((content) => {
+    content.thumbnail = content.thumbnail.length > 0 ? content.thumbnail : ["https://i.ibb.co/zsQdBNc/200x200.gif"]
     cards += `
         <div class="card" style="margin: 20px 100px; max-width: 200px">
             <img src=${content.thumbnail} width="200px" alt="img - ${content.thumbnail}">
             <div class="card-body">
                 <p class="card-title">${content.category} - ${content.title}</p>
             </div>
-            <div class="p-3">
-                <a href="/product/${content.id}" class="btn btn-primary btn-lg">Info</a>
+            <div class="p-3" style="display: flex; justify-content: space-between;">
+                <a href="/product/${content.id}" class="btn btn-primary">Info</a>
+                <div class="delete">
+                    <button class="btn btn-primary delete" id=${content.id}>
+                        Delete
+                    </button>
+                </div>
             </div>
         </div>`;
   });

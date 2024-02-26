@@ -2,6 +2,7 @@ import multer from "multer";
 import fs from "fs";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
+import Handlebars from "express-handlebars";
 
 const __filename = fileURLToPath(import.meta.url);
 export const __dirname = dirname(__filename);
@@ -40,7 +41,7 @@ export async function createFile(path) {
 
     console.log(`File created successfully - ${getLocaleTime()}`);
   }
-};
+}
 
 export async function saveData(data, path) {
   try {
@@ -59,3 +60,11 @@ export async function readData(path) {
     console.log(err);
   }
 }
+
+export const isEmptyArray = function (array, options) {
+  if (Array.isArray(array) && array.length === 0) {
+    return options.fn(this);
+  } else {
+    return options.inverse(this);
+  }
+};
