@@ -3,9 +3,9 @@ import { Router } from "express";
 const productManager = new ProductManager();
 const router = Router();
 
-router.get("/realTimeproducts", async (req, res) => {
+router.get("/realtimeproducts", async (req, res) => {
   const products = await productManager.getProducts();
-  res.render("realTimeproducts", { products: products });
+  res.render("realtimeproducts", { products: products });
 });
 
 router.get("/", async (req, res) => {
