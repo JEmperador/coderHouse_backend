@@ -108,5 +108,38 @@
     "stock": 10,
     "category": "MOTHER",
     "status": true
+  },
+  {
+    "id": 11,
+    "title": "1",
+    "description": "1",
+    "price": 1,
+    "thumbnail": [],
+    "code": "1",
+    "stock": 1,
+    "category": "1",
+    "status": false
+  },
+  {
+    "id": 12,
+    "title": "2",
+    "description": "2",
+    "price": 2,
+    "thumbnail": [],
+    "code": "2",
+    "stock": 2,
+    "category": "2",
+    "status": false
+  },
+  {
+    "id": 13,
+    "title": "3",
+    "description": "3",
+    "price": 3,
+    "thumbnail": [],
+    "code": "3",
+    "stock": 3,
+    "category": "3",
+    "status": false
   }
 ]

@@ -24,15 +24,17 @@ router.post("/:cid/product/:pid", async (req, res) => {
       quantity
     );
 
-    if (updatedCart === undefined) {
-      res.status(404).json("Not found");
-    } else if (updatedCart === false) {
-      res.status(400).json("Exceeds available stock");
-    } else {
-      res.status(200).json("Product was added correctly");
-    }
+    res.status(200).json("Product was added correctly");
   } catch (err) {
-    res.status(500).json(err);
+    if (err.message.includes("Not found Cart")) {
+      res.status(404).json(err.message);
+    } else if (err.message.includes("Not found Product")) {
+      res.status(404).json(err.message);
+    } else if (err.message.includes("Exceeds available stock")) {
+      res.status(404).json(err.message);
+    } else {
+      res.status(500).json(err);
+    }
   }
 });
 
@@ -42,7 +44,7 @@ router.get("/", async (req, res) => {
   try {
     const carts = await cartManager.getCarts();
 
-    if(carts === undefined) {
+    if (carts === undefined) {
       res.status(200).json([]);
     }
 
@@ -52,7 +54,6 @@ router.get("/", async (req, res) => {
       const limitedCarts = carts.slice(0, limit);
       res.status(206).json(limitedCarts);
     }
-
   } catch (err) {
     res.status(500).json(err);
   }
@@ -64,13 +65,13 @@ router.get("/:cid", async (req, res) => {
   try {
     const cart = await cartManager.getCartById(Number(cid));
 
-    if (cart === undefined) {
-      res.status(404).json("Not found");
-    }
-
     res.status(200).json(cart);
   } catch (err) {
-    res.status(500).json(err);
+    if (err.message.includes("Not found")) {
+      res.status(404).json(err.message);
+    } else {
+      res.status(500).json(err);
+    }
   }
 });
 
@@ -80,13 +81,13 @@ router.delete("/:cid", async (req, res) => {
   try {
     const cart = await cartManager.deleteCart(Number(cid));
 
-    if (cart === undefined) {
-      res.status(404).json("Not found");
-    } else {
-      res.status(200).json(`Cart with id: ${cid} was removed`);
-    }
+    res.status(200).json(`Cart with id: ${cid} was removed`);
   } catch (err) {
-    res.status(500).json(err);
+    if (err.message.includes("Cart does")) {
+      res.status(404).json(err.message);
+    } else {
+      res.status(500).json(err);
+    }
   }
 });
 
