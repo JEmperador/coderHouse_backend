@@ -71,8 +71,6 @@ io.on("connection", (socket) => {
   socket.on("client:deleteProduct", async (data) => {
     const id = Number(data);
 
-    console.log(id);
-
     const logicalDeleteProduct = await productManager.logicalDeleteProduct(id);
 
     //Envia el back

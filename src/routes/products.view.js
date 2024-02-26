@@ -3,9 +3,9 @@ import { Router } from "express";
 const productManager = new ProductManager();
 const router = Router();
 
-router.get("/upload", async (req, res) => {
+router.get("/realTimeproducts", async (req, res) => {
   const products = await productManager.getProducts();
-  res.render("upload", { products: products });
+  res.render("realTimeproducts", { products: products });
 });
 
 router.get("/", async (req, res) => {
