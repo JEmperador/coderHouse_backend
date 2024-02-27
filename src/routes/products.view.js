@@ -8,6 +8,18 @@ router.get("/realtimeproducts", async (req, res) => {
   res.render("realtimeproducts", { products: products });
 });
 
+router.get("/:pid", async (req, res) => {
+  const { pid } = req.params;
+
+  try {
+    const product = await productManager.getProductById(Number(pid));
+
+    res.render("product", product);
+  } catch (err) {
+    res.status(500).json(err);
+  }
+});
+
 router.get("/", async (req, res) => {
   const { limit } = req.query;
   try {
