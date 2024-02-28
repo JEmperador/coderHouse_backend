@@ -2,6 +2,7 @@ import productsRouter from "./products.router.js";
 import cartsRouter from "./carts.router.js";
 import productsView from "./products.view.js";
 import cartView from "./cart.view.js";
+import chatView from "./chat.view.js";
 
 const router = (app) => {
   //Postman
@@ -10,6 +11,7 @@ const router = (app) => {
   //Navegador
   app.use("/products", productsView);
   app.use("/cart", cartView);
+  app.use("/chat", chatView);
 };
 
 export default router;

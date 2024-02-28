@@ -39,10 +39,11 @@ const httpServer = app.listen(PORT, () => {
 
 const io = new Server(httpServer);
 
+const messages = [];
 io.on("connection", (socket) => {
   console.log(`New user ${socket.id} joined`);
 
-  //Recibe del front
+  //Recibe del front - Creacion de producto
   socket.on("client:newProduct", async (data) => {
     const { title, description, price, code, stock, category } = data;
 
@@ -67,7 +68,7 @@ io.on("connection", (socket) => {
     io.emit("server:list", listProducts);
   });
 
-  //Recibe del front
+  //Recibe del front - Eliminacion de producto
   socket.on("client:deleteProduct", async (data) => {
     const id = Number(data);
 
@@ -75,11 +76,17 @@ io.on("connection", (socket) => {
 
     //Envia el back
     const products = await productManager.getProducts();
-
-    //Solo para mostrar los productos con status true
-    const listProducts = products.filter((product) => product.status === true);
-
+    const listProducts = products.filter((product) => product.status === true); //Solo para mostrar los productos con status true
     io.emit("server:list", listProducts);
+  });
+
+  socket.on("new", (user) => console.log(`${user} joined`));
+
+  //Recibe del front - Mensajes
+  socket.on("message", (data) => {
+    messages.push(data);
+    //Envia el back
+    io.emit("logs", messages);
   });
 
   socket.on("disconnect", () => {
