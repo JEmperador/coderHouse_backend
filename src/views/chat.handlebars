@@ -1,6 +1,6 @@
 <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
     <div class="container-fluid">
-        <a href="./">
+        <a href="./../">
             <img src="https://i.ibb.co/4Fx6zTT/logo-Nuevo-negro.png" width="50px" alt="logo"
                 class="d-inline-block align-text-top me-3 header__img" />
         </a>
@@ -8,22 +8,32 @@
     <div class="d-flex collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav align-items-center header__lista">
             <li class="nav-item ms-3 header__item">
-                <a class="nav-link" href="./products">Products</a>
+                <a class="nav-link" href="../products">Products</a>
             </li>
             <li class="nav-item ms-3 header__item">
-                <a class="nav-link" href="./products/realtimeproducts">Upload</a>
+                <a class="nav-link" href="../products/realtimeproducts">Upload</a>
             </li>
             <li class="nav-item ms-3 header__item">
                 <a class="nav-link" href="./chat">Chat</a>
             </li>
             <li class="nav-item ms-3 me-3 header__item">
-                <a class="nav-link" href="./cart/10">Cart</a>
+                <a class="nav-link" href="../cart/10">Cart</a>
             </li>
         </ul>
     </div>
 </nav>
 
+<h1 class="text-center m-5">Chat</h1>
+
+<div style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
+    {{>window}}
+</div>
+
 {{>footer}}
 
-{{!-- <script src="https://cdn.socket.io/4.7.3/socket.io.min.js"></script>
-<script src="/static/js/main.js"></script> --}}
+{{!-- SweetAlert --}}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+{{!-- Socket.io --}}
+<script src="/socket.io/socket.io.js"></script>
+{{!-- Logica de Socket.io --}}
+<script src="/static/js/chat.js"></script>

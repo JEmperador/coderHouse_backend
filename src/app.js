@@ -3,8 +3,10 @@ import router from "./routes/index.js";
 import handlebars from "express-handlebars";
 import { Server } from "socket.io";
 import ProductManager from "./controllers/productManager.js";
+import ChatManager from "./controllers/chatManager.js";
 import { isEmptyArray } from "./utils.js";
 const productManager = new ProductManager();
+const chatManager = new ChatManager();
 
 const app = express();
 
@@ -42,7 +44,7 @@ const io = new Server(httpServer);
 io.on("connection", (socket) => {
   console.log(`New user ${socket.id} joined`);
 
-  //Recibe del front
+  //Recibe del front - Creacion de producto
   socket.on("client:newProduct", async (data) => {
     const { title, description, price, code, stock, category } = data;
 
@@ -67,7 +69,7 @@ io.on("connection", (socket) => {
     io.emit("server:list", listProducts);
   });
 
-  //Recibe del front
+  //Recibe del front - Eliminacion de producto
   socket.on("client:deleteProduct", async (data) => {
     const id = Number(data);
 
@@ -75,11 +77,19 @@ io.on("connection", (socket) => {
 
     //Envia el back
     const products = await productManager.getProducts();
-
-    //Solo para mostrar los productos con status true
-    const listProducts = products.filter((product) => product.status === true);
-
+    const listProducts = products.filter((product) => product.status === true); //Solo para mostrar los productos con status true
     io.emit("server:list", listProducts);
+  });
+
+  socket.on("new", (user) => console.log(`${user} joined`));
+
+  //Recibe del front - Mensajes
+  socket.on("message", async (data) => {
+    const message = await chatManager.saveMessage(data);
+    //Envia el back
+    const messages = await chatManager.getMessasges();
+    const messagesReverse = messages.reverse()
+    io.emit("logs", messagesReverse);
   });
 
   socket.on("disconnect", () => {
