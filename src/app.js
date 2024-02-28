@@ -3,8 +3,10 @@ import router from "./routes/index.js";
 import handlebars from "express-handlebars";
 import { Server } from "socket.io";
 import ProductManager from "./controllers/productManager.js";
+import ChatManager from "./controllers/chatManager.js";
 import { isEmptyArray } from "./utils.js";
 const productManager = new ProductManager();
+const chatManager = new ChatManager();
 
 const app = express();
 
@@ -39,7 +41,6 @@ const httpServer = app.listen(PORT, () => {
 
 const io = new Server(httpServer);
 
-const messages = [];
 io.on("connection", (socket) => {
   console.log(`New user ${socket.id} joined`);
 
@@ -83,10 +84,12 @@ io.on("connection", (socket) => {
   socket.on("new", (user) => console.log(`${user} joined`));
 
   //Recibe del front - Mensajes
-  socket.on("message", (data) => {
-    messages.push(data);
+  socket.on("message", async (data) => {
+    const message = await chatManager.saveMessage(data);
     //Envia el back
-    io.emit("logs", messages);
+    const messages = await chatManager.getMessasges();
+    const messagesReverse = messages.reverse()
+    io.emit("logs", messagesReverse);
   });
 
   socket.on("disconnect", () => {

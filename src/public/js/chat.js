@@ -1,5 +1,12 @@
 const socket = io();
+
 const chatbox = document.getElementById("chatbox");
+
+window.onload = function () {
+  const logs = document.getElementById("logs");
+  logs.scrollTop = logs.scrollHeight;
+};
+
 let user = sessionStorage.getItem("user") || "";
 
 //SweetAlert
@@ -9,7 +16,7 @@ if (!user) {
     input: "text",
     text: "Set username",
     inputAttributes: {
-      maxlength: 10
+      maxlength: 10,
     },
     inputValidator: (value) => {
       return !value.trim() && "Please write a username";
@@ -58,13 +65,15 @@ socket.on("logs", (data) => {
     messages =
       `
         <div class="card m-3" style="width: 200px">
-          <div class="m-2">
+          <div class="m-2" style="display: flex; flex-direction: column;">
             <p class="m-0" style="font-size: 10px;"><b>${message.user}</b></p>
-            <p class="m-0" style="font-size: 16px;">${message.message}<i style="font-size: x-small; margin-left: 5px;">${message.hour}</i></p>
+            <p class="m-0" style="font-size: 16px;">${message.message}</p>
+            <div style="margin-left: auto;">
+              <i style="font-size: x-small; margin-left: 5px;">${message.hour}</i>
+            </div>
           </div>
         </div>
-      ` +
-      messages;
+      ` + messages;
   });
 
   divLogs.innerHTML = messages;
