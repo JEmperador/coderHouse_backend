@@ -8,12 +8,16 @@ if (!user) {
     title: "Auth",
     input: "text",
     text: "Set username",
+    inputAttributes: {
+      maxlength: 10
+    },
     inputValidator: (value) => {
       return !value.trim() && "Please write a username";
     },
     allowOutsideClick: false,
   }).then((result) => {
     user = result.value;
+    user = user.charAt(0).toUpperCase() + user.slice(1);
     document.getElementById("username").innerHTML = user;
     sessionStorage.setItem("user", user);
     socket.emit("new", user);
@@ -52,7 +56,14 @@ socket.on("logs", (data) => {
   let messages = "";
   data.forEach((message) => {
     messages =
-      `<p><b>${message.user}:</b> ${message.message}<i style="font-size: x-small; margin-left: 5px;">${message.hour}</i></p>` +
+      `
+        <div class="card m-3" style="width: 200px">
+          <div class="m-2">
+            <p class="m-0" style="font-size: 10px;"><b>${message.user}</b></p>
+            <p class="m-0" style="font-size: 16px;">${message.message}<i style="font-size: x-small; margin-left: 5px;">${message.hour}</i></p>
+          </div>
+        </div>
+      ` +
       messages;
   });
 

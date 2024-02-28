@@ -5,13 +5,25 @@ body {
   position: relative;
   padding-bottom: 100px;
   min-height: 100vh;
-
-  
 }
 
-::-webkit-scrollbar {
+body::-webkit-scrollbar {
   width: 0;
   height: 0;
+}
+
+#logs::-webkit-scrollbar {
+  width: 5px;
+  height: 100%;
+}
+
+#logs::-webkit-scrollbar-track {
+  background: rgb(175, 175, 175);
+}
+
+#logs::-webkit-scrollbar-thumb {
+  border-radius: 50px;
+  background: #0d6efd;
 }
 
 .footer {
