@@ -37,18 +37,18 @@ if (!user) {
 //Envia el front
 chatbox.addEventListener("keyup", (event) => {
   if (event.key === "Enter") {
-    const msn = chatbox.value.trim();
+    const message = chatbox.value.trim();
 
-    if (msn.length > 0) {
+    if (message.length > 0) {
       const date = new Date();
       const hourDate = date.getHours();
       const minuteDate = date.getMinutes();
       const formarttedMinute = minuteDate.toString().padStart(2, "0");
       const hour = `${hourDate}:${formarttedMinute}`;
 
-      socket.emit("message", {
+      socket.emit("client:message", {
         user,
-        message: msn,
+        message,
         hour,
       });
 
@@ -58,7 +58,7 @@ chatbox.addEventListener("keyup", (event) => {
 });
 
 //Respuesta del back
-socket.on("logs", (data) => {
+socket.on("server:messages", (data) => {
   const divLogs = document.getElementById("logs");
   let messages = "";
   data.forEach((message) => {

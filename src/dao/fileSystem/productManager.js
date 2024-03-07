@@ -5,7 +5,7 @@ import {
   createFile,
   saveData,
   readData,
-} from "../utils.js";
+} from "../../utils.js";
 
 class ProductManager {
   static #path = "./mock/products.json";
@@ -129,8 +129,8 @@ class ProductManager {
       const ix = await products.findIndex((product) => product.id === id);
 
       if (ix === -1) {
-        console.log(`Product does not exist - ${getLocaleTime()}`);
-        throw new Error("Product does not exist");
+        console.log(`Not found Product - ${getLocaleTime()}`);
+        throw new Error("Not found Product");
       }
 
       if (props.hasOwnProperty("id") || props.hasOwnProperty("code")) {
@@ -161,8 +161,8 @@ class ProductManager {
       const product = Object.values(products).find((i) => i.id === id);
 
       if (product === undefined) {
-        console.log(`Product does not exist - ${getLocaleTime()}`);
-        throw new Error("Product does not exist");
+        console.log(`Not found Product - ${getLocaleTime()}`);
+        throw new Error("Not found Product");
       }
 
       products = products.filter((i) => i.id !== id);
@@ -182,8 +182,8 @@ class ProductManager {
       const productIdx = Object.values(products).findIndex((i) => i.id === id);
 
       if (productIdx === -1) {
-        console.log(`Product does not exist - ${getLocaleTime()}`);
-        throw new Error("Product does not exist");
+        console.log(`Not found Product - ${getLocaleTime()}`);
+        throw new Error("Not found Product");
       }
 
       products[productIdx].status = false;

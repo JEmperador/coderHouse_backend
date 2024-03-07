@@ -1,10 +1,10 @@
-import CartManager from "../controllers/cartManager.js";
+import CartManager from "../../dao/fileSystem/cartManager.js";
 import { Router } from "express";
 
 const cartManager = new CartManager();
 const router = Router();
 
-router.post("/", async (req, res) => {
+router.post("/v1/carts", async (req, res) => {
   try {
     const newCart = await cartManager.createCart();
     res.status(201).json("New Cart created");
@@ -13,7 +13,7 @@ router.post("/", async (req, res) => {
   }
 });
 
-router.post("/:cid/product/:pid", async (req, res) => {
+router.post("/v1/carts/:cid/product/:pid", async (req, res) => {
   const { cid, pid } = req.params;
   const quantity = req.body.quantity || 1;
 
@@ -38,7 +38,7 @@ router.post("/:cid/product/:pid", async (req, res) => {
   }
 });
 
-router.get("/", async (req, res) => {
+router.get("/v1/carts", async (req, res) => {
   const { limit } = req.query;
 
   try {
@@ -59,7 +59,7 @@ router.get("/", async (req, res) => {
   }
 });
 
-router.get("/:cid", async (req, res) => {
+router.get("/v1/carts/:cid", async (req, res) => {
   const { cid } = req.params;
 
   try {
@@ -75,7 +75,7 @@ router.get("/:cid", async (req, res) => {
   }
 });
 
-router.delete("/:cid", async (req, res) => {
+router.delete("/v1/carts/:cid", async (req, res) => {
   const { cid } = req.params;
 
   try {
@@ -83,8 +83,44 @@ router.delete("/:cid", async (req, res) => {
 
     res.status(200).json(`Cart with id: ${cid} was removed`);
   } catch (err) {
-    if (err.message.includes("Cart does")) {
+    if (err.message.includes("Not found")) {
       res.status(404).json(err.message);
+    } else {
+      res.status(500).json(err);
+    }
+  }
+});
+
+router.delete("/v1/carts/:cid/products", async (req, res) => {
+  const { cid } = req.params;
+
+  try {
+    const cart = await cartManager.deleteProducts(Number(cid));
+
+    res.status(200).json(`Cart with id: ${cid} was emptied`);
+  } catch (err) {
+    if (err.message.includes("Not found")) {
+      res.status(404).json(err.message);
+    } else if (err.message.includes("Cart is already")) {
+      res.status(404).json(err.message);
+    } else {
+      res.status(500).json(err);
+    }
+  }
+});
+
+router.delete("/v1/carts/:cid/products/:pid", async (req, res) => {
+  const { cid, pid } = req.params;
+
+  try {
+    const cart = await cartManager.deleteProductById(Number(cid), Number(pid));
+
+    res.status(200).json(`Product with id: ${pid} has been removed`);
+  } catch (err) {
+    if (err.message.includes("Not found Cart")) {
+      res.status(404).json(err.message);
+    } else if (err.message.includes("Not found Product")) {
+      res.status(404).json(err.message)
     } else {
       res.status(500).json(err);
     }

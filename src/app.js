@@ -2,9 +2,11 @@ import express from "express";
 import router from "./routes/index.js";
 import handlebars from "express-handlebars";
 import { Server } from "socket.io";
-import ProductManager from "./controllers/productManager.js";
-import ChatManager from "./controllers/chatManager.js";
+//import ProductManager from "./dao/fileSystem/productManager.js";
+import ProductManager from "./dao/mongoDB/productManager.js";
+import ChatManager from "./dao/mongoDB/chatManager.js";
 import { isEmptyArray } from "./utils.js";
+import { mongodb } from "./database.js";
 const productManager = new ProductManager();
 const chatManager = new ChatManager();
 
@@ -17,15 +19,18 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 //Navegador
+const hbs = handlebars.create({
+  runtimeOptions: {
+    allowProtoPropertiesByDefault: true,
+    allowProtoMethodsByDefault: true,
+  },
+  helpers: {
+    isEmptyArray: isEmptyArray,
+  },
+});
+
 app.use("/static", express.static("./src/public"));
-app.engine(
-  "handlebars",
-  handlebars.engine({
-    helpers: {
-      isEmptyArray: isEmptyArray,
-    },
-  })
-);
+app.engine("handlebars", hbs.engine);
 app.set("view engine", "handlebars");
 app.set("views", "./src/views");
 
@@ -46,27 +51,39 @@ io.on("connection", (socket) => {
 
   //Recibe del front - Creacion de producto
   socket.on("client:newProduct", async (data) => {
-    const { title, description, price, code, stock, category } = data;
+    try {
+      const { title, description, price, code, stock, category } = data;
 
-    const thumbnail = Array.isArray(data.thumbnail)
-      ? data.thumbnail
-      : [data.thumbnail];
+      const thumbnail = Array.isArray(data.thumbnail)
+        ? data.thumbnail
+        : data.thumbnail.length > 0
+        ? [data.thumbnail]
+        : [];
 
-    const postProducts = await productManager.addProduct(
-      title,
-      description,
-      price,
-      thumbnail,
-      code,
-      stock,
-      category
-    );
+      const postProducts = {
+        title,
+        description,
+        price,
+        thumbnail,
+        code,
+        stock,
+        category,
+      };
 
-    //Envia el back
-    const products = await productManager.getProducts();
-    const listProducts = products.filter((product) => product.status === true);
+      await productManager.addProduct(postProducts);
 
-    io.emit("server:list", listProducts);
+      //Envia el back
+      const products = await productManager.getProducts();
+      const listProducts = products.filter(
+        (product) => product.status === true
+      );
+
+      console.log(listProducts);
+
+      io.emit("server:list", listProducts);
+    } catch (err) {
+      io.emit("server:error", err.message)
+    }
   });
 
   //Recibe del front - Eliminacion de producto
@@ -84,12 +101,12 @@ io.on("connection", (socket) => {
   socket.on("new", (user) => console.log(`${user} joined`));
 
   //Recibe del front - Mensajes
-  socket.on("message", async (data) => {
+  socket.on("client:message", async (data) => {
     const message = await chatManager.saveMessage(data);
     //Envia el back
-    const messages = await chatManager.getMessasges();
-    const messagesReverse = messages.reverse()
-    io.emit("logs", messagesReverse);
+    const messages = await chatManager.getMessages();
+    const messagesReverse = messages.reverse();
+    io.emit("server:messages", messagesReverse);
   });
 
   socket.on("disconnect", () => {
