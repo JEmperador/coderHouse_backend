@@ -35,7 +35,7 @@ class CartManager {
 
       const cart = await CartModel.findById(idC);
 
-      if (cart === null) {
+      if (!cart) {
         console.error(`Not found Cart - ${getLocaleTime()}`);
         throw new Error("Not found Cart");
       }
@@ -93,7 +93,7 @@ class CartManager {
 
       const cartDeleted = await CartModel.findByIdAndDelete(idC);
 
-      if (cartDeleted === null) {
+      if (!cartDeleted) {
         console.log(`Not found Cart - ${getLocaleTime()}`);
         throw new Error("Not found Cart");
       }
@@ -114,7 +114,7 @@ class CartManager {
 
       const cart = await CartModel.findById(idC);
 
-      if (!cart /*  === null */) {
+      if (!cart) {
         console.log("Not found Cart");
         throw new Error("Not found Cart");
       }
@@ -151,7 +151,7 @@ class CartManager {
         $pull: { products: { product: idP } },
       });
 
-      if (!updatedCart /* cart === null */) {
+      if (!updatedCart) {
         console.log(`Not found Cart - ${getLocaleTime()}`);
         throw new Error("Not found Cart");
       }

@@ -50,7 +50,7 @@ class ProductManager {
 
       const product = await ProductModel.findById(idP);
 
-      if (product === null) {
+      if (!product) {
         console.log(`Not found Product - ${getLocaleTime()}`);
         throw new Error("Not found Product");
       }
@@ -83,7 +83,7 @@ class ProductManager {
         new: true,
       });
 
-      if (newProduct === null) {
+      if (!newProduct) {
         console.log(`Not found Product - ${getLocaleTime()}`);
         throw new Error(`Not found Product`);
       }
@@ -104,7 +104,7 @@ class ProductManager {
 
       const productDeleted = await ProductModel.findByIdAndDelete(idP);
 
-      if (productDeleted === null) {
+      if (!productDeleted) {
         console.log(`Not found Product - ${getLocaleTime()}`);
         throw new Error("Not found Product");
       }
@@ -129,7 +129,7 @@ class ProductManager {
         { new: true }
       );
 
-      if (!updatedProduct /*  === null */) {
+      if (!updatedProduct) {
         console.log(`Not found Product - ${getLocaleTime()}`);
         throw new Error("Not found Product");
       }

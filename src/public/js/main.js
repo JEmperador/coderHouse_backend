@@ -45,6 +45,7 @@ formDelete.addEventListener("submit", (e) => {
 document.addEventListener("click", (event) => {
   if (event.target.classList.contains("delete")) {
     const id = event.target.getAttribute("id");
+
     socket.emit("client:deleteProduct", id);
   }
 });
