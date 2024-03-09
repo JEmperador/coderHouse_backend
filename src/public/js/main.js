@@ -45,6 +45,7 @@ formDelete.addEventListener("submit", (e) => {
 document.addEventListener("click", (event) => {
   if (event.target.classList.contains("delete")) {
     const id = event.target.getAttribute("id");
+
     socket.emit("client:deleteProduct", id);
   }
 });
@@ -54,7 +55,10 @@ socket.on("server:list", (data) => {
   const divList = document.getElementById("list");
   let cards = "";
   data.forEach((content) => {
-    content.thumbnail = content.thumbnail.length > 0 ? content.thumbnail : ["https://i.ibb.co/zsQdBNc/200x200.gif"]
+    content.thumbnail =
+      content.thumbnail.length > 0
+        ? content.thumbnail
+        : ["https://i.ibb.co/zsQdBNc/200x200.gif"];
     cards += `
         <div class="card" style="margin: 20px 100px; max-width: 200px">
             <img src=${content.thumbnail} width="200px" alt="img - ${content.thumbnail}">
@@ -62,7 +66,7 @@ socket.on("server:list", (data) => {
                 <p class="card-title">${content.category} - ${content.title}</p>
             </div>
             <div class="p-3" style="display: flex; justify-content: space-between;">
-                <a href="/product/${content.id}" class="btn btn-primary">Info</a>
+                <a href="/products/${content._id}" class="btn btn-primary">Info</a>
                 <div class="delete">
                     <button class="btn btn-primary delete" id=${content.id}>
                         Delete
@@ -73,4 +77,12 @@ socket.on("server:list", (data) => {
   });
 
   divList.innerHTML = cards;
+});
+
+socket.on("server:error", (data) => {
+  Swal.fire({
+    icon: "error",
+    title: "Oops...",
+    text: `${data}`,
+  });
 });

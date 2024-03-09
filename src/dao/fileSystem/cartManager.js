@@ -5,7 +5,7 @@ import {
   createFile,
   saveData,
   readData,
-} from "../utils.js";
+} from "../../utils.js";
 import ProductManager from "./productManager.js";
 
 const productManager = new ProductManager();
@@ -35,7 +35,7 @@ class CartManager {
       carts.push(cart);
       await saveData(carts, CartManager.#path);
 
-      console.log(`Cart was loaded successfully - ${getLocaleTime()}`);
+      console.log(`Cart created successfully - ${getLocaleTime()}`);
       return carts;
     } catch (err) {
       console.log(err);
@@ -88,7 +88,14 @@ class CartManager {
 
   updateCart = async (idC, idP, quantity) => {
     try {
-      const cart = await this.getCartById(idC);
+      const carts = await this.getCarts();
+      const cart = carts.find((cart) => cart.id === idC);
+
+      if (cart === undefined) {
+        console.log(`Not found Cart - ${getLocaleTime()}`);
+        throw new Error("Not found Cart");
+      }
+
       const product = await productManager.getProductById(idP);
 
       if (quantity > product.stock) {
@@ -132,14 +139,71 @@ class CartManager {
       const cart = Object.values(carts).find((i) => i.id === id);
 
       if (cart === undefined) {
-        console.log(`Cart does not exist - ${getLocaleTime()}`);
-        throw new Error("Cart does not exist");
+        console.log(`Not found Cart - ${getLocaleTime()}`);
+        throw new Error("Not found Cart");
       }
 
       carts = carts.filter((i) => i.id !== id);
       await saveData(carts, CartManager.#path);
 
       console.log(`Cart removed - ${getLocaleTime()}`);
+      return true;
+    } catch (err) {
+      throw err;
+    }
+  };
+
+  deleteProducts = async (id) => {
+    try {
+      let carts = await this.getCarts();
+
+      const cart = Object.values(carts).find((i) => i.id === id);
+
+      if (cart === undefined) {
+        console.log(`Not found Cart - ${getLocaleTime()}`);
+        throw new Error("Not found Cart");
+      }
+
+      if (cart.products.length === 0) {
+        console.log(`Cart is already empty - ${getLocaleTime()}`);
+        throw new Error("Cart is already empty");
+      }
+
+      cart.products = [];
+      await saveData(carts, CartManager.#path);
+
+      console.log(`Cart was emptied - ${getLocaleTime()}`);
+      return true;
+    } catch (err) {
+      throw err;
+    }
+  };
+
+  deleteProductById = async (idC, idP) => {
+    try {
+      let carts = await this.getCarts();
+
+      const cart = Object.values(carts).find((i) => i.id === idC);
+
+      if (cart === undefined) {
+        console.log(`Not found Cart - ${getLocaleTime()}`);
+        throw new Error("Not found Cart");
+      }
+
+      const productIndex = Object.values(cart.products).findIndex(
+        (i) => i.id === idP
+      );
+
+      if (productIndex === -1) {
+        console.log(`Not found Product - ${getLocaleTime()}`);
+        throw new Error("Not found Product");
+      }
+
+      cart.products.splice(productIndex, 1);
+
+      await saveData(carts, CartManager.#path);
+
+      console.log(`Product removed successfully - ${getLocaleTime()}`);
       return true;
     } catch (err) {
       throw err;

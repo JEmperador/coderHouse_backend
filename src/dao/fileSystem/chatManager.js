@@ -5,7 +5,7 @@ import {
   createFile,
   saveData,
   readData,
-} from "../utils.js";
+} from "../../utils.js";
 
 class ChatManager {
   static #path = "./mock/chats.json";
@@ -22,7 +22,7 @@ class ChatManager {
         await createFile(ChatManager.#path);
       }
 
-      const chats = await this.getMessasges();
+      const chats = await this.getMessages();
 
       const chat = {
         id: getNextId(ChatManager.#path),
@@ -39,7 +39,7 @@ class ChatManager {
     }
   };
 
-  getMessasges = async () => {
+  getMessages = async () => {
     try {
       const fileExist = fs.existsSync(ChatManager.#path);
 
