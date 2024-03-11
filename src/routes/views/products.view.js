@@ -6,7 +6,10 @@ const router = Router();
 router.get("/realtimeproducts", async (req, res) => {
   const { limit } = req.query;
   const products = await productManager.getProducts(limit);
-  res.render("realtimeproducts", { products: products });
+  res.render("realtimeproducts", {
+    title: "Atlas Tech | Products",
+    products: products,
+  });
 });
 
 router.get("/:pid", async (req, res) => {
@@ -14,6 +17,8 @@ router.get("/:pid", async (req, res) => {
 
   try {
     const product = await productManager.getProductById(pid);
+
+    product.title = `Atlas Tech | ${product.title}`
 
     res.render("product", product);
   } catch (err) {
@@ -26,7 +31,10 @@ router.get("/", async (req, res) => {
   try {
     const products = await productManager.getProducts(limit);
 
-    res.render("products", { products: products });
+    res.render("products", {
+      title: "Atlas Tech | Products",
+      products: products,
+    });
   } catch (err) {
     res.status(400).json("Bad Request");
   }

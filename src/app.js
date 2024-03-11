@@ -35,7 +35,7 @@ app.set("views", "./src/views");
 router(app);
 
 app.get("/", (req, res) => {
-  res.render("index");
+  res.render("index", {title: "Atlas Tech"});
 });
 
 const httpServer = app.listen(PORT, () => {
