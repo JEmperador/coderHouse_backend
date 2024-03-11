@@ -9,6 +9,8 @@ router.get("/:cid", async (req, res) => {
   try {
     const cart = await cartManager.getCartById(cid);
 
+    cart.title = "Atlas Tech | Cart"
+
     res.render("cart", cart);
   } catch (err) {
     res.status(500).json(err);

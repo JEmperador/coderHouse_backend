@@ -68,7 +68,7 @@ socket.on("server:list", (data) => {
             <div class="p-3" style="display: flex; justify-content: space-between;">
                 <a href="/products/${content._id}" class="btn btn-primary">Info</a>
                 <div class="delete">
-                    <button class="btn btn-primary delete" id=${content.id}>
+                    <button class="btn btn-primary delete" id=${content._id}>
                         Delete
                     </button>
                 </div>
