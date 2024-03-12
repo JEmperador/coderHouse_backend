@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import { CartModel } from "../models/cart.model.js";
-import { getLocaleTime } from "../../utils.js";
+import { getLocaleTime } from "../../helpers/utils.js";
 
 class CartManager {
   createCart = async (cart) => {

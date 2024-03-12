@@ -5,7 +5,7 @@ import {
   createFile,
   saveData,
   readData,
-} from "../../utils.js";
+} from "../../helpers/utils.js";
 import ProductManager from "./productManager.js";
 
 const productManager = new ProductManager();

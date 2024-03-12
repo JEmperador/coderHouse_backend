@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 import { ProductModel } from "../models/product.model.js";
-import { getLocaleTime } from "../../utils.js";
+import { getLocaleTime } from "../../helpers/utils.js";
 
 class ProductManager {
   addProduct = async (product) => {
