@@ -1,6 +1,6 @@
 import { Server } from "socket.io";
-import ProductManager from "./dao/mongoDB/productManager.js";
-import ChatManager from "./dao/mongoDB/chatManager.js";
+import ProductManager from "../dao/mongoDB/productManager.js";
+import ChatManager from "../dao/mongoDB/chatManager.js";
 const productManager = new ProductManager();
 const chatManager = new ChatManager();
 

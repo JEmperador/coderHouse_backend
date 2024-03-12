@@ -5,7 +5,7 @@ import {
   createFile,
   saveData,
   readData,
-} from "../../utils.js";
+} from "../../helpers/utils.js";
 
 class ProductManager {
   static #path = "./mock/products.json";
