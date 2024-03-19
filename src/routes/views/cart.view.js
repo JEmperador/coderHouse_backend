@@ -11,7 +11,6 @@ router.get("/:cid", async (req, res) => {
 
     cart.title = "Atlas Tech | Cart"
 
-    console.log("router view", cart);
     res.render("cart", cart);
   } catch (err) {
     res.status(500).json(err);
