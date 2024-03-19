@@ -17,7 +17,7 @@
                 <a class="nav-link" href="./chat">Chat</a>
             </li>
             <li class="nav-item ms-3 me-3 header__item">
-                <a class="nav-link" href="./cart/65e6751b34e6b71589b79b08">Cart</a>
+                <a class="nav-link" href="./cart/65e6751d34e6b71589b79b0c">Cart</a>
             </li>
         </ul>
     </div>
@@ -25,8 +25,10 @@
 
 <h1 class="text-center m-5">Products</h1>
 
-<div style="display: flex; justify-content: center; width: 100%; padding: 0px 100px">
-    {{>cards}}
+<div style="display: flex; flex-direction: column; justify-content: center; width: 100%; padding: 0px 100px">
+    {{>table}}
 </div>
 
 {{>footer}}
+
+<script src="/static/js/list.js"></script>
