@@ -42,9 +42,9 @@
         <td>{{this.price}}U$D</td>
         <td>{{this.stock}}</td>
         <td>
-            <div style="display: flex; justify-content: space-evenly;">
+            <div id="add" style="display: flex; justify-content: space-evenly;">
                 <a class="btn btn-primary" href="/products/{{id}}" role="button">Info</a>
-                <button class="btn btn-success" onclick="addProduct('{{{this._id}}}')" role="button">Add</button>
+                <button id={{this.id}} class="btn btn-success add">Add</button>
             </div>
         </td>
         </tr>

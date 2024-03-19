@@ -17,8 +17,6 @@ const cartSchema = new mongoose.Schema({
   },
 });
 
-//mongoose.set("strictQuery", false);
-
 cartSchema.pre("find", function () {
   this.populate("products.product");
 });

@@ -41,8 +41,6 @@ export default function socketioHandler(httpServer) {
           (product) => product.status === true
         );
 
-        console.log(listProducts);
-
         io.emit("server:list", listProducts);
       } catch (err) {
         io.emit("server:error", err.message);
@@ -83,7 +81,28 @@ export default function socketioHandler(httpServer) {
         //Envia el back
         const cart = await cartManager.getCartById(cid);
         io.emit("server:cart", cart);
-        console.log("socket", cart);
+      } catch (err) {
+        io.emit("server:error", err.message);
+      }
+    });
+
+    //Recibe del front - Incorporacion de producto (en carrito)
+    socket.on("client:addProductOnCart", async (data) => {
+      try {
+        const cid = "65e6751d34e6b71589b79b0c";
+        const pid = data;
+
+        console.log("socket", cid, pid);
+
+        const addProductOnCart = await cartManager.updateCart(
+          cid,
+          pid,
+          1
+        );
+
+        //Envia el back
+        const cart = await cartManager.getCartById(cid);
+        io.emit("server:add", cart);
       } catch (err) {
         io.emit("server:error", err.message);
       }

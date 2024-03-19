@@ -5,17 +5,15 @@ document.addEventListener("click", (event) => {
   if (event.target.classList.contains("delete")) {
     const id = event.target.getAttribute("id");
 
-    console.log("cart.js", id);
-
     socket.emit("client:deleteProductOnCart", id);
   }
 });
 
 //Respuesta del back
 socket.on("server:cart", (data) => {
-  const divList = document.getElementById("list");
+  const divList = document.getElementById("cart");
   let cards = "";
-  data.forEach((content) => {
+  data.products.forEach((content) => {
     cards += `
       <li class="list-group-item p-0">
           <div style="display: flex;">

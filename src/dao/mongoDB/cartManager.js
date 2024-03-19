@@ -161,14 +161,14 @@ class CartManager {
       );
 
       if (productPosition === -1) {
-        console.log(`Not found Product`);
-        throw new Error(`Not found Product`);
+        console.log(`Not found Product - ${getLocaleTime()}`);
+        throw new Error("Not found Product");
       }
 
       updatedCart.products.splice(productPosition, 1);
       await updatedCart.save();
 
-      console.log("Product removed successfully");
+      console.log(`Product removed successfully - ${getLocaleTime()}`);
       return true;
     } catch (err) {
       throw err;
