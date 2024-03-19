@@ -1,7 +1,9 @@
 import { Server } from "socket.io";
 import ProductManager from "../dao/mongoDB/productManager.js";
+import CartManager from "../dao/mongoDB/cartManager.js";
 import ChatManager from "../dao/mongoDB/chatManager.js";
 const productManager = new ProductManager();
+const cartManager = new CartManager();
 const chatManager = new ChatManager();
 
 export default function socketioHandler(httpServer) {
@@ -39,8 +41,6 @@ export default function socketioHandler(httpServer) {
           (product) => product.status === true
         );
 
-        console.log(listProducts);
-
         io.emit("server:list", listProducts);
       } catch (err) {
         io.emit("server:error", err.message);
@@ -62,6 +62,47 @@ export default function socketioHandler(httpServer) {
           (product) => product.status === true
         ); //Solo para mostrar los productos con status true
         io.emit("server:list", listProducts);
+      } catch (err) {
+        io.emit("server:error", err.message);
+      }
+    });
+
+    //Recibe del front - Eliminacion de producto (en carrito)
+    socket.on("client:deleteProductOnCart", async (data) => {
+      try {
+        const cid = "65e6751d34e6b71589b79b0c";
+        const pid = data;
+
+        const deleteProductOnCart = await cartManager.deleteProductById(
+          cid,
+          pid
+        );
+
+        //Envia el back
+        const cart = await cartManager.getCartById(cid);
+        io.emit("server:cart", cart);
+      } catch (err) {
+        io.emit("server:error", err.message);
+      }
+    });
+
+    //Recibe del front - Incorporacion de producto (en carrito)
+    socket.on("client:addProductOnCart", async (data) => {
+      try {
+        const cid = "65e6751d34e6b71589b79b0c";
+        const pid = data;
+
+        console.log("socket", cid, pid);
+
+        const addProductOnCart = await cartManager.updateCart(
+          cid,
+          pid,
+          1
+        );
+
+        //Envia el back
+        const cart = await cartManager.getCartById(cid);
+        io.emit("server:add", cart);
       } catch (err) {
         io.emit("server:error", err.message);
       }
