@@ -16,6 +16,6 @@ document.addEventListener("click", (event) => {
   if (event.target.classList.contains("add")) {
     const id = event.target.getAttribute("id");
 
-    socket.emit("client:addProductOnCart", id);
+    socket.emit("client:addProductOnCart", {id, selectedQuantity: 1});
   }
 });
