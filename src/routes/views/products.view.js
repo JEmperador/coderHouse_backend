@@ -7,9 +7,13 @@ const router = Router();
 router.get("/realtimeproducts", async (req, res) => {
   const { limit } = req.query;
   const products = await productManager.getProducts(limit);
+
+  const user = req.session.user;
+
   res.render("realtimeproducts", {
     title: "Atlas Tech | Products",
     products: products,
+    user: user,
   });
 });
 

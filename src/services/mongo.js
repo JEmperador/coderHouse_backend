@@ -5,7 +5,7 @@ dotenv.config();
 const url = `mongodb+srv://${process.env.DB_MONGO_USER}:${process.env.DB_MONGO_PASS}@${process.env.DB_MONGO_CLUSTER}.6hohxmy.mongodb.net/?retryWrites=true&w=majority&appName=${process.env.DB_MONGO_APP}`;
 
 mongoose.connect(url, {
-  dbName: process.env.DB_MONDO_DB,
+  dbName: process.env.DB_MONGO_DB,
 });
 
 export const mongodb = mongoose.connection;
