@@ -19,19 +19,24 @@
             <li class="nav-item ms-3 me-3 header__item">
                 <a class="nav-link" href="../cart/65fb8308f303ee5626d8e88f">Cart</a>
             </li>
+            <li class="nav-item ms-3 header__item" style="margin-right: 24px;">
+                <a class="nav-link" href="../profile">
+                    <img src="https://i.ibb.co/3WdFcqG/profile.png" alt="profile" width="30px">
+                </a>
+            </li>
         </ul>
     </div>
 </nav>
 
-<h1 class="text-center m-5">Upload product</h1>
+<h1 class="text-center m-5">Upload product with {{user.first_name}}</h1>
 
 <div style="display: flex; justify-content: center; padding: 0px 100px">
     <div style="display: flex; flex-direction: column; padding: 10px 70px; width: 25%;">
         <h2 class="text-center m-3">Add Product</h2>
-        {{>formCreate}}
+        {{>form-create}}
         <hr>
         <h2 class="text-center m-3">Delete Product</h2>
-        {{>formDelete}}
+        {{>form-delete}}
     </div>
     <div style="width: 75%;">
         {{>cards}}
