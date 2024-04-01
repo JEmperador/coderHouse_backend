@@ -6,7 +6,7 @@ router.get("/", (req, res) => {
     res.redirect("/profile");
   }
 
-  res.render("login", { title: "Atlas Tech - Login" });
+  res.render("login", { title: "Atlas Tech - Login", req: req });
 });
 
 router.get("/register", (req, res) => {
@@ -14,7 +14,7 @@ router.get("/register", (req, res) => {
     res.redirect("/profile");
   }
 
-  res.render("register", { title: "Atlas Tech - Register" });
+  res.render("register", { title: "Atlas Tech - Register", req: req });
 });
 
 function auth(req, res, next) {
@@ -27,7 +27,7 @@ router.get("/profile", auth, (req, res) => {
 
   user.title = "Atlas Tech - Profile"
 
-  res.render("profile", user);
+  res.render("profile", {user: user, req: req});
 });
 
 export default router;

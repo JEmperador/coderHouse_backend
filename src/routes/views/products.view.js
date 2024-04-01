@@ -13,7 +13,7 @@ router.get("/realtimeproducts", async (req, res) => {
   res.render("realtimeproducts", {
     title: "Atlas Tech | Products",
     products: products,
-    user: user,
+    req: req,
   });
 });
 
@@ -100,7 +100,11 @@ router.get("/", async (req, res) => {
       limit,
     };
 
-    res.render("products", { title: "Atlas Tech | Products", result: format });
+    res.render("products", {
+      title: "Atlas Tech | Products",
+      result: format,
+      req: req,
+    });
   } catch (err) {
     res.status(400).json("Bad Request");
   }

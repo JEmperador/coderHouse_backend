@@ -6,7 +6,7 @@ const chatManager = new ChatManager();
 
 router.get("/", async (req, res) => {
   const messages = await chatManager.getMessages();
-  res.render("chat", { title: "Atlas Tech | Chat", messages: messages });
+  res.render("chat", { title: "Atlas Tech | Chat", messages: messages, req: req });
 });
 
 export default router;
