@@ -7,7 +7,12 @@ router.post("/v1/sesssion/login", async (req, res) => {
   const { email, password } = req.body;
   const user = await UserModel.findOne({ email, password });
 
-  if (!user) return res.redirect("/");
+  if (!user) {
+    req.session.destroy();
+    return res.redirect("/");
+  } else {
+    req.session.login = true;
+  }
 
   req.session.user = user;
 

@@ -60,9 +60,17 @@ export async function readData(path) {
   }
 }
 
-export const isEmptyArray = function (array, options) {
+export const isEmptyArray = (array, options) => {
   if (Array.isArray(array) && array.length === 0) {
     return options.fn(this);
+  } else {
+    return options.inverse(this);
+  }
+};
+
+export const isSessionStarted = (req, options) => {
+  if (req.session.login === true) {
+    return options.fn(this);;
   } else {
     return options.inverse(this);
   }

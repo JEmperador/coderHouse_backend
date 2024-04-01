@@ -19,11 +19,16 @@
             <li class="nav-item ms-3 me-3 header__item">
                 <a class="nav-link" href="../cart/65fb8308f303ee5626d8e88f">Cart</a>
             </li>
+            <li class="nav-item ms-3 header__item" style="margin-right: 24px;">
+                <a class="nav-link" href="../profile">
+                    <img src="https://i.ibb.co/3WdFcqG/profile.png" alt="profile" width="30px">
+                </a>
+            </li>
         </ul>
     </div>
 </nav>
 
-<h1 class="text-center m-5">Product - {{id}}</h1>
+<h1 class="text-center m-5">Product - {{title}}</h1>
 
 <div style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
     {{>productDetail}}

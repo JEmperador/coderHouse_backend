@@ -6,7 +6,7 @@ router.get("/", (req, res) => {
     res.redirect("/profile");
   }
 
-  res.render("login", { title: "Atlas Tech - Login" });
+  res.render("login", { title: "Atlas Tech - Login", req: req });
 });
 
 router.get("/register", (req, res) => {
