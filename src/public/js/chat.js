@@ -66,7 +66,12 @@ socket.on("server:messages", (data) => {
       `
         <div class="card m-3" style="width: 200px">
           <div class="m-2" style="display: flex; flex-direction: column;">
-            <p class="m-0" style="font-size: 10px;"><b>${message.user}</b></p>
+            <div style="display: flex; align-items: center; justify-content: space-between;">
+              <p class="m-0" style="font-size: 10px;"><b>${message.user}</b></p>
+              <button type="button" class="btn" style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: 10px;">
+                edit
+              </button>
+            </div>
             <p class="m-0" style="font-size: 16px;">${message.message}</p>
             <div style="margin-left: auto;">
               <i style="font-size: x-small; margin-left: 5px;">${message.hour}</i>
