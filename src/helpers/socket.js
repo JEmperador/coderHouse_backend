@@ -91,7 +91,7 @@ export default function socketioHandler(httpServer) {
       try {
         const cid = "65fb8308f303ee5626d8e88f";
         const pid = data.id;
-        const quantity = data.selectedQuantity > 1 ? data.selectedQuantity : 1
+        const quantity = data.selectedQuantity > 1 ? data.selectedQuantity : 1;
 
         const addProductOnCart = await cartManager.updateCart(
           cid,
@@ -112,6 +112,21 @@ export default function socketioHandler(httpServer) {
     //Recibe del front - Mensajes
     socket.on("client:message", async (data) => {
       const message = await chatManager.saveMessage(data);
+      //Envia el back
+      const messages = await chatManager.getMessages();
+      const messagesReverse = messages.reverse();
+      io.emit("server:messages", messagesReverse);
+    });
+
+    //Recibe del front - Mensajes
+    socket.on("client:editMessage", async (data) => {
+      const { id, user, message, hour } = data;
+
+      const newMessage = await chatManager.editMessage(id, {
+        user,
+        message,
+        hour,
+      });
       //Envia el back
       const messages = await chatManager.getMessages();
       const messagesReverse = messages.reverse();

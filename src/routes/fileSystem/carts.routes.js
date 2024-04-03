@@ -120,7 +120,7 @@ router.delete("/v1/carts/:cid/products/:pid", async (req, res) => {
     if (err.message.includes("Not found Cart")) {
       res.status(404).json(err.message);
     } else if (err.message.includes("Not found Product")) {
-      res.status(404).json(err.message)
+      res.status(404).json(err.message);
     } else {
       res.status(500).json(err);
     }
