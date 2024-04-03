@@ -7,7 +7,7 @@ class ChatManager {
     try {
       const newMessage = await MessageModel.create(message);
 
-      console.log("Message saved");
+      console.log(`Message saved - ${getLocaleTime()}`);
       return true;
     } catch (err) {
       console.log(err);
@@ -21,7 +21,7 @@ class ChatManager {
 
       return messages;
     } catch (err) {
-      console.log("No messages");
+      console.log(`No messages - ${getLocaleTime()}`);
       return [];
     }
   };
@@ -33,7 +33,7 @@ class ChatManager {
         throw new Error("Invalid message ID");
       }
 
-      if (props.message.trim.length < 1) {
+      if (props.message.trim().length < 1) {
         console.log(`Message cannot be empty - ${getLocaleTime()}`);
         throw new Error("Message cannot be empty");
       }

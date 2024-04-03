@@ -9,7 +9,7 @@ window.onload = function () {
 
 let user = sessionStorage.getItem("user") || "";
 
-//SweetAlert
+//SweetAlert2
 if (!user) {
   Swal.fire({
     title: "Auth",
@@ -34,7 +34,50 @@ if (!user) {
   socket.emit("new", user);
 }
 
-//Envia el front
+//Envia el front - Editar mensaje
+document.addEventListener("click", async (event) => {
+  if (event.target.classList.contains("edit")) {
+    const id = event.target.getAttribute("id");
+
+    const date = new Date();
+    const hourDate = date.getHours();
+    const minuteDate = date.getMinutes();
+    const formarttedMinute = minuteDate.toString().padStart(2, "0");
+    const chatHour = `${hourDate}:${formarttedMinute}`;
+
+    const { value: text } = await Swal.fire({
+      input: "textarea",
+      inputLabel: "Message",
+      inputPlaceholder: "Type your message here...",
+      inputAttributes: {
+        "aria-label": "Type your message here",
+      },
+      showCancelButton: true,
+    });
+
+    if (text) {
+      let user = sessionStorage.getItem("user");
+
+      Swal.fire({
+        position: "top-end",
+        icon: "success",
+        title: "Your message was updated",
+        text: text,
+        showConfirmButton: false,
+        timer: 1500,
+      });
+
+      socket.emit("client:editMessage", {
+        id: id,
+        user: user,
+        message: text,
+        hour: chatHour,
+      });
+    }
+  }
+});
+
+//Envia el front - Mensaje
 chatbox.addEventListener("keyup", (event) => {
   if (event.key === "Enter") {
     const message = chatbox.value.trim();
@@ -68,7 +111,7 @@ socket.on("server:messages", (data) => {
           <div class="m-2" style="display: flex; flex-direction: column;">
             <div style="display: flex; align-items: center; justify-content: space-between;">
               <p class="m-0" style="font-size: 10px;"><b>${message.user}</b></p>
-              <button type="button" class="btn" style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: 10px;">
+              <button id=${message._id} type="button" class="btn edit" style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: 10px;">
                 edit
               </button>
             </div>

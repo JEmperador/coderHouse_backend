@@ -25,9 +25,9 @@ function auth(req, res, next) {
 router.get("/profile", auth, (req, res) => {
   const user = req.session.user;
 
-  user.title = "Atlas Tech - Profile"
+  user.title = "Atlas Tech - Profile";
 
-  res.render("profile", {user: user, req: req});
+  res.render("profile", { user: user, req: req });
 });
 
 export default router;

@@ -16,6 +16,15 @@ document.addEventListener("click", (event) => {
   if (event.target.classList.contains("add")) {
     const id = event.target.getAttribute("id");
 
-    socket.emit("client:addProductOnCart", {id, selectedQuantity: 1});
+    socket.emit("client:addProductOnCart", { id, selectedQuantity: 1 });
+
+    //SweetAlert2
+    Swal.fire({
+      position: "center-center",
+      icon: "success",
+      text: "Your product was added to the cart",
+      showConfirmButton: false,
+      timer: 1500,
+    });
   }
 });

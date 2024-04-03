@@ -70,7 +70,7 @@ export const isEmptyArray = (array, options) => {
 
 export const isSessionStarted = (req, options) => {
   if (req.session.login === true) {
-    return options.fn(this);;
+    return options.fn(this);
   } else {
     return options.inverse(this);
   }
