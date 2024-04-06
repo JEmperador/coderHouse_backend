@@ -2,10 +2,6 @@ import { Router } from "express";
 const router = Router();
 
 router.get("/", (req, res) => {
-  if (req.session?.user) {
-    res.redirect("/profile");
-  }
-
   res.render("login", { title: "Atlas Tech - Login", req: req });
 });
 
@@ -25,9 +21,11 @@ function auth(req, res, next) {
 router.get("/profile", auth, (req, res) => {
   const user = req.session.user;
 
-  user.title = "Atlas Tech - Profile";
+  res.render("profile", { title: "Atlas Tech - Profile", user: user, req: req });
+});
 
-  res.render("profile", { user: user, req: req });
+router.get("/reset", (req, res) => {
+  res.render("reset", { title: "Atlas Tech - Reset password", req: req });
 });
 
 export default router;
