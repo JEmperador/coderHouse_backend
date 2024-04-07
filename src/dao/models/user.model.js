@@ -8,6 +8,11 @@ const userSchema = new mongoose.Schema({
   email: { type: String, unique: true },
   age: Number,
   password: String,
+  social: {
+    type: String,
+    enum: ["Local", "GitHub", "Google"],
+    default: "Local",
+  },
   rol: {
     type: String,
     enum: ["user", "admin"],

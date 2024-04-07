@@ -1,8 +1,11 @@
+import { UserModel } from "../dao/models/user.model.js";
 import multer from "multer";
+import { hashSync, compareSync, genSaltSync } from "bcrypt";
 import fs from "fs";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
 
+//Multer
 const __filename = fileURLToPath(import.meta.url);
 export const __dirname = dirname(__filename);
 
@@ -17,11 +20,26 @@ const storage = multer.diskStorage({
 
 export const uploader = multer({ storage });
 
-export function getLocaleTime() {
-  const time = new Date().toLocaleTimeString();
-  return time;
+//Bcrypt
+export const createHash = (password) => {
+  return hashSync(password, genSaltSync(10));
+};
+
+export const isValidPassword = (password, user) => {
+  return compareSync(password, user.password);
+};
+
+//Passport
+export const serializeUser = (user, done) => {
+  done(null, user._id);
 }
 
+export const deserializeUser = async (id, done) => {
+  const user = await UserModel.findById({_id: id});
+  done(null, user);
+}
+
+//Clases con FS
 export function getNextId(path) {
   const data = fs.readFileSync(path);
   const products = JSON.parse(data);
@@ -32,6 +50,7 @@ export function getNextId(path) {
   return nextId;
 }
 
+//FS
 export async function createFile(path) {
   try {
     await fs.promises.access(path);
@@ -68,6 +87,7 @@ export const isEmptyArray = (array, options) => {
   }
 };
 
+//Handlebars
 export const isSessionStarted = (req, options) => {
   if (req.session.login === true) {
     return options.fn(this);
@@ -75,3 +95,9 @@ export const isSessionStarted = (req, options) => {
     return options.inverse(this);
   }
 };
+
+//General
+export function getLocaleTime() {
+  const time = new Date().toLocaleTimeString();
+  return time;
+}
