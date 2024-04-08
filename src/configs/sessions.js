@@ -5,7 +5,7 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-const secret = process.env.SECRET;
+const secret = process.env.SECRET_CONNECT_MONGO;
 
 const sessions = session({
   secret: secret,

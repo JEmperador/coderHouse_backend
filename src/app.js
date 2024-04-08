@@ -3,6 +3,8 @@ import router from "./routes/index.js";
 import hbs from "./configs/handlebars.js";
 import morgan from "morgan";
 import sessions from "./configs/sessions.js";
+import passport from "passport";
+import { initializePassport } from "./configs/passport.config.js";
 import socketioHandler from "./helpers/socket.js";
 
 const app = express();
@@ -19,6 +21,10 @@ app.use("/static", express.static("./src/public"));
 app.engine("handlebars", hbs.engine);
 app.set("view engine", "handlebars");
 app.set("views", "./src/views");
+
+initializePassport();
+app.use(passport.initialize());
+app.use(passport.session());
 
 router(app);
 
