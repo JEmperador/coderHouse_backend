@@ -42,9 +42,10 @@ export const initializePassport = () => {
             social: "Local",
           };
 
+          console.log("desde passport", newUser.email, newUser.password);
+
           if (
-            newUser.email === "adminCoder@coder.com" &&
-            newUser.password === "adminCod3r123"
+            newUser.email === "adminCoder@coder.com"
           ) {
             newUser.rol = "admin";
           }

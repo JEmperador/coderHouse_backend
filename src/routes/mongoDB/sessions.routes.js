@@ -1,5 +1,6 @@
 import passport from "passport";
 import { UserModel } from "../../dao/models/user.model.js";
+import { createHash } from "../../helpers/utils.js";
 import { Router } from "express";
 
 const router = Router();
@@ -33,7 +34,7 @@ router.post("/v1/sessions/reset", async (req, res) => {
     const user = await UserModel.findOne({ email });
 
     if (!user) {
-      console.log("User already exists");
+      console.log("User not found");
       req.session.destroy();
       return res.status(404).redirect("/");
     } else {
@@ -114,6 +115,31 @@ router.post(
     return res.redirect("/profile");
   }
 );
+
+router.post("/v2/sessions/reset", async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    const user = await UserModel.findOne({ email });
+
+    if (!user) {
+      console.log("User not found");
+      req.session.destroy();
+      return res.status(404).redirect("/");
+    } else {
+      const userId = user._id;
+
+      const userNewPassword = await UserModel.findByIdAndUpdate(userId, {
+        password: createHash(password),
+      });
+    }
+
+    return res.status(200).redirect("/");
+  } catch (err) {
+    console.log("Internal server error");
+    res.status(500).redirect("/");
+  }
+});
 
 //GitHub
 router.get(
