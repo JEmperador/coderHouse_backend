@@ -144,7 +144,16 @@ router.post("/v2/sessions/reset", async (req, res) => {
 //GitHub
 router.get(
   "/v2/sessions/login-github",
-  passport.authenticate("github", { scope: ["user:email"] }),
+  passport.authenticate("github", { scope: ["user:email"], session: true }),
+  async (req, res) => {}
+);
+
+router.get(
+  "/v2/sessions/login-google",
+  passport.authenticate("google", {
+    scope: ["profile", "email"],
+    session: true,
+  }),
   async (req, res) => {}
 );
 
@@ -152,7 +161,16 @@ router.get(
   "/v2/sessions/githubcallback",
   passport.authenticate("github", { failureRedirect: "/" }),
   async (req, res) => {
-    //console.log("Callback: ", req.user);
+    req.session.user = req.user;
+    req.session.login = true;
+    res.redirect("/profile");
+  }
+);
+
+router.get(
+  "/v2/sessions/googlecallback",
+  passport.authenticate("google", { failureRedirect: "/" }),
+  async (req, res) => {
     req.session.user = req.user;
     req.session.login = true;
     res.redirect("/profile");

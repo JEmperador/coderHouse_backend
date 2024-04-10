@@ -1,6 +1,7 @@
 import passport from "passport";
 import local from "passport-local";
 import github from "passport-github2";
+import google from "passport-google-oauth20";
 import dotenv from "dotenv";
 import { UserModel } from "../dao/models/user.model.js";
 import {
@@ -14,6 +15,7 @@ dotenv.config();
 
 const LocalStrategy = local.Strategy;
 const GitHubStrategy = github.Strategy;
+const GoogleStrategy = google.Strategy;
 
 export const initializePassport = () => {
   passport.use(
@@ -44,9 +46,7 @@ export const initializePassport = () => {
 
           console.log("desde passport", newUser.email, newUser.password);
 
-          if (
-            newUser.email === "adminCoder@coder.com"
-          ) {
+          if (newUser.email === "adminCoder@coder.com") {
             newUser.rol = "admin";
           }
 
@@ -95,7 +95,6 @@ export const initializePassport = () => {
         callbackURL: process.env.GITHUB_CALLBACK,
       },
       async (accessToken, refreshToken, profile, done) => {
-        console.log("desde passport config", profile._json);
         try {
           const email = profile._json.email;
           const fullName = profile._json.name.split(" ");
@@ -105,7 +104,7 @@ export const initializePassport = () => {
           const user = await UserModel.findOne({ email });
 
           if (user) {
-            console.log(`User already exists ${email}`);
+            console.log(`User ${email} already exists`);
             return done(null, user);
           }
 
@@ -116,7 +115,7 @@ export const initializePassport = () => {
             password: "",
             social: "GitHub",
           };
-          
+
           const result = await UserModel.create(newUser);
 
           return done(null, result);
@@ -125,7 +124,46 @@ export const initializePassport = () => {
         }
       }
     )
-  )
+  );
+
+  passport.use(
+    "google",
+    new GoogleStrategy(
+      {
+        clientID: process.env.CLIENT_GOOGLE_ID,
+        clientSecret: process.env.CLIENT_GOOGLE_SECRET,
+        callbackURL: process.env.GOOGLE_CALLBACK,
+      },
+      async (accessToken, refreshToken, profile, cb) => {
+        try {
+          const email = profile._json.email;
+          const name = profile._json.given_name;
+          const lastName = profile._json.family_name;
+
+          const user = await UserModel.findOne({ email: email });
+
+          if (user) {
+            console.log(`User ${email} already exists`);
+            return cb(null, user);
+          }
+
+          const newUser = {
+            first_name: name,
+            last_name: lastName,
+            email: email,
+            password: "",
+            social: "Google",
+          };
+
+          const result = await UserModel.create(newUser);
+
+          return cb(null, result);
+        } catch (err) {
+          return cb(`Error: ${err}`);
+        }
+      }
+    )
+  );
 
   passport.serializeUser(serializeUser);
 
