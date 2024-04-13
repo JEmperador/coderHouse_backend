@@ -5,7 +5,6 @@ import { getLocaleTime } from "../../helpers/utils.js";
 class UserManager {
   createUser = async (user) => {
     try {
-      console.log(user);
       const validate = await UserModel.findOne({ email: user.email });
 
       if (validate) {
