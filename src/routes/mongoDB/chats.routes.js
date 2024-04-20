@@ -5,29 +5,23 @@ const chatManager = new ChatManager();
 const router = Router();
 
 router.post("/v2/chats", async (req, res) => {
-  const { user, message, hour } = req.body;
-
-  if (!user || !message) {
-    return res.status(400).json("All fields are required");
-  }
-
-  const date = new Date();
-  const hourDate = date.getHours();
-  const minuteDate = date.getMinutes();
-  const formarttedMinute = minuteDate.toString().padStart(2, "0");
-  const chatHour = `${hourDate}:${formarttedMinute}`;
+  const { user, message } = req.body;
 
   try {
     const chat = {
       user,
       message,
-      hour: chatHour,
     };
 
     await chatManager.saveMessage(chat);
+
     res.status(201).json("Message created successfully");
   } catch (err) {
-    res.status(500).json(err);
+    if (err.message.includes("All fields")) {
+      res.status(400).json(err.message);
+    } else {
+      res.status(500).json(err);
+    }
   }
 });
 

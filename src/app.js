@@ -4,6 +4,7 @@ import hbs from "./configs/handlebars.js";
 import morgan from "morgan";
 import sessions from "./configs/sessions.js";
 import passport from "passport";
+import cookieParser from "cookie-parser";
 import { initializePassport } from "./configs/passport.config.js";
 import socketioHandler from "./helpers/socket.js";
 
@@ -22,9 +23,10 @@ app.engine("handlebars", hbs.engine);
 app.set("view engine", "handlebars");
 app.set("views", "./src/views");
 
-initializePassport();
+app.use(cookieParser());
 app.use(passport.initialize());
 app.use(passport.session());
+initializePassport();
 
 router(app);
 

@@ -1,11 +1,11 @@
 <div style="display: flex; flex-wrap: wrap; justify-content: center; width: 100%" id="list">
     {{#each products}}
     {{#if status}}
-    <div class="card" style="margin: 10px 50px; max-width: 200px">
+    <div class="card" style="margin: 20px 100px; max-width: 200px">
         {{#isEmptyArray thumbnail}}
-        <img src="https://i.ibb.co/zsQdBNc/200x200.gif" alt="img - no img">
+        <img src="https://i.ibb.co/zsQdBNc/200x200.gif" width="200px" alt="img - no img">
         {{else}}
-        <img src={{thumbnail}} width="200px" alt="img - {{thumbnail}}">
+        <img src={{this.thumbnail}} width="200px" alt="img" >
         {{/isEmptyArray}}
         <div class="card-body">
             <p class="card-title">{{category}} - {{title}}</p>

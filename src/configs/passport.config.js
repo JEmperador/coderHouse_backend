@@ -1,5 +1,6 @@
 import passport from "passport";
 import local from "passport-local";
+import jwt from "passport-jwt";
 import github from "passport-github2";
 import google from "passport-google-oauth20";
 import dotenv from "dotenv";
@@ -9,11 +10,14 @@ import {
   isValidPassword,
   serializeUser,
   deserializeUser,
+  cookieExtractor,
 } from "../helpers/utils.js";
 
 dotenv.config();
 
 const LocalStrategy = local.Strategy;
+const JWTStrategy = jwt.Strategy;
+const ExtractJwt = jwt.ExtractJwt;
 const GitHubStrategy = github.Strategy;
 const GoogleStrategy = google.Strategy;
 
@@ -79,6 +83,23 @@ export const initializePassport = () => {
           }
 
           return done(null, user);
+        } catch (err) {
+          return done(err);
+        }
+      }
+    )
+  );
+
+  passport.use(
+    "jwt",
+    new JWTStrategy(
+      {
+        jwtFromRequest: ExtractJwt.fromExtractors([cookieExtractor]),
+        secretOrKey: process.env.SECRET_JWT,
+      },
+      async (jwt_payload, done) => {
+        try {
+          return done(null, jwt_payload);
         } catch (err) {
           return done(err);
         }

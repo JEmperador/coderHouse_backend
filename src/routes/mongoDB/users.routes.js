@@ -1,6 +1,6 @@
 import UserManager from "../../dao/mongoDB/userManager.js";
 import { Router } from "express";
-import { createHash } from "../../helpers/utils.js";
+import { createHash, generateToken } from "../../helpers/utils.js";
 
 const userManager = new UserManager();
 const router = Router();
@@ -76,6 +76,119 @@ router.put("/v2/users", async (req, res) => {
     } else {
       res.status(500).json(err);
     }
+  }
+});
+
+router.post("/v2/register", async (req, res) => {
+  const { first_name, last_name, email, age, password, social, rol } = req.body;
+
+  try {
+    const newUser = {
+      first_name,
+      last_name,
+      email,
+      age,
+      password: createHash(password),
+      social,
+      rol,
+    };
+
+    const user = await userManager.createUser(newUser);
+
+    const token = generateToken({ id: user._id });
+
+    res
+      .cookie(process.env.COOKIE, token, {
+        maxAge: 60 * 60 * 2000,
+        httpOnly: true,
+      })
+      .json({
+        status: "success",
+        message: "Successful register",
+        token: token,
+      });
+  } catch (err) {
+    if (err.message.includes("Email")) {
+      res.status(401).json(err.message);
+    } else {
+      res.status(500).json(err);
+    }
+  }
+});
+
+router.post("/v2/login", async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    const userValid = await userManager.getUserValid(email, password);
+
+    const loginUser = {
+      first_name: userValid.first_name,
+      last_name: userValid.last_name,
+      email: userValid.email,
+      rol: userValid.rol,
+    };
+
+    const token = generateToken(loginUser);
+
+    res
+      .cookie(process.env.COOKIE, token, {
+        maxAge: 60 * 60 * 2000,
+        httpOnly: true,
+      })
+      .json({ status: "success", message: "Successful login", token: token });
+  } catch (err) {
+    if (err.message.includes("Invalid credentials")) {
+      res.status(401).json(err.message);
+    } else if (err.message.includes("Invalid password")) {
+      res.status(401).json(err.message);
+    } else {
+      res.status(500).json(err);
+    }
+  }
+});
+
+router.post("/v2/reset", async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    const user = await userManager.getUserByEmail(email);
+
+    const userNewPassword = await userManager.updatePassword(email, password);
+
+    const token = generateToken({ id: user._id });
+
+    res
+      .cookie(process.env.COOKIE, token, {
+        maxAge: 60 * 60 * 2000,
+        httpOnly: true,
+      })
+      .json({
+        status: "success",
+        message: "Successful reset password",
+        token: token,
+      });
+  } catch (err) {
+    if (err.message.includes("User")) {
+      res.status(401).json(err.message);
+    } else if (err.message.includes("Email")) {
+      res.status(401).json(err.message);
+    } else if (err.message.includes("Same")) {
+      res.status(401).json(err.message);
+    } else {
+      res.status(500).json(err);
+    }
+  }
+});
+
+router.get("/v2/logout", async (req, res) => {
+  if (req?.cookies[process.env.COOKIE]) {
+    res
+      .clearCookie(process.env.COOKIE, { secure: true })
+      .status(200)
+      .json({ status: "success", message: "Successful logout" });
+  } else {
+    res.status(400).json({ status: "failure", message: "Not logged in" });
   }
 });
 
