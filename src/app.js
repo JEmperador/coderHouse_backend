@@ -16,7 +16,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use(morgan("dev"));
-app.use(sessions);
+//app.use(sessions);
 
 app.use("/static", express.static("./src/public"));
 app.engine("handlebars", hbs.engine);
@@ -25,7 +25,7 @@ app.set("views", "./src/views");
 
 app.use(cookieParser());
 app.use(passport.initialize());
-app.use(passport.session());
+//app.use(passport.session());
 initializePassport();
 
 router(app);
