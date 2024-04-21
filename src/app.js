@@ -1,8 +1,8 @@
 import express from "express";
 import router from "./routes/index.js";
-import hbs from "./configs/handlebars.js";
+import hbs from "./configs/handlebars.config.js";
 import morgan from "morgan";
-import sessions from "./configs/sessions.js";
+import sessions from "./configs/sessions.config.js";
 import passport from "passport";
 import cookieParser from "cookie-parser";
 import { initializePassport } from "./configs/passport.config.js";

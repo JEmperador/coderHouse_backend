@@ -1,6 +1,5 @@
 import productsRouterFileSystem from "./fileSystem/products.routes.js";
 import cartsRouterFileSystem from "./fileSystem/carts.routes.js";
-
 import productRouterMongo from "./mongoDB/products.routes.js";
 import cartRouterMongo from "./mongoDB/carts.routes.js";
 import chatRouterMongo from "./mongoDB/chats.routes.js";
@@ -12,6 +11,8 @@ import productsView from "./views/products.view.js";
 import cartView from "./views/cart.view.js";
 import chatView from "./views/chat.view.js";
 import jwtView from "./views/jwt.view.js";
+
+import page404 from "./views/page404.view.js";
 
 const router = (app) => {
   //Postman
@@ -28,6 +29,7 @@ const router = (app) => {
   app.use("/cart", cartView);
   app.use("/chat", chatView);
   app.use("/", jwtView);
+  app.use("*", page404);
 };
 
 export default router;
