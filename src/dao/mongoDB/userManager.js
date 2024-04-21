@@ -1,6 +1,9 @@
 import { UserModel } from "../models/user.model.js";
 import { createHash, isValidPassword } from "../../helpers/utils.js";
+import CartManager from "./cartManager.js";
 import { getLocaleTime } from "../../helpers/utils.js";
+
+const cartManager = new CartManager();
 
 class UserManager {
   createUser = async (user) => {
@@ -13,6 +16,10 @@ class UserManager {
         );
         throw new Error(`Email ${user.email} is already in use`);
       }
+
+      const cart = await cartManager.createCart();
+
+      user.cartId = cart._id
 
       const newUser = await UserModel.create(user);
 
