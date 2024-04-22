@@ -6,7 +6,7 @@ const userManager = new UserManager();
 const router = Router();
 
 router.post("/v2/users", async (req, res) => {
-  const { first_name, last_name, email, age, password, social, rol } = req.body;
+  const { first_name, last_name, email, age, password, social, role } = req.body;
 
   if (!first_name || !last_name || !email || !age) {
     return res.status(400).json("All fields are required");
@@ -20,7 +20,7 @@ router.post("/v2/users", async (req, res) => {
       age,
       password: createHash(password),
       social,
-      rol,
+      role,
     };
 
     const result = await userManager.createUser(user);
@@ -80,7 +80,7 @@ router.put("/v2/users", async (req, res) => {
 });
 
 router.post("/v2/register", async (req, res) => {
-  const { first_name, last_name, email, age, password, social, rol } = req.body;
+  const { first_name, last_name, email, age, password, social, role } = req.body;
 
   try {
     const newUser = {
@@ -90,7 +90,7 @@ router.post("/v2/register", async (req, res) => {
       age,
       password: createHash(password),
       social,
-      rol,
+      role,
     };
 
     const user = await userManager.createUser(newUser);
@@ -126,7 +126,7 @@ router.post("/v2/login", async (req, res) => {
       first_name: userValid.first_name,
       last_name: userValid.last_name,
       email: userValid.email,
-      rol: userValid.rol,
+      role: userValid.role,
     };
 
     const token = generateToken(loginUser);

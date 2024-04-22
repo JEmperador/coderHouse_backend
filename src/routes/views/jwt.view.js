@@ -25,7 +25,7 @@ router.get(
   passportCall("jwt"),
   passport.authenticate("jwt", { session: false }),
   (req, res) => {
-    const user = req.user;
+    const user = req.user.user;
 
     res.render("profile", {
       title: "Atlas Tech - Profile",

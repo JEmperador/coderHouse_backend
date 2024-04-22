@@ -17,7 +17,7 @@ const userSchema = new mongoose.Schema({
     enum: ["Local", "GitHub", "Google"],
     default: "Local",
   },
-  rol: {
+  role: {
     type: String,
     enum: ["user", "admin"],
     default: "user",

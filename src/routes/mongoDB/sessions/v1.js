@@ -17,7 +17,7 @@ export const register = async (req, res) => {
       user.email === "adminCoder@coder.com" &&
       user.password === "adminCod3r123"
     ) {
-      user.rol = "admin";
+      user.role = "admin";
     }
 
     await UserModel.create(user);

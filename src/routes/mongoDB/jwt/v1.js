@@ -7,7 +7,7 @@ dotenv.config();
 const userManager = new UserManager();
 
 export const register = async (req, res) => {
-  const { first_name, last_name, email, age, password, social, rol } = req.body;
+  const { first_name, last_name, email, age, password, social, role } = req.body;
 
   try {
     const newUser = {
@@ -17,7 +17,7 @@ export const register = async (req, res) => {
       age,
       password: createHash(password),
       social,
-      rol,
+      role,
     };
 
     const user = await userManager.createUser(newUser);
@@ -42,7 +42,7 @@ export const login = async (req, res) => {
       first_name: userValid.first_name,
       last_name: userValid.last_name,
       email: userValid.email,
-      rol: userValid.rol,
+      role: userValid.role,
     };
 
     const token = generateToken(loginUser);
@@ -78,7 +78,7 @@ export const reset = async (req, res) => {
       first_name: userNewPassword.first_name,
       last_name: userNewPassword.last_name,
       email: userNewPassword.email,
-      rol: userNewPassword.rol,
+      role: userNewPassword.role,
     };
 
     const tokenUser = generateToken(resetPassword);

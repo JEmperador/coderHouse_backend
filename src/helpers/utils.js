@@ -123,7 +123,7 @@ export function getLocaleTime() {
 
 //JWT
 export const generateToken = (user) => {
-  const token = jwt.sign(user, process.env.SECRET_JWT, { expiresIn: "2h" });
+  const token = jwt.sign({ user }, process.env.SECRET_JWT, { expiresIn: "2h" });
 
   return token;
 };
