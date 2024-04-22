@@ -1,5 +1,6 @@
 import passport from "passport";
 import local from "passport-local";
+import jwt from "passport-jwt";
 import github from "passport-github2";
 import google from "passport-google-oauth20";
 import dotenv from "dotenv";
@@ -9,11 +10,15 @@ import {
   isValidPassword,
   serializeUser,
   deserializeUser,
+  cookieExtractor,
+  generateToken,
 } from "../helpers/utils.js";
 
 dotenv.config();
 
 const LocalStrategy = local.Strategy;
+const JWTStrategy = jwt.Strategy;
+const ExtractJwt = jwt.ExtractJwt;
 const GitHubStrategy = github.Strategy;
 const GoogleStrategy = google.Strategy;
 
@@ -30,6 +35,7 @@ export const initializePassport = () => {
 
         try {
           const user = await UserModel.findOne({ email });
+
           if (user) {
             console.log("User already exists");
             return done(null, false);
@@ -44,10 +50,8 @@ export const initializePassport = () => {
             social: "Local",
           };
 
-          console.log("desde passport", newUser.email, newUser.password);
-
           if (newUser.email === "adminCoder@coder.com") {
-            newUser.rol = "admin";
+            newUser.role = "admin";
           }
 
           const result = await UserModel.create(newUser);
@@ -87,6 +91,23 @@ export const initializePassport = () => {
   );
 
   passport.use(
+    "jwt",
+    new JWTStrategy(
+      {
+        jwtFromRequest: ExtractJwt.fromExtractors([cookieExtractor]),
+        secretOrKey: process.env.SECRET_JWT,
+      },
+      async (jwt_payload, done) => {
+        try {
+          return done(null, jwt_payload);
+        } catch (err) {
+          return done(err);
+        }
+      }
+    )
+  );
+
+  passport.use(
     "github",
     new GitHubStrategy(
       {
@@ -101,24 +122,23 @@ export const initializePassport = () => {
           const name = fullName[0];
           const lastName = fullName[1];
 
-          const user = await UserModel.findOne({ email });
+          let user = await UserModel.findOne({ email: email });
 
-          if (user) {
-            console.log(`User ${email} already exists`);
-            return done(null, user);
+          if (!user) {
+            user = await UserModel.create({
+              first_name: name,
+              last_name: lastName,
+              email: email,
+              password: "",
+              social: "GitHub",
+            });
           }
 
-          const newUser = {
-            first_name: name,
-            last_name: lastName,
-            email: email,
-            password: "",
-            social: "GitHub",
-          };
+          const token = generateToken(user);
 
-          const result = await UserModel.create(newUser);
+          user.token = token;
 
-          return done(null, result);
+          return done(null, user);
         } catch (err) {
           return done(err);
         }
@@ -140,7 +160,7 @@ export const initializePassport = () => {
           const name = profile._json.given_name;
           const lastName = profile._json.family_name;
 
-          const user = await UserModel.findOne({ email: email });
+          /* const user = await UserModel.findOne({ email: email });
 
           if (user) {
             console.log(`User ${email} already exists`);
@@ -155,9 +175,25 @@ export const initializePassport = () => {
             social: "Google",
           };
 
-          const result = await UserModel.create(newUser);
+          const result = await UserModel.create(newUser); */
 
-          return cb(null, result);
+          let user = await UserModel.findOne({ email: email });
+
+          if (!user) {
+            user = await UserModel.create({
+              first_name: name,
+              last_name: lastName,
+              email: email,
+              password: "",
+              social: "GitHub",
+            });
+          }
+
+          const token = generateToken(user);
+
+          user.token = token;
+
+          return cb(null, user);
         } catch (err) {
           return cb(`Error: ${err}`);
         }

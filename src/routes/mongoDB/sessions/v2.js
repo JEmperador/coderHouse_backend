@@ -50,7 +50,6 @@ export const reset = async (req, res) => {
 
     return res.status(200).redirect(redir);
   } catch (err) {
-    console.log("Internal server error");
     res.status(500).redirect("/");
   }
 };

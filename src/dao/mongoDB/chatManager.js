@@ -5,13 +5,23 @@ import { getLocaleTime } from "../../helpers/utils.js";
 class ChatManager {
   saveMessage = async (message) => {
     try {
-      const newMessage = await MessageModel.create(message);
+      if (!message.user || !message.message) {
+        console.log("All fields are required");
+        throw new Error("All fields are required");
+      }
+
+      const chat = {
+        user: message.user,
+        message: message.message,
+        hour: getLocaleTime(),
+      };
+
+      const newMessage = await MessageModel.create(chat);
 
       console.log(`Message saved - ${getLocaleTime()}`);
       return true;
     } catch (err) {
-      console.log(err);
-      return err;
+      throw err;
     }
   };
 

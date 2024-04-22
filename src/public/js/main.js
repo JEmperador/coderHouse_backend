@@ -61,7 +61,7 @@ socket.on("server:list", (data) => {
         : ["https://i.ibb.co/zsQdBNc/200x200.gif"];
     cards += `
         <div class="card" style="margin: 20px 100px; max-width: 200px">
-            <img src=${content.thumbnail} width="200px" alt="img - ${content.thumbnail}">
+            <img src=${content.thumbnail} width="200" alt="img - ${content.thumbnail}">
             <div class="card-body">
                 <p class="card-title">${content.category} - ${content.title}</p>
             </div>

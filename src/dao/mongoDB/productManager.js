@@ -15,7 +15,7 @@ class ProductManager {
         );
         throw new Error(`Product with code ${product.code} already exists`);
       }
-
+      
       product.status = product.stock > 0 ? true : false;
       await ProductModel.create(product);
 

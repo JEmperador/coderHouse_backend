@@ -6,15 +6,18 @@ const router = Router();
 
 router.get("/realtimeproducts", async (req, res) => {
   const { limit } = req.query;
-  const products = await productManager.getProducts(limit);
 
-  const user = req.session.user;
+  try {
+    const products = await productManager.getProducts(limit);
 
-  res.render("realtimeproducts", {
-    title: "Atlas Tech | Products",
-    products: products,
-    req: req,
-  });
+    res.render("realtimeproducts", {
+      title: "Atlas Tech | Products",
+      products: products,
+      req: req,
+    });
+  } catch (err) {
+    res.status(500).json(err);
+  }
 });
 
 router.get("/:pid", async (req, res) => {

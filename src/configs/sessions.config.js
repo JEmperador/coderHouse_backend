@@ -11,10 +11,10 @@ const sessions = session({
   secret: secret,
   resave: true,
   saveUninitialized: true,
-  store: MongoStore.create({
+  /* store: MongoStore.create({
     mongoUrl: `mongodb+srv://${process.env.DB_MONGO_USER}:${process.env.DB_MONGO_PASS}@${process.env.DB_MONGO_CLUSTER}.6hohxmy.mongodb.net/${process.env.DB_MONGO_DB}?retryWrites=true&w=majority`,
     ttl: 100,
-  }),
+  }), */
 });
 
 export default sessions;

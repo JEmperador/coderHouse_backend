@@ -39,12 +39,6 @@ document.addEventListener("click", async (event) => {
   if (event.target.classList.contains("edit")) {
     const id = event.target.getAttribute("id");
 
-    const date = new Date();
-    const hourDate = date.getHours();
-    const minuteDate = date.getMinutes();
-    const formarttedMinute = minuteDate.toString().padStart(2, "0");
-    const chatHour = `${hourDate}:${formarttedMinute}`;
-
     const { value: text } = await Swal.fire({
       input: "textarea",
       inputLabel: "Message",
@@ -71,7 +65,6 @@ document.addEventListener("click", async (event) => {
         id: id,
         user: user,
         message: text,
-        hour: chatHour,
       });
     }
   }
@@ -83,16 +76,9 @@ chatbox.addEventListener("keyup", (event) => {
     const message = chatbox.value.trim();
 
     if (message.length > 0) {
-      const date = new Date();
-      const hourDate = date.getHours();
-      const minuteDate = date.getMinutes();
-      const formarttedMinute = minuteDate.toString().padStart(2, "0");
-      const hour = `${hourDate}:${formarttedMinute}`;
-
       socket.emit("client:message", {
         user,
         message,
-        hour,
       });
 
       chatbox.value = "";

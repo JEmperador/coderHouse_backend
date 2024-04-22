@@ -1,9 +1,13 @@
-import { UserModel } from "../dao/models/user.model.js";
 import multer from "multer";
-import { hashSync, compareSync, genSaltSync } from "bcrypt";
 import fs from "fs";
+import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
+import { UserModel } from "../dao/models/user.model.js";
+import { hashSync, compareSync, genSaltSync } from "bcrypt";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
+
+dotenv.config();
 
 //Multer
 const __filename = fileURLToPath(import.meta.url);
@@ -32,12 +36,20 @@ export const isValidPassword = (password, user) => {
 //Passport
 export const serializeUser = (user, done) => {
   done(null, user._id);
-}
+};
 
 export const deserializeUser = async (id, done) => {
-  const user = await UserModel.findById({_id: id});
+  const user = await UserModel.findById({ _id: id });
   done(null, user);
-}
+};
+
+export const cookieExtractor = (req) => {
+  let token = null;
+  if (req && req.cookies) {
+    token = req.cookies[process.env.COOKIE];
+  }
+  return token;
+};
 
 //FS
 export function getNextId(path) {
@@ -78,6 +90,7 @@ export async function readData(path) {
   }
 }
 
+//Handlebars
 export const isEmptyArray = (array, options) => {
   if (Array.isArray(array) && array.length === 0) {
     return options.fn(this);
@@ -86,9 +99,16 @@ export const isEmptyArray = (array, options) => {
   }
 };
 
-//Handlebars
 export const isSessionStarted = (req, options) => {
   if (req.session.login === true) {
+    return options.fn(this);
+  } else {
+    return options.inverse(this);
+  }
+};
+
+export const cookieExists = (req, options) => {
+  if (req?.cookies[process.env.COOKIE]) {
     return options.fn(this);
   } else {
     return options.inverse(this);
@@ -100,3 +120,10 @@ export function getLocaleTime() {
   const time = new Date().toLocaleTimeString();
   return time;
 }
+
+//JWT
+export const generateToken = (user) => {
+  const token = jwt.sign({ user }, process.env.SECRET_JWT, { expiresIn: "2h" });
+
+  return token;
+};

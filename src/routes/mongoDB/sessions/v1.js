@@ -17,7 +17,7 @@ export const register = async (req, res) => {
       user.email === "adminCoder@coder.com" &&
       user.password === "adminCod3r123"
     ) {
-      user.rol = "admin";
+      user.role = "admin";
     }
 
     await UserModel.create(user);
@@ -38,7 +38,7 @@ export const login = async (req, res) => {
     if (!user) {
       console.log("Invalid credentials");
       req.session.destroy();
-      return res.status(404).redirect("/");
+      return res.status(401).redirect("/");
     } else {
       req.session.user = user;
       req.session.login = true;
@@ -55,14 +55,14 @@ export const reset = async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    const user = await UserModel.findOne({ email });
+    const redir = req.session.login ? "/profile" : "/"; //Verifica session para redirigir
 
-    const redir = req.session.login ? "/profile" : "/" //Verifica session para redirigir
+    const user = await UserModel.findOne({ email });
 
     if (!user) {
       console.log("User not found");
       req.session.destroy();
-      return res.status(404).redirect("/");
+      return res.status(404).redirect(redir);
     } else {
       const userId = user._id;
 
@@ -70,12 +70,11 @@ export const reset = async (req, res) => {
         password: password,
       });
 
-      const reUser = await UserModel.find(); //Para que se recargue en memoria nuevamente todos los usuario con la clave actualizada
+      const reUser = await UserModel.find(); //Evita recargar login con F5
     }
 
-    return res.status(200).redirect("/");
+    return res.status(200).redirect(redir);
   } catch (err) {
-    console.log("Internal server error");
     res.status(500).redirect("/");
   }
 };
