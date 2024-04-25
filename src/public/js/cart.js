@@ -1,11 +1,13 @@
 const socket = io();
 
+const cartId = document.getElementById("cartId").innerText;
+
 //Envia el front
 document.addEventListener("click", (event) => {
   if (event.target.classList.contains("delete")) {
     const id = event.target.getAttribute("id");
 
-    socket.emit("client:deleteProductOnCart", id);
+    socket.emit("client:deleteProductOnCart", {id, cartId});
   }
 });
 

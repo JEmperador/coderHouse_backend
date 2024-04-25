@@ -20,6 +20,8 @@ router.post("/v1/sessions/login", loginV1);
 
 router.post("/v1/sessions/reset", resetV1);
 
+router.post("/v2/sessions/reset", resetV2);
+
 router.get("/v1/sessions/logout", logout);
 
 //Passport
@@ -38,8 +40,6 @@ router.post(
   }),
   loginV2
 );
-
-router.post("/v2/sessions/reset", resetV2);
 
 //GitHub
 router.get(

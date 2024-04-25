@@ -2,11 +2,11 @@
     {{#each products}}
     {{#if status}}
     <div class="card" style="margin: 20px 100px; max-width: 200px">
-        {{#isEmptyArray thumbnail}}
-        <img src="https://i.ibb.co/zsQdBNc/200x200.gif" width="200px" alt="img - no img">
+        {{#if thumbnail}}
+        <img src={{thumbnail}} width="200px" alt="img" >
         {{else}}
-        <img src={{this.thumbnail}} width="200px" alt="img" >
-        {{/isEmptyArray}}
+        <img src="https://i.ibb.co/zsQdBNc/200x200.gif" width="200px" alt="img - no img">
+        {{/if}}
         <div class="card-body">
             <p class="card-title">{{category}} - {{title}}</p>
         </div>

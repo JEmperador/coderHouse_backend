@@ -14,7 +14,13 @@ import {
   generateToken,
 } from "../helpers/utils.js";
 
+import UserManager from "../dao/mongoDB/userManager.js";
+import CartManager from "../dao/mongoDB/cartManager.js";
+
 dotenv.config();
+
+const userManager = new UserManager();
+const cartManager = new CartManager();
 
 const LocalStrategy = local.Strategy;
 const JWTStrategy = jwt.Strategy;
@@ -125,7 +131,7 @@ export const initializePassport = () => {
           let user = await UserModel.findOne({ email: email });
 
           if (!user) {
-            user = await UserModel.create({
+            user = await userManager.createUser({
               first_name: name,
               last_name: lastName,
               email: email,
@@ -160,32 +166,15 @@ export const initializePassport = () => {
           const name = profile._json.given_name;
           const lastName = profile._json.family_name;
 
-          /* const user = await UserModel.findOne({ email: email });
-
-          if (user) {
-            console.log(`User ${email} already exists`);
-            return cb(null, user);
-          }
-
-          const newUser = {
-            first_name: name,
-            last_name: lastName,
-            email: email,
-            password: "",
-            social: "Google",
-          };
-
-          const result = await UserModel.create(newUser); */
-
           let user = await UserModel.findOne({ email: email });
 
           if (!user) {
-            user = await UserModel.create({
+            user = await userManager.createUser({
               first_name: name,
               last_name: lastName,
               email: email,
               password: "",
-              social: "GitHub",
+              social: "Google",
             });
           }
 

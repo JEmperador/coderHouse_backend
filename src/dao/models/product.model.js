@@ -9,7 +9,7 @@ const productSchema = new mongoose.Schema({
   title: { type: String, required: true },
   description: { type: String, required: true },
   price: { type: Number, required: true },
-  thumbnail: Array,
+  thumbnail: String,
   code: { type: String, unique: true, index: true, required: true },
   stock: { type: Number, required: true },
   category: { type: String, index: true, enum: enumCategories, required: true },
