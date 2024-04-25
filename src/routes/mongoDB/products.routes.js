@@ -6,13 +6,7 @@ const router = Router();
 
 router.post("/v2/products", async (req, res) => {
   const { title, description, price, code, stock, category } = req.body;
-  /* const thumbnail = Array.isArray(req.body.thumbnail)
-    ? req.body.thumbnail
-    : req.body.thumbnail.length > 0
-    ? [req.body.thumbnail]
-    : []; */
-
-    const thumbnail = req.thumbnail.lenght > 0 ? req.thumbnail : "";
+  const thumbnail = req.thumbnail.lenght > 0 ? req.thumbnail : "";
 
   if (
     !title ||

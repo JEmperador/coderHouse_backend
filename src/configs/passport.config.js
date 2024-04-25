@@ -15,12 +15,10 @@ import {
 } from "../helpers/utils.js";
 
 import UserManager from "../dao/mongoDB/userManager.js";
-import CartManager from "../dao/mongoDB/cartManager.js";
 
 dotenv.config();
 
 const userManager = new UserManager();
-const cartManager = new CartManager();
 
 const LocalStrategy = local.Strategy;
 const JWTStrategy = jwt.Strategy;
