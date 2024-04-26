@@ -2,6 +2,7 @@ import { Server } from "socket.io";
 import ProductManager from "../dao/mongoDB/productManager.js";
 import CartManager from "../dao/mongoDB/cartManager.js";
 import ChatManager from "../dao/mongoDB/chatManager.js";
+import jwt from "jsonwebtoken";
 const productManager = new ProductManager();
 const cartManager = new CartManager();
 const chatManager = new ChatManager();
@@ -10,7 +11,12 @@ export default function socketioHandler(httpServer) {
   const io = new Server(httpServer);
 
   io.on("connection", (socket) => {
-    console.log(`New user ${socket.id} joined`);
+    const cookieToken = socket.handshake.headers.cookie;
+    const token = cookieToken.split("=")[1];
+    const decodeToken = jwt.decode(token);
+    const userName = decodeToken.user.email;
+
+    console.log(`New user ${userName} joined`);
 
     //Recibe del front - Creacion de producto
     socket.on("client:newProduct", async (data) => {
