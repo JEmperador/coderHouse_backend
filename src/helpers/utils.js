@@ -127,3 +127,16 @@ export const generateToken = (user) => {
 
   return token;
 };
+
+//Socket
+export const socketUserName = (cookiesSocket) => {
+  let userName = null;
+
+  if (cookiesSocket.length > 0) {
+    const token = cookiesSocket.split("cookieTokenParzival=")[1];
+    const decodeToken = jwt.decode(token);
+    userName = decodeToken.user.email;
+  }
+  
+  return userName
+};
