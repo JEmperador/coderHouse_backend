@@ -2,6 +2,7 @@ import { Server } from "socket.io";
 import ProductManager from "../dao/mongoDB/productManager.js";
 import CartManager from "../dao/mongoDB/cartManager.js";
 import ChatManager from "../dao/mongoDB/chatManager.js";
+import jwt from "jsonwebtoken";
 const productManager = new ProductManager();
 const cartManager = new CartManager();
 const chatManager = new ChatManager();
@@ -10,18 +11,19 @@ export default function socketioHandler(httpServer) {
   const io = new Server(httpServer);
 
   io.on("connection", (socket) => {
-    console.log(`New user ${socket.id} joined`);
+    const cookieToken = socket.handshake.headers.cookie;
+    const token = cookieToken.split("=")[1];
+    const decodeToken = jwt.decode(token);
+    const userName = decodeToken.user.email;
+
+    console.log(`New user ${userName} joined`);
 
     //Recibe del front - Creacion de producto
     socket.on("client:newProduct", async (data) => {
       try {
         const { title, description, price, code, stock, category } = data;
 
-        const thumbnail = Array.isArray(data.thumbnail)
-          ? data.thumbnail
-          : data.thumbnail.length > 0
-          ? [data.thumbnail]
-          : [];
+        const thumbnail = data.thumbnail.lenght > 0 ? data.thumbnail : "";
 
         const postProducts = {
           title,
@@ -70,8 +72,8 @@ export default function socketioHandler(httpServer) {
     //Recibe del front - Eliminacion de producto (en carrito)
     socket.on("client:deleteProductOnCart", async (data) => {
       try {
-        const cid = "65fb8308f303ee5626d8e88f";
-        const pid = data;
+        const cid = data.cartId;
+        const pid = data.id;
 
         const deleteProductOnCart = await cartManager.deleteProductById(
           cid,
@@ -89,7 +91,7 @@ export default function socketioHandler(httpServer) {
     //Recibe del front - Incorporacion de producto (en carrito)
     socket.on("client:addProductOnCart", async (data) => {
       try {
-        const cid = "65fb8308f303ee5626d8e88f";
+        const cid = data.cartId;
         const pid = data.id;
         const quantity = data.selectedQuantity > 1 ? data.selectedQuantity : 1;
 

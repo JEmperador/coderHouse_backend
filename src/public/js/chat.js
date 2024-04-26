@@ -1,13 +1,14 @@
 const socket = io();
 
 const chatbox = document.getElementById("chatbox");
+const userName = document.getElementById("userName").innerText;
 
 window.onload = function () {
   const logs = document.getElementById("logs");
   logs.scrollTop = logs.scrollHeight;
 };
 
-let user = sessionStorage.getItem("user") || "";
+let user = userName;
 
 //SweetAlert2
 if (!user) {

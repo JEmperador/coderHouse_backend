@@ -6,7 +6,7 @@ const router = Router();
 
 router.post("/v1/products", async (req, res) => {
   const { title, description, price, code, stock, category } = req.body;
-  const thumbnail = req.body.thumbnail ? req.body.thumbnail : [];
+  const thumbnail = req.body.thumbnail.length > 0 ? req.body.thumbnail : "";
 
   try {
     const createProduct = await productManager.addProduct(

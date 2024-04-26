@@ -19,7 +19,7 @@ formCreate.addEventListener("submit", (e) => {
     title,
     description,
     price,
-    thumbnail: thumbnail ? thumbnail : [],
+    thumbnail: thumbnail ? thumbnail : "",
     code,
     stock,
     category,
