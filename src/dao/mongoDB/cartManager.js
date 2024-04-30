@@ -15,7 +15,7 @@ class CartManager {
     }
   };
 
-  getCarts = async (limit) => {
+  readCarts = async (limit) => {
     try {
       const carts = CartModel.find().limit(Number(limit));
 
@@ -26,7 +26,7 @@ class CartManager {
     }
   };
 
-  getCartById = async (idC) => {
+  readCartById = async (idC) => {
     try {
       if (!mongoose.Types.ObjectId.isValid(idC)) {
         console.log(`Invalid cart ID - ${getLocaleTime()}`);
@@ -65,12 +65,12 @@ class CartManager {
         throw new Error("Not found Cart");
       }
 
-      const existingProductIndex = cart.products.findIndex(
-        (product) => product.product == idP
+      const existingProduct = cart.products.find(
+        (product) => product.product.equals(idP)
       );
 
-      if (existingProductIndex !== -1) {
-        cart.products[existingProductIndex].quantity += quantity;
+      if (existingProduct) {
+        existingProduct.quantity += quantity;
       } else {
         cart.products.push({ product: idP, quantity });
       }
@@ -84,7 +84,7 @@ class CartManager {
     }
   };
 
-  deleteCart = async (idC) => {
+  physicalDeleteCart = async (idC) => {
     try {
       if (!mongoose.Types.ObjectId.isValid(idC)) {
         console.log(`Invalid cart ID - ${getLocaleTime()}`);
@@ -105,7 +105,7 @@ class CartManager {
     }
   };
 
-  deleteProducts = async (idC) => {
+  physicalDeleteProducts = async (idC) => {
     try {
       if (!mongoose.Types.ObjectId.isValid(idC)) {
         console.log(`Invalid cart ID - ${getLocaleTime()}`);
@@ -135,7 +135,7 @@ class CartManager {
     }
   };
 
-  deleteProductById = async (idC, idP) => {
+  physicalDeleteProductById = async (idC, idP) => {
     try {
       if (!mongoose.Types.ObjectId.isValid(idC)) {
         console.log(`Invalid cart ID - ${getLocaleTime()}`);

@@ -1,13 +1,12 @@
 import { Server } from "socket.io";
 import { socketUserName } from "./utils.js";
+import ProductService from "../services/product.service.js";
+import CartService from "../services/cart.service.js";
+import ChatService from "../services/chat.service.js";
 
-import ProductManager from "../dao/mongoDB/productManager.js";
-import CartManager from "../dao/mongoDB/cartManager.js";
-import ChatManager from "../dao/mongoDB/chatManager.js";
-
-const productManager = new ProductManager();
-const cartManager = new CartManager();
-const chatManager = new ChatManager();
+const productService = new ProductService();
+const cartService = new CartService();
+const chatService = new ChatService();
 
 export default function socketioHandler(httpServer) {
   const io = new Server(httpServer);
@@ -24,7 +23,7 @@ export default function socketioHandler(httpServer) {
 
         const thumbnail = data.thumbnail.lenght > 0 ? data.thumbnail : "";
 
-        const postProducts = {
+        await productService.createProduct(
           title,
           description,
           price,
@@ -32,12 +31,10 @@ export default function socketioHandler(httpServer) {
           code,
           stock,
           category,
-        };
-
-        await productManager.addProduct(postProducts);
+        );
 
         //Envia el back
-        const products = await productManager.getProducts();
+        const products = await productService.readProducts();
         const listProducts = products.filter(
           (product) => product.status === true
         );
@@ -53,12 +50,12 @@ export default function socketioHandler(httpServer) {
       try {
         const id = data;
 
-        const logicalDeleteProduct = await productManager.logicalDeleteProduct(
+        const logicalDeleteProduct = await productService.logicalDeleteProduct(
           id
         );
 
         //Envia el back
-        const products = await productManager.getProducts();
+        const products = await productService.readProducts();
         const listProducts = products.filter(
           (product) => product.status === true
         ); //Solo para mostrar los productos con status true
@@ -74,13 +71,13 @@ export default function socketioHandler(httpServer) {
         const cid = data.cartId;
         const pid = data.id;
 
-        const deleteProductOnCart = await cartManager.deleteProductById(
+        const deleteProductOnCart = await cartService.physicalDeleteProductById(
           cid,
           pid
         );
 
         //Envia el back
-        const cart = await cartManager.getCartById(cid);
+        const cart = await cartService.readCartById(cid);
         io.emit("server:cart", cart);
       } catch (err) {
         io.emit("server:error", err.message);
@@ -94,27 +91,27 @@ export default function socketioHandler(httpServer) {
         const pid = data.id;
         const quantity = data.selectedQuantity > 1 ? data.selectedQuantity : 1;
 
-        const addProductOnCart = await cartManager.updateCart(
+        const addProductOnCart = await cartService.updateCart(
           cid,
           pid,
-          quantity
+          Number(quantity)
         );
 
         //Envia el back
-        const cart = await cartManager.getCartById(cid);
+        const cart = await cartService.readCartById(cid);
         io.emit("server:add", cart);
       } catch (err) {
         io.emit("server:error", err.message);
       }
     });
 
-    socket.on("new", (user) => console.log(`${user} joined`));
+    socket.on("new", (user) => console.log(`${user} joined to Chat`));
 
     //Recibe del front - Mensajes
     socket.on("client:message", async (data) => {
-      const message = await chatManager.saveMessage(data);
+      const message = await chatService.createMessage(data);
       //Envia el back
-      const messages = await chatManager.getMessages();
+      const messages = await chatService.readMessages();
       const messagesReverse = messages.reverse();
       io.emit("server:messages", messagesReverse);
     });
@@ -123,19 +120,19 @@ export default function socketioHandler(httpServer) {
     socket.on("client:editMessage", async (data) => {
       const { id, user, message, hour } = data;
 
-      const newMessage = await chatManager.editMessage(id, {
+      const newMessage = await chatService.updateMessage(id, {
         user,
         message,
         hour,
       });
       //Envia el back
-      const messages = await chatManager.getMessages();
+      const messages = await chatService.readMessages();
       const messagesReverse = messages.reverse();
       io.emit("server:messages", messagesReverse);
     });
 
     socket.on("disconnect", () => {
-      console.log(`User ${socket.id} disconnected`);
+      console.log(`User ${userName} disconnected`);
     });
   });
 }

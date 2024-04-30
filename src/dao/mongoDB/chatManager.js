@@ -3,7 +3,7 @@ import { MessageModel } from "../models/message.model.js";
 import { getLocaleTime } from "../../helpers/utils.js";
 
 class ChatManager {
-  saveMessage = async (message) => {
+  createMessage = async (message) => {
     try {
       if (!message.user || !message.message) {
         console.log("All fields are required");
@@ -14,6 +14,7 @@ class ChatManager {
         user: message.user,
         message: message.message,
         hour: getLocaleTime(),
+        status: true,
       };
 
       const newMessage = await MessageModel.create(chat);
@@ -25,7 +26,7 @@ class ChatManager {
     }
   };
 
-  getMessages = async () => {
+  readMessages = async () => {
     try {
       const messages = await MessageModel.find();
 
@@ -36,7 +37,7 @@ class ChatManager {
     }
   };
 
-  editMessage = async (idM, props) => {
+  updateMessage = async (idM, props) => {
     try {
       if (!mongoose.Types.ObjectId.isValid(idM)) {
         console.log(`Invalid message ID - ${getLocaleTime()}`);
@@ -58,6 +59,52 @@ class ChatManager {
       }
 
       return newChat;
+    } catch (err) {
+      throw err;
+    }
+  };
+
+  physicalDeleteMessage = async (idM) => {
+    try {
+      if (!mongoose.Types.ObjectId.isValid(idM)) {
+        console.log(`Invalid message ID - ${getLocaleTime()}`);
+        throw new Error("Invalid message ID");
+      }
+
+      const messageDeleted = await MessageModel.findByIdAndDelete(idM);
+
+      if (!messageDeleted) {
+        console.log(`Not found Message - ${getLocaleTime()}`);
+        throw new Error("Not found Message");
+      }
+
+      console.log(`Message removed - ${getLocaleTime()}`);
+      return true;
+    } catch (err) {
+      throw err;
+    }
+  };
+
+  logicalDeleteMessage = async (idM) => {
+    try {
+      if (!mongoose.Types.ObjectId.isValid(idM)) {
+        console.log(`Invalid message ID - ${getLocaleTime()}`);
+        throw new Error("Invalid message ID");
+      }
+
+      const updatedMessage = await MessageModel.findByIdAndUpdate(
+        idM,
+        { status: false },
+        { new: true }
+      );
+
+      if (!updatedMessage) {
+        console.log(`Not found Message - ${getLocaleTime()}`);
+        throw new Error("Not found Message");
+      }
+
+      console.log(`Message removed - ${getLocaleTime()}`);
+      return true;
     } catch (err) {
       throw err;
     }

@@ -1,10 +1,10 @@
-import ProductManager from "../../dao/mongoDB/productManager.js";
+import ProductService from "../../services/product.service.js"
 import { Router } from "express";
 import { ProductModel } from "../../dao/models/product.model.js";
 import passport from "passport";
 import { passportCall } from "../../helpers/middlewares.js";
 
-const productManager = new ProductManager();
+const productService = new ProductService();
 const router = Router();
 
 router.get(
@@ -15,7 +15,7 @@ router.get(
     const { limit } = req.query;
 
     try {
-      const products = await productManager.getProducts(limit);
+      const products = await productService.readProducts(limit);
 
       res.render("realtimeproducts", {
         title: "Atlas Tech | Products",
@@ -36,7 +36,7 @@ router.get(
     const { pid } = req.params;
 
     try {
-      const product = await productManager.getProductById(pid);
+      const product = await productService.readProductById(pid);
 
       res.render("product", {
         title: `Atlas Tech | ${product.title}`,

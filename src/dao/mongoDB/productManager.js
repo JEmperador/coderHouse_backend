@@ -3,11 +3,23 @@ import { ProductModel } from "../models/product.model.js";
 import { getLocaleTime } from "../../helpers/utils.js";
 
 class ProductManager {
-  addProduct = async (product) => {
+  createProduct = async (product) => {
     try {
-      const validate = await ProductModel.findOne({ code: product.code });
+      if (
+        !product.title ||
+        !product.description ||
+        !product.price ||
+        !product.code ||
+        product.stock === undefined ||
+        !product.category
+      ) {
+        console.log(`All fields are required - ${getLocaleTime()}`);
+        throw new Error("All fields are required");
+      }
 
-      if (validate) {
+      const validateCode = await ProductModel.findOne({ code: product.code });
+
+      if (validateCode) {
         console.log(
           `Product with code ${
             product.code
@@ -15,21 +27,22 @@ class ProductManager {
         );
         throw new Error(`Product with code ${product.code} already exists`);
       }
-      
+
       product.status = product.stock > 0 ? true : false;
+
       await ProductModel.create(product);
 
       console.log(`Product was loaded successfully - ${getLocaleTime()}`);
 
-      const Reproducts = await this.getProducts();
+      const Reproducts = await this.readProducts();
 
-      return Reproducts;
+      return true;
     } catch (err) {
       throw err;
     }
   };
 
-  getProducts = async (limit) => {
+  readProducts = async (limit) => {
     try {
       const products = await ProductModel.find().limit(Number(limit));
 
@@ -40,7 +53,7 @@ class ProductManager {
     }
   };
 
-  getProductById = async (idP) => {
+  readProductById = async (idP) => {
     try {
       if (!mongoose.Types.ObjectId.isValid(idP)) {
         console.log(`Invalid product ID - ${getLocaleTime()}`);
@@ -94,7 +107,7 @@ class ProductManager {
     }
   };
 
-  deleteProduct = async (idP) => {
+  physicalDeleteProduct = async (idP) => {
     try {
       if (!mongoose.Types.ObjectId.isValid(idP)) {
         console.log(`Invalid product ID - ${getLocaleTime()}`);

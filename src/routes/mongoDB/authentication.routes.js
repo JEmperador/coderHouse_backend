@@ -2,33 +2,33 @@ import { Router } from "express";
 import passport from "passport";
 import dotenv from "dotenv";
 import {
-  register as registerV1,
-  login as loginV1,
-  reset as resetV1,
-  logout as logoutV1,
-} from "./jwt/v1.js";
+  register,
+  login,
+  reset,
+  logout,
+} from "../../controllers/authentication.controller.js";
 
 dotenv.config();
 
 const router = Router();
 
-router.post("/v1/jwt/register", registerV1);
+router.post("/v3/authentication/register", register);
 
-router.post("/v1/jwt/login", loginV1);
+router.post("/v3/authentication/login", login);
 
-router.post("/v1/jwt/reset", resetV1);
+router.post("/v3/authentication/reset", reset);
 
-router.get("/v1/jwt/logout", logoutV1);
+router.get("/v3/authentication/logout", logout);
 
 //GitHub
 router.get(
-  "/v2/jwt/login-github",
+  "/v3/authentication/login-github",
   passport.authenticate("github", { scope: ["user:email"], session: false }),
   async (req, res) => {}
 );
 
 router.get(
-  "/v2/jwt/githubcallback",
+  "/v3/authentication/githubcallback",
   passport.authenticate("github", { failureRedirect: "/", session: false }),
   async (req, res) => {
     res.cookie(process.env.COOKIE, req.user.token);
@@ -38,7 +38,7 @@ router.get(
 
 //Google
 router.get(
-  "/v2/jwt/login-google",
+  "/v3/authentication/login-google",
   passport.authenticate("google", {
     scope: ["profile", "email"],
     session: false,
@@ -47,7 +47,7 @@ router.get(
 );
 
 router.get(
-  "/v2/jwt/googlecallback",
+  "/v3/authentication/googlecallback",
   passport.authenticate("google", { failureRedirect: "/", session: false }),
   async (req, res) => {
     res.cookie(process.env.COOKIE, req.user.token);

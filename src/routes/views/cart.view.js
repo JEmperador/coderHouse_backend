@@ -1,9 +1,9 @@
-import CartManager from "../../dao/mongoDB/cartManager.js";
+import CartService from "../../services/cart.service.js";
 import { Router } from "express";
 import passport from "passport";
 import { passportCall } from "../../helpers/middlewares.js";
 
-const cartManager = new CartManager();
+const cartService = new CartService();
 const router = Router();
 
 router.get(
@@ -14,7 +14,7 @@ router.get(
     const { cid } = req.params;
 
     try {
-      const cart = await cartManager.getCartById(cid);
+      const cart = await cartService.readCartById(cid);
 
       res.render("cart", {
         title: "Atlas Tech | Cart",
