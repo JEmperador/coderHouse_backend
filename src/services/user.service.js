@@ -6,7 +6,7 @@ class UserService {
   createUser = async (user) => {
     const newUser = await usermanager.createUser(user);
 
-    return "User was created successfully";
+    return newUser;
   };
 
   readUsers = async () => {

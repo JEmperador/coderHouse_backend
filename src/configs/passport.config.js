@@ -4,6 +4,7 @@ import local from "passport-local";
 import jwt from "passport-jwt";
 import github from "passport-github2";
 import google from "passport-google-oauth20";
+import { UserModel } from "../dao/models/user.model.js";
 import UserService from "../services/user.service.js";
 import {
   isValidPassword,
@@ -120,17 +121,17 @@ export const initializePassport = () => {
           const name = fullName[0];
           const lastName = fullName[1];
 
-          let user = await userService.readUserByEmail(email);
+          let user = await UserModel.findOne({email});
 
           if (!user) {
             const newUser = {
               first_name: name,
               last_name: lastName,
               email,
-              age,
+              age: 18,
               password: "",
               social: "GitHub",
-              role,
+              role: "user",
             };
 
             user = await userService.createUser(newUser);
@@ -162,17 +163,17 @@ export const initializePassport = () => {
           const name = profile._json.given_name;
           const lastName = profile._json.family_name;
 
-          let user = await userService.readUserByEmail(email);
+          let user = await UserModel.findOne({email});
 
           if (!user) {
             const newUser = {
               first_name: name,
               last_name: lastName,
               email,
-              age,
+              age: 18,
               password: "",
               social: "Google",
-              role,
+              role: "user",
             };
 
             user = await userService.createUser(newUser);

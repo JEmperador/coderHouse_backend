@@ -1,14 +1,18 @@
 import dotenv from "dotenv";
 import mongoose from "mongoose";
+import configSwitch from "../configs/switch.config.js";
+const { mongo_user, mongo_pass, mongo_cluster, mongo_app, mongo_db } =
+  configSwitch;
+
 dotenv.config();
 
-const url = `mongodb+srv://${process.env.DB_MONGO_USER}:${process.env.DB_MONGO_PASS}@${process.env.DB_MONGO_CLUSTER}.6hohxmy.mongodb.net/?retryWrites=true&w=majority&appName=${process.env.DB_MONGO_APP}`;
+const url = `mongodb+srv://${mongo_user}:${mongo_pass}@${mongo_cluster}.mongodb.net/?retryWrites=true&w=majority&appName=${mongo_app}`;
 
 class MongoDB {
   static #instance;
   constructor() {
     mongoose.connect(url, {
-      dbName: process.env.DB_MONGO_DB,
+      dbName: mongo_db,
     });
   }
 
