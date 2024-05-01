@@ -51,7 +51,7 @@ document.addEventListener("click", async (event) => {
     });
 
     if (text) {
-      let user = sessionStorage.getItem("user");
+      const userName = document.getElementById("userName").innerText;
 
       Swal.fire({
         position: "top-end",
@@ -64,7 +64,7 @@ document.addEventListener("click", async (event) => {
 
       socket.emit("client:editMessage", {
         id: id,
-        user: user,
+        user: userName,
         message: text,
       });
     }

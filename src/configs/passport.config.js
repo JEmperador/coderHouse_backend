@@ -1,12 +1,12 @@
+import dotenv from "dotenv";
 import passport from "passport";
 import local from "passport-local";
 import jwt from "passport-jwt";
 import github from "passport-github2";
 import google from "passport-google-oauth20";
-import dotenv from "dotenv";
 import { UserModel } from "../dao/models/user.model.js";
+import UserService from "../services/user.service.js";
 import {
-  createHash,
   isValidPassword,
   serializeUser,
   deserializeUser,
@@ -14,11 +14,9 @@ import {
   generateToken,
 } from "../helpers/utils.js";
 
-import UserManager from "../dao/mongoDB/userManager.js";
-
 dotenv.config();
 
-const userManager = new UserManager();
+const userService = new UserService();
 
 const LocalStrategy = local.Strategy;
 const JWTStrategy = jwt.Strategy;
@@ -38,7 +36,7 @@ export const initializePassport = () => {
         const { first_name, last_name, email, age } = req.body;
 
         try {
-          const user = await UserModel.findOne({ email });
+          const user = await userService.readUserByEmail(email);
 
           if (user) {
             console.log("User already exists");
@@ -50,15 +48,12 @@ export const initializePassport = () => {
             last_name,
             email,
             age,
-            password: createHash(password),
-            social: "Local",
+            password,
+            social,
+            role,
           };
 
-          if (newUser.email === "adminCoder@coder.com") {
-            newUser.role = "admin";
-          }
-
-          const result = await UserModel.create(newUser);
+          const result = await userService.createUser(newUser);
 
           return done(null, false);
         } catch (err) {
@@ -74,7 +69,7 @@ export const initializePassport = () => {
       { usernameField: "email" },
       async (email, password, done) => {
         try {
-          const user = await UserModel.findOne({ email });
+          const user = await userService.readUserByEmail(email);
 
           if (!user) {
             console.log("User doesn't exists");
@@ -126,16 +121,20 @@ export const initializePassport = () => {
           const name = fullName[0];
           const lastName = fullName[1];
 
-          let user = await UserModel.findOne({ email: email });
+          let user = await UserModel.findOne({email});
 
           if (!user) {
-            user = await userManager.createUser({
+            const newUser = {
               first_name: name,
               last_name: lastName,
-              email: email,
+              email,
+              age: 18,
               password: "",
               social: "GitHub",
-            });
+              role: "user",
+            };
+
+            user = await userService.createUser(newUser);
           }
 
           const token = generateToken(user);
@@ -164,16 +163,20 @@ export const initializePassport = () => {
           const name = profile._json.given_name;
           const lastName = profile._json.family_name;
 
-          let user = await UserModel.findOne({ email: email });
+          let user = await UserModel.findOne({email});
 
           if (!user) {
-            user = await userManager.createUser({
+            const newUser = {
               first_name: name,
               last_name: lastName,
-              email: email,
+              email,
+              age: 18,
               password: "",
               social: "Google",
-            });
+              role: "user",
+            };
+
+            user = await userService.createUser(newUser);
           }
 
           const token = generateToken(user);

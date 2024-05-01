@@ -8,6 +8,11 @@ const cartManager = new CartManager();
 class UserManager {
   createUser = async (user) => {
     try {
+      if (!user.first_name || !user.last_name || !user.email || !user.age) {
+        console.log("All fields are required");
+        throw new Error("All fields are required");
+      }
+
       const validate = await UserModel.findOne({ email: user.email });
 
       if (validate) {
@@ -19,7 +24,9 @@ class UserManager {
 
       const cart = await cartManager.createCart();
 
-      user.cartId = cart._id
+      user.password = createHash(user.password);
+      user.cartId = cart._id;
+      user.role = user.email == "adminCoder@coder.com" ? "admin" : "user";
 
       const newUser = await UserModel.create(user);
 
@@ -30,7 +37,7 @@ class UserManager {
     }
   };
 
-  getUsers = async () => {
+  readUsers = async () => {
     try {
       const users = await UserModel.find();
 
@@ -41,7 +48,7 @@ class UserManager {
     }
   };
 
-  getUserByEmail = async (email) => {
+  readUserByEmail = async (email) => {
     try {
       const user = await UserModel.findOne({ email });
 
@@ -56,7 +63,7 @@ class UserManager {
     }
   };
 
-  getUserValid = async (email, password) => {
+  readUserValid = async (email, password) => {
     try {
       const user = await UserModel.findOne({ email });
 
@@ -74,9 +81,9 @@ class UserManager {
     }
   };
 
-  updatePassword = async (email, password) => {
+  updateUserPassword = async (email, password) => {
     try {
-      const user = await UserModel.findOne({ email });
+      const user = await this.readUserByEmail(email);
 
       if (!user) {
         console.log(`Email ${email} not exists - ${getLocaleTime()}`);

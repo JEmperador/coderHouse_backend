@@ -1,13 +1,14 @@
 import dotenv from "dotenv";
-import UserManager from "../../../dao/mongoDB/userManager.js";
-import { createHash, generateToken } from "../../../helpers/utils.js";
+import UserService from "../services/user.service.js";
+import { generateToken } from "../helpers/utils.js";
 
 dotenv.config();
 
-const userManager = new UserManager();
+const userService = new UserService();
 
 export const register = async (req, res) => {
-  const { first_name, last_name, email, age, password, social, role } = req.body;
+  const { first_name, last_name, email, age, password, social, role } =
+    req.body;
 
   try {
     const newUser = {
@@ -15,18 +16,21 @@ export const register = async (req, res) => {
       last_name,
       email,
       age,
-      password: createHash(password),
+      password,
       social,
       role,
     };
 
-    const user = await userManager.createUser(newUser);
+    const result = await userService.createUser(newUser);
 
     res.redirect("/");
   } catch (err) {
-    if (err.message.includes("Email")) {
-      res.status(401).json(err.message);
+    if (err.message.includes("All fields")) {
+      res.status(404).json(err.message);
+    } else if (err.message.includes("Email")) {
+      res.status(404).json(err.message);
     } else {
+      console.log(err);
       res.status(500).json(err);
     }
   }
@@ -36,12 +40,16 @@ export const login = async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    const userValid = await userManager.getUserValid(email, password);
+    const userValid = await userService.readUserValid(email, password);
 
     const loginUser = {
       first_name: userValid.first_name,
       last_name: userValid.last_name,
       email: userValid.email,
+      age: userValid.age,
+      password: "",
+      cartId: userValid.cartId,
+      social: userValid.social,
       role: userValid.role,
     };
 
@@ -68,17 +76,20 @@ export const reset = async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    const redir = req.cookies[process.env.COOKIE] ? "/profile" : "/";
+    const user = await userService.readUserValid(email, password);
 
-    const user = await userManager.getUserByEmail(email);
-
-    const userNewPassword = await userManager.updatePassword(email, password);
+    const newUserPassword = await userService.updateUserPassword(
+      email,
+      password
+    );
 
     const resetPassword = {
-      first_name: userNewPassword.first_name,
-      last_name: userNewPassword.last_name,
-      email: userNewPassword.email,
-      role: userNewPassword.role,
+      first_name: newUserPassword.first_name,
+      last_name: newUserPassword.last_name,
+      email: newUserPassword.email,
+      cartId: newUserPassword.cartId,
+      social: newUserPassword.social,
+      role: newUserPassword.role,
     };
 
     const tokenUser = generateToken(resetPassword);
@@ -88,9 +99,13 @@ export const reset = async (req, res) => {
       httpOnly: true,
     });
 
-    res.redirect(redir);
+    res.redirect("/profile");
   } catch (err) {
-    if (err.message.includes("User")) {
+    if (err.message.includes("Email")) {
+      res.status(404).json(err.message);
+    } else if (err.message.includes("Same password")) {
+      res.status(404).json(err.message);
+    } else if (err.message.includes("User")) {
       res.status(401).json(err.message);
     } else if (err.message.includes("Email")) {
       res.status(401).json(err.message);
