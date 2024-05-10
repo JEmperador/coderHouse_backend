@@ -1,37 +1,50 @@
-import UserManager from "../dao/mongoDB/userManager.js";
+import { userDAO } from "../dao/factory.js";
 
-const usermanager = new UserManager();
+const dao = new userDAO();
 
 class UserService {
-  createUser = async (user) => {
-    const newUser = await usermanager.createUser(user);
+  createUser = async (
+    first_name,
+    last_name,
+    email,
+    age,
+    password,
+    social,
+    role
+  ) => {
+    const newUser = await dao.createUser({
+      first_name,
+      last_name,
+      email,
+      age,
+      password,
+      social,
+      role,
+    });
 
     return newUser;
   };
 
   readUsers = async () => {
-    const users = await usermanager.readUsers();
+    const users = await dao.readUsers();
 
     return users;
   };
 
   readUserByEmail = async (email) => {
-    const user = await usermanager.readUserByEmail(email);
+    const user = await dao.readUserByEmail(email);
 
     return user;
   };
 
   readUserValid = async (email, password) => {
-    const userValid = await usermanager.readUserValid(email, password);
+    const userValid = await dao.readUserValid(email, password);
 
     return userValid;
   };
 
   updateUserPassword = async (email, password) => {
-    const newUserPassword = await usermanager.updateUserPassword(
-      email,
-      password
-    );
+    const newUserPassword = await dao.updateUserPassword(email, password);
 
     return newUserPassword;
   };

@@ -1,6 +1,6 @@
 import ProductService from "../../services/product.service.js"
 import { Router } from "express";
-import { ProductModel } from "../../dao/models/product.model.js";
+import { ProductModel } from "../../models/product.model.js";
 import passport from "passport";
 import { passportCall } from "../../helpers/middlewares.js";
 

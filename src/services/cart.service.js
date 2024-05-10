@@ -1,49 +1,49 @@
-import CartManager from "../dao/mongoDB/cartManager.js";
+import { cartDAO } from "../dao/factory.js";
 
-const cartManager = new CartManager();
+const dao = new cartDAO();
 
 class CartService {
   createCart = async () => {
-    const newCart = await cartManager.createCart();
+    const newCart = await dao.createCart();
 
     return "Cart was created successfully";
   };
 
   readCarts = async (limit) => {
-    const Carts = await cartManager.readCarts(limit);
+    const Carts = await dao.readCarts(limit);
 
     return Carts;
   };
 
   readCartById = async (idC) => {
-    const cart = await cartManager.readCartById(idC);
+    const cart = await dao.readCartById(idC);
 
     return cart;
   };
 
   updateCart = async (idC, idP, quantity) => {
-    const updatedCart = await cartManager.updateCart(idC, idP, quantity);
+    const updatedCart = await dao.updateCart(idC, idP, quantity);
 
     return updatedCart;
   };
 
   physicalDeleteCart = async (idC) => {
-    const physicalDeletedCart = await cartManager.physicalDeleteCart(idC);
+    const physicalDeletedCart = await dao.physicalDeleteCart(idC);
 
     return "Cart removed";
   };
 
   physicalDeleteProducts = async (idC) => {
-    const physicalDeleteProducts = await cartManager.physicalDeleteProducts(
-      idC
-    );
+    const physicalDeleteProducts = await dao.physicalDeleteProducts(idC);
 
     return "Products in the cart were removed";
   };
 
   physicalDeleteProductById = async (idC, idP) => {
-    const physicalDeleteProductById =
-      await cartManager.physicalDeleteProductById(idC, idP);
+    const physicalDeleteProductById = await dao.physicalDeleteProductById(
+      idC,
+      idP
+    );
 
     return "Product from the cart was removed";
   };

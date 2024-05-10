@@ -2,6 +2,9 @@ import mongoose from "mongoose";
 
 const usersCollections = "users";
 
+const enumSocial = ["Local", "GitHub", "Google"];
+const enumRole = ["user", "admin"];
+
 const userSchema = new mongoose.Schema({
   first_name: String,
   last_name: String,
@@ -14,12 +17,12 @@ const userSchema = new mongoose.Schema({
   },
   social: {
     type: String,
-    enum: ["Local", "GitHub", "Google"],
+    enum: enumSocial,
     default: "Local",
   },
   role: {
     type: String,
-    enum: ["user", "admin"],
+    enum: enumRole,
     default: "user",
   },
 });

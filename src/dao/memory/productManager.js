@@ -1,33 +1,23 @@
-import fs from "fs";
-import {
-  getNextId,
-  getLocaleTime,
-  createFile,
-  saveData,
-  readData,
-} from "../../helpers/utils.js";
+import { getLocaleTime } from "../../helpers/utils.js";
 
 class ProductManager {
-  static #path = "./mock/products.json";
   constructor() {
     this.products = [];
-    ProductManager.#path;
   }
 
-  createProduct = async (
-    product
-  ) => {
+  _getNextId = () => {
+    const count = this.products.length;
+    const nextId = count > 0 ? this.products[count - 1].id + 1 : 1;
+
+    return nextId;
+  };
+
+  createProduct = async (product) => {
     try {
-      const fileExist = fs.existsSync(ProductManager.#path);
-
-      if (!fileExist) {
-        await createFile(ProductManager.#path);
-      }
-
       const products = await this.readProducts();
 
       const newProduct = {
-        id: getNextId(ProductManager.#path),
+        id: this._getNextId(),
         title: product.title,
         description: product.description,
         price: product.price,
@@ -60,7 +50,6 @@ class ProductManager {
       }
 
       products.push(newProduct);
-      await saveData(products, ProductManager.#path);
 
       console.log(`Product was loaded successfully - ${getLocaleTime()}`);
 
@@ -72,37 +61,25 @@ class ProductManager {
     }
   };
 
-  readProducts = async () => {
+  readProducts = () => {
     try {
-      const fileExist = fs.existsSync(ProductManager.#path);
-
-      if (!fileExist) {
-        await createFile(ProductManager.#path);
-
-        console.log(`[] - ${getLocaleTime()}`);
-
-        return undefined;
-      }
-
-      const products = await readData(ProductManager.#path);
-
-      if (products.length < 1) {
-        console.log(`[] - ${getLocaleTime()}`);
-
-        return undefined;
-      }
+      const products = this.products;
 
       return products;
     } catch (err) {
       console.log(err);
-      return err;
+      return [];
     }
   };
 
-  readProductById = async (id) => {
+  readProductById = async (idP) => {
+    console.log(idP);
     try {
-      const products = await this.readProducts();
-      const product = Object.values(products).find((i) => i.id === Number(id));
+      const products = this.readProducts();
+      console.log(products);
+      const product = Object.values(products).find((i) => i.id === Number(idP));
+
+      console.log(product);
 
       if (product === undefined) {
         console.log(`Not found Product - ${getLocaleTime()}`);
@@ -141,7 +118,6 @@ class ProductManager {
       updatedProduct.stock === 0
         ? (updatedProduct.status = false)
         : (updatedProduct.status = true);
-      await saveData(products, ProductManager.#path);
 
       console.log(updatedProduct);
       return updatedProduct;
@@ -161,8 +137,8 @@ class ProductManager {
         throw new Error("Not found Product");
       }
 
-      products = products.filter((i) => i.id !== Number(id));
-      const save = await saveData(products, ProductManager.#path);
+      const newProducts = products.filter((i) => i.id !== Number(id));
+      this.products = newProducts
 
       console.log(`Product removed - ${getLocaleTime()}`);
       return true;
@@ -175,7 +151,9 @@ class ProductManager {
     try {
       let products = await this.readProducts();
 
-      const productIdx = Object.values(products).findIndex((i) => i.id === Number(id));
+      const productIdx = Object.values(products).findIndex(
+        (i) => i.id === Number(id)
+      );
 
       if (productIdx === -1) {
         console.log(`Not found Product - ${getLocaleTime()}`);
@@ -183,7 +161,6 @@ class ProductManager {
       }
 
       products[productIdx].status = false;
-      const save = await saveData(products, ProductManager.#path);
 
       console.log(`Product removed - ${getLocaleTime()}`);
       return true;

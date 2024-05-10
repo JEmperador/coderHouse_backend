@@ -28,10 +28,6 @@ initializePassport();
 
 router(app);
 
-app.get("/", (req, res) => {
-  res.render("login", { title: "Atlas Tech" });
-});
-
 const httpServer = app.listen(PORT, () => {
   console.log(`Server is running at: http://localhost:${PORT}`);
 });

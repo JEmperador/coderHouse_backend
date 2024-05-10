@@ -2,7 +2,7 @@ import multer from "multer";
 import fs from "fs";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
-import { UserModel } from "../dao/models/user.model.js";
+import { UserModel } from "../models/user.model.js";
 import { hashSync, compareSync, genSaltSync } from "bcrypt";
 import { fileURLToPath } from "url";
 import { dirname } from "path";

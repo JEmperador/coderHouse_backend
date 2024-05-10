@@ -1,31 +1,26 @@
-import fs from "fs";
 import {
-  getNextId,
-  getLocaleTime,
-  createFile,
-  saveData,
-  readData,
+  getLocaleTime
 } from "../../helpers/utils.js";
 
 class ChatManager {
-  static #path = "./mock/chats.json";
   constructor() {
     this.chats = [];
-    ChatManager.#path;
   }
+
+  _getNextId = () => {
+    const count = this.chats.length;
+    const nextId = count > 0 ? this.chats[count - 1].id + 1 : 1;
+
+    return nextId;
+  };
 
   createMessage = async ({ user, message, hour }) => {
     try {
-      const fileExist = fs.existsSync(ChatManager.#path);
-
-      if (!fileExist) {
-        await createFile(ChatManager.#path);
-      }
 
       const chats = await this.readMessages();
 
       const chat = {
-        id: getNextId(ChatManager.#path),
+        id: this._getNextId(),
         user,
         message,
         hour: getLocaleTime(),
@@ -33,7 +28,6 @@ class ChatManager {
       };
 
       chats.push(chat);
-      await saveData(chats, ChatManager.#path);
     } catch (err) {
       console.log(`${err} - ${getLocaleTime()}`);
       return err;
@@ -42,18 +36,12 @@ class ChatManager {
 
   readMessages = async () => {
     try {
-      const fileExist = fs.existsSync(ChatManager.#path);
-
-      if (!fileExist) {
-        await createFile(ChatManager.#path);
-      }
-
-      const chats = await readData(ChatManager.#path);
+      const chats = this.chats;
 
       return chats;
     } catch (err) {
       console.log(`${err} - ${getLocaleTime()}`);
-      return err;
+      return [];
     }
   };
 
@@ -78,8 +66,6 @@ class ChatManager {
       Object.assign(messages[ix], props);
       const updatedMessage = messages[ix];
 
-      await saveData(messages, ChatManager.#path);
-
       console.log(updatedMessage);
       return updatedMessage;
     } catch (err) {
@@ -99,8 +85,8 @@ class ChatManager {
         throw new Error("Not found Message");
       }
 
-      chats = chats.filter((i) => i.id !== Number(id));
-      const save = await saveData(chats, ChatManager.#path);
+      const newChats = chats.filter((i) => i.id !== Number(id));
+      this.chats = newChats;
 
       console.log(`Message removed - ${getLocaleTime()}`);
       return true;
@@ -124,7 +110,6 @@ class ChatManager {
       }
 
       chats[chatIdx].status = false;
-      const save = await saveData(chats, ChatManager.#path);
 
       console.log(`Message removed - ${getLocaleTime()}`);
       return true;

@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { MessageModel } from "../models/message.model.js";
+import { MessageModel } from "../../models/message.model.js";
 import { getLocaleTime } from "../../helpers/utils.js";
 
 class ChatManager {

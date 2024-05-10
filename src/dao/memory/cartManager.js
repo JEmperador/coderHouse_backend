@@ -1,39 +1,27 @@
-import fs from "fs";
-import {
-  getNextId,
-  getLocaleTime,
-  createFile,
-  saveData,
-  readData,
-} from "../../helpers/utils.js";
-import ProductManager from "./productManager.js";
-
-const productManager = new ProductManager();
+import { getLocaleTime } from "../../helpers/utils.js";
 
 class CartManager {
-  static #path = "./mock/carts.json";
   constructor() {
     this.carts = [];
-    CartManager.#path;
   }
+
+  _getNextId = () => {
+    const count = this.carts.length;
+    const nextId = count > 0 ? this.carts[count - 1].id + 1 : 1;
+
+    return nextId;
+  };
 
   createCart = async () => {
     try {
-      const fileExist = fs.existsSync(CartManager.#path);
-
-      if (!fileExist) {
-        await createFile(CartManager.#path);
-      }
-
       const carts = await this.readCarts();
 
       const cart = {
-        id: getNextId(CartManager.#path),
+        id: this._getNextId(),
         products: [],
       };
 
       carts.push(cart);
-      await saveData(carts, CartManager.#path);
 
       console.log(`Cart created successfully - ${getLocaleTime()}`);
       return carts;
@@ -45,28 +33,12 @@ class CartManager {
 
   readCarts = async () => {
     try {
-      const fileExist = fs.existsSync(CartManager.#path);
-
-      if (!fileExist) {
-        await createFile(CartManager.#path);
-
-        console.log(`[] - ${getLocaleTime()}`);
-
-        return undefined;
-      }
-
-      const carts = readData(CartManager.#path);
-
-      if (carts.length < 1) {
-        console.log(`[] - ${getLocaleTime()}`);
-
-        return undefined;
-      }
+      const carts = this.carts;
 
       return carts;
     } catch (err) {
       console.log(err);
-      return err;
+      return [];
     }
   };
 
@@ -96,38 +68,22 @@ class CartManager {
         throw new Error("Not found Cart");
       }
 
-      const product = await productManager.readProductById(Number(idP));
+      const productExist = cart.products.find(
+        (product) => product.id === String(idP)
+      );
 
-      if (quantity > product.stock) {
-        console.log(`Exceeds available stock - ${getLocaleTime()}`);
-        throw new Error("Exceeds available stock");
-      }
-
-      const productExist = cart.products.find((product) => product.id === Number(idP));
-
-      if (productExist) {
-        product.stock -= quantity;
+      if (productExist !== undefined) {
         productExist.quantity += quantity;
       } else {
-        product.stock -= quantity;
         cart.products.push({
           id: idP,
           quantity,
         });
       }
 
-      const newStock = product.stock;
-      const newStatus =
-        newStock === 0 ? (product.status = false) : (product.status = true);
-
-      await productManager.updateProduct(Number(idP), {
-        stock: newStock,
-        status: newStatus,
-      });
-      await saveData(carts, CartManager.#path);
-
       return cart;
     } catch (err) {
+        console.log(err);
       throw err;
     }
   };
@@ -143,12 +99,13 @@ class CartManager {
         throw new Error("Not found Cart");
       }
 
-      carts = carts.filter((i) => i.id !== Number(id));
-      await saveData(carts, CartManager.#path);
+      const newCarts = carts.filter((i) => i.id !== Number(id));
+      this.carts = newCarts;
 
       console.log(`Cart removed - ${getLocaleTime()}`);
       return true;
     } catch (err) {
+        console.log(err);
       throw err;
     }
   };
@@ -170,7 +127,6 @@ class CartManager {
       }
 
       cart.products = [];
-      await saveData(carts, CartManager.#path);
 
       console.log(`Cart was emptied - ${getLocaleTime()}`);
       return true;
@@ -184,8 +140,6 @@ class CartManager {
       let carts = await this.readCarts();
 
       const cart = Object.values(carts).find((i) => i.id === Number(idC));
-
-      console.log(cart);
 
       if (cart === undefined) {
         console.log(`Not found Cart - ${getLocaleTime()}`);
@@ -202,8 +156,6 @@ class CartManager {
       }
 
       cart.products.splice(productIndex, 1);
-
-      await saveData(carts, CartManager.#path);
 
       console.log(`Product removed successfully - ${getLocaleTime()}`);
       return true;
