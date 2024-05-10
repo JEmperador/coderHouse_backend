@@ -13,6 +13,7 @@ const configSwitch = {
   mongo_cluster: process.env.DB_MONGO_CLUSTER,
   mongo_app: process.env.DB_MONGO_APP,
   mongo_db: process.env.DB_MONGO_DB,
+  persistence: process.env.PERSISTENCE || "mongo",
 };
 
 export default configSwitch;

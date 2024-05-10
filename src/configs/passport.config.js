@@ -4,7 +4,7 @@ import local from "passport-local";
 import jwt from "passport-jwt";
 import github from "passport-github2";
 import google from "passport-google-oauth20";
-import { UserModel } from "../dao/models/user.model.js";
+import { UserModel } from "../models/user.model.js";
 import UserService from "../services/user.service.js";
 import {
   isValidPassword,

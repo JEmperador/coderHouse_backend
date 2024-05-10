@@ -6,7 +6,7 @@
     "price": 299.99,
     "thumbnail": "https://picsum.photos/200",
     "code": "AMD5600X",
-    "stock": 50,
+    "stock": 49,
     "category": "CPU",
     "status": true
   },
@@ -17,7 +17,7 @@
     "price": 699.99,
     "thumbnail": "https://picsum.photos/200",
     "code": "RTX3080",
-    "stock": 30,
+    "stock": 28,
     "category": "GPU",
     "status": true
   },
@@ -105,9 +105,9 @@
     "price": 129.99,
     "thumbnail": "https://picsum.photos/200",
     "code": "FOCUSGX750",
-    "stock": 45,
+    "stock": 100,
     "category": "PSU",
-    "status": true
+    "status": false
   },
   {
     "id": 11,

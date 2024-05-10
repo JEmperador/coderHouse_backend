@@ -1,13 +1,9 @@
 //Backend
-//File System
-import productsRouterFileSystem from "./fileSystem/products.routes.js";
-import cartsRouterFileSystem from "./fileSystem/carts.routes.js";
-//MongoDB
-import productRouterMongo from "./mongoDB/products.routes.js";
-import cartRouterMongo from "./mongoDB/carts.routes.js";
-import chatRouterMongo from "./mongoDB/chats.routes.js";
-import userRouterMongo from "./mongoDB/users.routes.js";
-import authenticationRouterMongo from "./mongoDB/authentication.routes.js";
+import productRouter from "./persistence/products.routes.js";
+import cartRouter from "./persistence/carts.routes.js";
+import chatRouter from "./persistence/chats.routes.js";
+import userRouter from "./persistence/users.routes.js";
+import authenticationRouter from "./persistence/authentication.routes.js";
 //Frontend
 import productsRouterView from "./views/products.view.js";
 import cartRouterView from "./views/cart.view.js";
@@ -17,13 +13,11 @@ import page404RouterView from "./views/page404.view.js";
 
 const router = (app) => {
   //Backend
-  app.use("/api", productsRouterFileSystem);
-  app.use("/api", cartsRouterFileSystem);
-  app.use("/api", productRouterMongo);
-  app.use("/api", cartRouterMongo);
-  app.use("/api", chatRouterMongo);
-  app.use("/api", userRouterMongo);
-  app.use("/api", authenticationRouterMongo);
+  app.use("/api", productRouter);
+  app.use("/api", cartRouter);
+  app.use("/api", chatRouter);
+  app.use("/api", userRouter);
+  app.use("/api", authenticationRouter);
   //Frontend
   app.use("/products", productsRouterView);
   app.use("/cart", cartRouterView);

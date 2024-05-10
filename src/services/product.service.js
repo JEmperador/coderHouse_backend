@@ -1,6 +1,6 @@
-import ProductManager from "../dao/mongoDB/productManager.js";
+import { productDAO } from "../dao/factory.js";
 
-const productManager = new ProductManager();
+const dao = new productDAO();
 
 class ProductService {
   createProduct = async (
@@ -13,7 +13,7 @@ class ProductService {
     category,
     status
   ) => {
-    const newProduct = await productManager.createProduct({
+    const newProduct = await dao.createProduct({
       title,
       description,
       price,
@@ -28,25 +28,25 @@ class ProductService {
   };
 
   readProducts = async (limit) => {
-    const products = await productManager.readProducts(limit);
+    const products = await dao.readProducts(limit);
 
     return products;
   };
 
   readProductById = async (idP) => {
-    const product = await productManager.readProductById(idP);
+    const product = await dao.readProductById(idP);
 
     return product;
   };
 
   updateProduct = async (idP, props) => {
-    const updatedProduct = await productManager.updateProduct(idP, props);
+    const updatedProduct = await dao.updateProduct(idP, props);
 
     return updatedProduct;
   };
 
   physicalDeleteProduct = async (idP) => {
-    const physicalDeletedProduct = await productManager.physicalDeleteProduct(
+    const physicalDeletedProduct = await dao.physicalDeleteProduct(
       idP
     );
 
@@ -54,7 +54,7 @@ class ProductService {
   };
 
   logicalDeleteProduct = async (idP) => {
-    const logicalDeletedProduct = await productManager.logicalDeleteProduct(
+    const logicalDeletedProduct = await dao.logicalDeleteProduct(
       idP
     );
 

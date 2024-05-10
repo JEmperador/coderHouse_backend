@@ -1,6 +1,7 @@
 import { Router } from "express";
 import passport from "passport";
 import { passportCall } from "../../helpers/middlewares.js";
+import ProfileDTO from "../../dto/profile.dto.js";
 
 const router = Router();
 
@@ -27,9 +28,11 @@ router.get(
   (req, res) => {
     const user = req.user.user;
 
+    const profile = new ProfileDTO(user)
+
     res.render("profile", {
       title: "Atlas Tech - Profile",
-      user: user,
+      profile: profile,
       req: req,
     });
   }
