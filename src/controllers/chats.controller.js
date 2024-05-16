@@ -73,7 +73,7 @@ export const logicalDeleteMessage = async (req, res) => {
 
     res.status(200).json(`Message with id: ${mid} was removed`);
   } catch (err) {
-    if (err.message.includes("Invalid Message")) {
+    if (err.message.includes("Invalid message")) {
       res.status(404).json(err.message);
     } else if (err.message.includes("Not found")) {
       res.status(404).json(err.message);

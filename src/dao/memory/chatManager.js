@@ -74,7 +74,6 @@ class ChatManager {
   };
 
   physicalDeleteMessage = async (id) => {
-    console.log("AQUI VA EL BORRADO FISICO DEL MENSAJE POR ID");
     try {
       let chats = await this.readMessages();
 
@@ -96,7 +95,6 @@ class ChatManager {
   };
 
   logicalDeleteMessage = async (id) => {
-    console.log("AQUI VA EL BORRADO LOGICO DEL MENSAJE POR ID");
     try {
       let chats = await this.readMessages();
 

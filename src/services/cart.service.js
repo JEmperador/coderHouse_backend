@@ -9,6 +9,12 @@ class CartService {
     return "Cart was created successfully";
   };
 
+  createPurchase = async (purchase) => {
+    const newPurchase = await dao.createPurchase(purchase);
+
+    return newPurchase;
+  }
+
   readCarts = async (limit) => {
     const Carts = await dao.readCarts(limit);
 
@@ -20,6 +26,12 @@ class CartService {
 
     return cart;
   };
+
+  readCartAmountById = async (idC) => {
+    const total = await dao.readCartAmountById(idC);
+
+    return total;
+  }
 
   updateCart = async (idC, idP, quantity) => {
     const updatedCart = await dao.updateCart(idC, idP, quantity);

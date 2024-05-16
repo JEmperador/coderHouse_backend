@@ -1,37 +1,14 @@
 import ProductService from "../../services/product.service.js"
 import { Router } from "express";
 import { ProductModel } from "../../models/product.model.js";
-import passport from "passport";
 import { passportCall } from "../../helpers/middlewares.js";
 
 const productService = new ProductService();
 const router = Router();
 
 router.get(
-  "/realtimeproducts",
-  passportCall("jwt"),
-  passport.authenticate("jwt", { session: false }),
-  async (req, res) => {
-    const { limit } = req.query;
-
-    try {
-      const products = await productService.readProducts(limit);
-
-      res.render("realtimeproducts", {
-        title: "Atlas Tech | Products",
-        products: products,
-        req: req,
-      });
-    } catch (err) {
-      res.status(500).json(err);
-    }
-  }
-);
-
-router.get(
   "/:pid",
   passportCall("jwt"),
-  passport.authenticate("jwt", { session: false }),
   async (req, res) => {
     const { pid } = req.params;
 
@@ -52,7 +29,6 @@ router.get(
 router.get(
   "/",
   passportCall("jwt"),
-  passport.authenticate("jwt", { session: false }),
   async (req, res) => {
     try {
       const page = Number(req.query?.page) || 1;

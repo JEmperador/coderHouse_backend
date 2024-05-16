@@ -1,5 +1,4 @@
 import { Router } from "express";
-import passport from "passport";
 import { passportCall } from "../../helpers/middlewares.js";
 import ProfileDTO from "../../dto/profile.dto.js";
 
@@ -24,7 +23,6 @@ router.get("/register", (req, res) => {
 router.get(
   "/profile",
   passportCall("jwt"),
-  passport.authenticate("jwt", { session: false }),
   (req, res) => {
     const user = req.user.user;
 

@@ -12,6 +12,29 @@ export const createCart = async (req, res) => {
   }
 };
 
+export const createPurchase = async (req, res) => {
+  let { cid } = req.params;
+  let { buyer } = req.body;
+
+  try {
+    const purchase = await cartService.createPurchase({ cid, buyer });
+
+    res.status(201).json(purchase);
+  } catch (err) {
+    if (err.message.includes("Invalid cart")) {
+      res.status(404).json(err.message);
+    } else if (err.message.includes("Not found Cart")) {
+      res.status(404).json(err.message);
+    } else if (err.message.includes("Buyer is")) {
+      res.status(404).json(err.message);
+    } else if (err.message.includes("This products")) {
+      res.status(404).json(err.message);
+    } else {
+      res.status(500).json(err);
+    }
+  }
+};
+
 export const readCarts = async (req, res) => {
   const { limit } = req.query;
 
@@ -28,13 +51,33 @@ export const readCartById = async (req, res) => {
   let { cid } = req.params;
 
   try {
-    const product = await cartService.readCartById(cid);
+    const cart = await cartService.readCartById(cid);
 
-    res.status(200).json(product);
+    res.status(200).json(cart);
   } catch (err) {
     if (err.message.includes("Invalid cart")) {
       res.status(404).json(err.message);
     } else if (err.message.includes("Not found")) {
+      res.status(404).json(err.message);
+    } else {
+      res.status(500).json(err);
+    }
+  }
+};
+
+export const readCartAmountById = async (req, res) => {
+  const { cid } = req.params;
+
+  try {
+    const total = await cartService.readCartAmountById(cid);
+
+    res.status(200).json(total);
+  } catch (err) {
+    if (err.message.includes("Invalid cart")) {
+      res.status(404).json(err.message);
+    } else if (err.message.includes("Not found")) {
+      res.status(404).json(err.message);
+    } else if (err.message.includes("Cart is")) {
       res.status(404).json(err.message);
     } else {
       res.status(500).json(err);

@@ -1,7 +1,7 @@
 import CartService from "../../services/cart.service.js";
 import { Router } from "express";
-import passport from "passport";
 import { passportCall } from "../../helpers/middlewares.js";
+import ProfileDTO from "../../dto/profile.dto.js";
 
 const cartService = new CartService();
 const router = Router();
@@ -9,12 +9,15 @@ const router = Router();
 router.get(
   "/:cid",
   passportCall("jwt"),
-  passport.authenticate("jwt", { session: false }),
   async (req, res) => {
     const { cid } = req.params;
 
     try {
       const cart = await cartService.readCartById(cid);
+
+      const amount = await cartService.readCartAmountById(cid)
+
+      cart.amount = amount;
 
       res.render("cart", {
         title: "Atlas Tech | Cart",
@@ -26,5 +29,28 @@ router.get(
     }
   }
 );
+
+router.get("/:cid/purchase",
+  passportCall("jwt"),
+  async (req, res) => {
+    const { cid } = req.params;
+
+    try {
+      const user = req.user.user;
+
+      const buyer = user.email;
+
+      const ticket = await cartService.createPurchase({cid, buyer})
+      
+      res.render("purchase", {
+        title: "Atlas Tech | Checkout",
+        ticket: ticket,
+        req: req,
+      });
+    } catch (err) {
+      
+    }
+  }
+)
 
 export default router;
