@@ -3,7 +3,6 @@ import { CartModel } from "../../models/cart.model.js";
 import TicketManager from "./ticketManager.js";
 import ProductManager from "./productManager.js";
 import { getLocaleTime } from "../../helpers/utils.js";
-//import transport from "../../configs/transport.config.js";
 
 const ticketManager = new TicketManager();
 const productManager = new ProductManager();
