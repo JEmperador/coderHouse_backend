@@ -121,6 +121,11 @@ export function getLocaleTime() {
   return time;
 }
 
+export function getLocaleDateTime() {
+  const dateTime = new Date().toLocaleString();
+  return dateTime;
+}
+
 //JWT
 export const generateToken = (user) => {
   const token = jwt.sign({ user }, process.env.SECRET_JWT, { expiresIn: "2h" });
@@ -137,6 +142,6 @@ export const socketUserName = (cookiesSocket) => {
     const decodeToken = jwt.decode(token);
     userName = decodeToken.user.email;
   }
-  
-  return userName
+
+  return userName;
 };

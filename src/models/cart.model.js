@@ -20,7 +20,7 @@ const cartSchema = new mongoose.Schema({
 });
 
 cartSchema.pre("findOne", function () {
-  this.populate("products.product", "_id title price thumbnail category");
+  this.populate("products.product", "_id title price thumbnail stock category");
 });
 
 export const CartModel = mongoose.model(cartsCollection, cartSchema);

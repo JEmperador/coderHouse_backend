@@ -86,6 +86,35 @@ class CartManager {
     }
   };
 
+  readCartAmountById = async (idC) => {
+    try {
+      const cart = await this.readCartById(idC);
+
+      if (!cart) {
+        console.error(`Not found Cart - ${getLocaleTime()}`);
+        throw new Error("Not found Cart");
+      }
+
+      const products = cart.products;
+
+      if (!Object.keys(products).length > 0) {
+        console.error(`Cart is empty - ${getLocaleTime()}`);
+        throw new Error("Cart is empty");
+      }
+
+      const total = 0;
+
+      products.forEach((product) => {
+        total += product.product.price;
+      });
+
+      console.log(`Cart amount: $${total} - ${getLocaleTime()}`);
+      return total;
+    } catch (err) {
+      throw err;
+    }
+  };
+
   updateCart = async (idC, idP, quantity) => {
     try {
       const carts = await this.readCarts();
@@ -103,7 +132,9 @@ class CartManager {
         throw new Error("Exceeds available stock");
       }
 
-      const productExist = cart.products.find((product) => product.id === Number(idP));
+      const productExist = cart.products.find(
+        (product) => product.id === Number(idP)
+      );
 
       if (productExist) {
         product.stock -= quantity;
@@ -184,8 +215,6 @@ class CartManager {
       let carts = await this.readCarts();
 
       const cart = Object.values(carts).find((i) => i.id === Number(idC));
-
-      console.log(cart);
 
       if (cart === undefined) {
         console.log(`Not found Cart - ${getLocaleTime()}`);

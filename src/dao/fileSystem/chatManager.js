@@ -34,6 +34,8 @@ class ChatManager {
 
       chats.push(chat);
       await saveData(chats, ChatManager.#path);
+
+      return true;
     } catch (err) {
       console.log(`${err} - ${getLocaleTime()}`);
       return err;
@@ -52,7 +54,7 @@ class ChatManager {
 
       return chats;
     } catch (err) {
-      console.log(`${err} - ${getLocaleTime()}`);
+      console.log(`[] - ${getLocaleTime()}`);
       return err;
     }
   };
@@ -88,7 +90,6 @@ class ChatManager {
   };
 
   physicalDeleteMessage = async (id) => {
-    console.log("AQUI VA EL BORRADO FISICO DEL MENSAJE POR ID");
     try {
       let chats = await this.readMessages();
 
@@ -110,7 +111,6 @@ class ChatManager {
   };
 
   logicalDeleteMessage = async (id) => {
-    console.log("AQUI VA EL BORRADO LOGICO DEL MENSAJE POR ID");
     try {
       let chats = await this.readMessages();
 
