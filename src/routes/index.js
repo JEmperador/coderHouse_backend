@@ -5,7 +5,6 @@ import chatRouter from "./persistence/chats.routes.js";
 import userRouter from "./persistence/users.routes.js";
 import authenticationRouter from "./persistence/authentication.routes.js";
 import ticketRouter from "./persistence/ticket.routes.js";
-import mailRouter from "./other/mails.routes.js";
 //Frontend
 import productsRouterView from "./views/products.view.js";
 import productsAdminRouterView from "./views/productsAdmin.view.js";
@@ -23,7 +22,6 @@ const router = (app) => {
   app.use("/api", chatRouter);
   app.use("/api", userRouter);
   app.use("/api", authenticationRouter);
-  app.use("/api", mailRouter);
   app.use("/api", ticketRouter);
   //Frontend
   app.use("/products", checkRole(["user"]), productsRouterView);

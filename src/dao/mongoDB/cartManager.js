@@ -3,6 +3,7 @@ import { CartModel } from "../../models/cart.model.js";
 import TicketManager from "./ticketManager.js";
 import ProductManager from "./productManager.js";
 import { getLocaleTime } from "../../helpers/utils.js";
+//import transport from "../../configs/transport.config.js";
 
 const ticketManager = new TicketManager();
 const productManager = new ProductManager();
@@ -21,7 +22,6 @@ class CartManager {
   };
 
   createPurchase = async (purchase) => {
-    console.log("desde manager", purchase);
     try {
       const cartId = purchase.cid;
       const purchaser = purchase.buyer;
@@ -145,11 +145,6 @@ class CartManager {
       }
 
       const products = cart.products;
-
-      if (!Object.keys(products).length > 0) {
-        console.error(`Cart is empty - ${getLocaleTime()}`);
-        throw new Error("Cart is empty");
-      }
 
       let total = 0;
 
