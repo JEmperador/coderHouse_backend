@@ -5,7 +5,6 @@ import mongoose from "mongoose";
 
 class TicketManager {
   createTicket = async (ticket) => {
-    console.log(ticket);
     try {
       if (!ticket.amount || !ticket.purchaser) {
         console.log(`All fields are required - ${getLocaleTime()}`);

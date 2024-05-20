@@ -50,8 +50,6 @@ router.get("/:cid/purchase", passportCall("jwt"), async (req, res) => {
               <p>Yor ticket id: ${ticketId}<p/>`,
     });
 
-    console.log("front", result);
-
     res.render("purchase", {
       title: "Atlas Tech | Checkout",
       ticket: ticket,

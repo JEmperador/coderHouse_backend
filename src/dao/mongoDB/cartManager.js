@@ -74,7 +74,6 @@ class CartManager {
       });
 
       //Cart update
-      //NO LLEGA EL AMOUNT PORQUE BORRO PRIMERO EL CARRITO Y LUEGO LO SOBRE ESCRIBO ENTIENDO
       const result = await this.physicalDeleteProducts(cartId);
       productsInCartButNotInProducts.forEach(async (product) => {
         try {          
@@ -101,7 +100,6 @@ class CartManager {
 
       return ticketId;
     } catch (err) {
-      console.log(err);
       throw err;
     }
   };
