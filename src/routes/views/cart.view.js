@@ -2,9 +2,7 @@ import CartService from "../../services/cart.service.js";
 import { Router } from "express";
 import { passportCall } from "../../helpers/middlewares.js";
 import {
-  gmailTransport,
-  outlookTransport,
-  getTransport,
+  getTransport
 } from "../../configs/transport.config.js";
 
 const cartService = new CartService();
@@ -51,8 +49,6 @@ router.get("/:cid/purchase", passportCall("jwt"), async (req, res) => {
       html: `<h1>Congratulations</h1>
               <p>Yor ticket id: ${ticketId}<p/>`,
     });
-
-    console.log("front", result);
 
     res.render("purchase", {
       title: "Atlas Tech | Checkout",

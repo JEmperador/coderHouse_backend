@@ -31,4 +31,4 @@ const getTransport = (email) => {
   }
 };
 
-export { gmailTransport, outlookTransport, getTransport };
+export { getTransport };
