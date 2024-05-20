@@ -1,4 +1,5 @@
 import express from "express";
+import compression from "express-compression";
 import router from "./routes/index.js";
 import hbs from "./configs/handlebars.config.js";
 import morgan from "morgan";
@@ -11,6 +12,15 @@ import socketioHandler from "./helpers/socket.js";
 const app = express();
 
 const PORT = process.env.PORT || 8080;
+
+app.use(
+  compression({
+    brotli: {
+      enabled: true,
+      zlib: {},
+    },
+  })
+);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

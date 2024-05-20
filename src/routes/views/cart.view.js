@@ -2,9 +2,7 @@ import CartService from "../../services/cart.service.js";
 import { Router } from "express";
 import { passportCall } from "../../helpers/middlewares.js";
 import {
-  gmailTransport,
-  outlookTransport,
-  getTransport,
+  getTransport
 } from "../../configs/transport.config.js";
 
 const cartService = new CartService();

@@ -28,6 +28,8 @@ class CartManager {
       const cart = await this.readCartById(cartId);
       const products = await productManager.readProducts();
 
+      const amount = await this.readCartAmountById(cartId);
+
       if (!purchase.buyer) {
         console.error(`Buyer is missing - ${getLocaleTime()}`);
         throw new Error("Buyer is missing");
@@ -57,20 +59,28 @@ class CartManager {
         const productStock = productInCart.product.stock;
         const productQuantity = productInCart.quantity;
 
+        //Products out of Stock
+        if (productQuantity > productStock) {
+          productsInCartButNotInProducts.push(productInCart)
+          return;
+        }
+
         const newStock = (productInCart.product.stock -=
           productInCart.quantity);
-        console.log(productId, productStock, productQuantity, newStock);
+
         const updatedProduct = await productManager.updateProduct(productId, {
           stock: newStock,
         });
       });
 
       //Cart update
+      //NO LLEGA EL AMOUNT PORQUE BORRO PRIMERO EL CARRITO Y LUEGO LO SOBRE ESCRIBO ENTIENDO
+      const result = await this.physicalDeleteProducts(cartId);
       productsInCartButNotInProducts.forEach(async (product) => {
-        try {
-          const updatedCart = await updateCart(
+        try {          
+          const updatedCart = await this.updateCart(
             cartId,
-            product._id,
+            product.product._id,
             product.quantity
           );
         } catch (err) {
@@ -80,8 +90,6 @@ class CartManager {
           throw new Error("An error occurred while updating the cart");
         }
       });
-
-      const amount = await this.readCartAmountById(cartId);
 
       const ticket = await ticketManager.createTicket({ amount, purchaser });
 
