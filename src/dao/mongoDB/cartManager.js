@@ -3,6 +3,14 @@ import { CartModel } from "../../models/cart.model.js";
 import TicketManager from "./ticketManager.js";
 import ProductManager from "./productManager.js";
 import { getLocaleTime } from "../../helpers/utils.js";
+import CustomError from "../../helpers/errors/custom-error.js";
+import {
+  generateInvalidIdProductErrorInfo,
+  generateNotFoundProductErrorInfo,
+  generateInvalidIdCartErrorInfo,
+  generateNotFoundCartErrorInfo,
+} from "../../helpers/errors/info.js";
+import { Errors } from "../../helpers/errors/enum.js";
 
 const ticketManager = new TicketManager();
 const productManager = new ProductManager();
@@ -61,7 +69,7 @@ class CartManager {
 
         //Products out of Stock
         if (productQuantity > productStock) {
-          productsInCartButNotInProducts.push(productInCart)
+          productsInCartButNotInProducts.push(productInCart);
           return;
         }
 
@@ -76,7 +84,7 @@ class CartManager {
       //Cart update
       const result = await this.physicalDeleteProducts(cartId);
       productsInCartButNotInProducts.forEach(async (product) => {
-        try {          
+        try {
           const updatedCart = await this.updateCart(
             cartId,
             product.product._id,
@@ -119,14 +127,24 @@ class CartManager {
     try {
       if (!mongoose.Types.ObjectId.isValid(idC)) {
         console.log(`Invalid cart ID - ${getLocaleTime()}`);
-        throw new Error("Invalid cart ID");
+        throw CustomError.createError({
+          name: "Invalid cart ID",
+          cause: generateInvalidIdCartErrorInfo(idC),
+          message: "Error when trying to read a cart",
+          code: Errors.INVALID_ID,
+        });
       }
 
       const cart = await CartModel.findById(idC);
 
       if (!cart) {
         console.error(`Not found Cart - ${getLocaleTime()}`);
-        throw new Error("Not found Cart");
+        throw CustomError.createError({
+          name: "Not found Cart",
+          cause: generateNotFoundCartErrorInfo(),
+          message: "Error when trying to read a cart",
+          code: Errors.NOT_FOUND,
+        });
       }
 
       return cart;
@@ -139,14 +157,24 @@ class CartManager {
     try {
       if (!mongoose.Types.ObjectId.isValid(idC)) {
         console.log(`Invalid cart ID - ${getLocaleTime()}`);
-        throw new Error("Invalid cart ID");
+        throw CustomError.createError({
+          name: "Invalid cart ID",
+          cause: generateInvalidIdCartErrorInfo(idC),
+          message: "Error when trying to read a cart",
+          code: Errors.INVALID_ID,
+        });
       }
 
       const cart = await CartModel.findById(idC);
 
       if (!cart) {
         console.error(`Not found Cart - ${getLocaleTime()}`);
-        throw new Error("Not found Cart");
+        throw CustomError.createError({
+          name: "Not found Cart",
+          cause: generateNotFoundCartErrorInfo(),
+          message: "Error when trying to read a cart",
+          code: Errors.NOT_FOUND,
+        });
       }
 
       const products = cart.products;
@@ -168,19 +196,34 @@ class CartManager {
     try {
       if (!mongoose.Types.ObjectId.isValid(idC)) {
         console.log(`Invalid cart ID - ${getLocaleTime()}`);
-        throw new Error("Invalid cart ID");
+        throw CustomError.createError({
+          name: "Invalid cart ID",
+          cause: generateInvalidIdCartErrorInfo(idC),
+          message: "Error when trying to update a cart",
+          code: Errors.INVALID_ID,
+        });
       }
 
       if (!mongoose.Types.ObjectId.isValid(idP)) {
         console.log(`Invalid product ID - ${getLocaleTime()}`);
-        throw new Error("Invalid product ID");
+        throw CustomError.createError({
+          name: "Invalid product ID",
+          cause: generateInvalidIdProductErrorInfo(idP),
+          message: "Error when trying to update a product",
+          code: Errors.INVALID_ID,
+        });
       }
 
       const cart = await CartModel.findById(idC);
 
       if (!cart) {
         console.log(`Not found Cart - ${getLocaleTime()}`);
-        throw new Error("Not found Cart");
+        throw CustomError.createError({
+          name: "Not found Cart",
+          cause: generateNotFoundCartErrorInfo(),
+          message: "Error when trying to update a cart",
+          code: Errors.NOT_FOUND,
+        });
       }
 
       const existingProduct = cart.products.find((product) =>
@@ -206,14 +249,24 @@ class CartManager {
     try {
       if (!mongoose.Types.ObjectId.isValid(idC)) {
         console.log(`Invalid cart ID - ${getLocaleTime()}`);
-        throw new Error("Invalid cart ID");
+        throw CustomError.createError({
+          name: "Invalid cart ID",
+          cause: generateInvalidIdCartErrorInfo(idC),
+          message: "Error when trying to delete a cart",
+          code: Errors.INVALID_ID,
+        });
       }
 
       const cartDeleted = await CartModel.findByIdAndDelete(idC);
 
       if (!cartDeleted) {
         console.log(`Not found Cart - ${getLocaleTime()}`);
-        throw new Error("Not found Cart");
+        throw CustomError.createError({
+          name: "Not found Cart",
+          cause: generateNotFoundCartErrorInfo(),
+          message: "Error when trying to delete a cart",
+          code: Errors.NOT_FOUND,
+        });
       }
 
       console.log(`Cart removed - ${getLocaleTime()}`);
@@ -227,14 +280,24 @@ class CartManager {
     try {
       if (!mongoose.Types.ObjectId.isValid(idC)) {
         console.log(`Invalid cart ID - ${getLocaleTime()}`);
-        throw new Error("Invalid cart ID");
+        throw CustomError.createError({
+          name: "Invalid cart ID",
+          cause: generateInvalidIdCartErrorInfo(idC),
+          message: "Error when trying to remove products from cart",
+          code: Errors.INVALID_ID,
+        });
       }
 
       const cart = await CartModel.findById(idC);
 
       if (!cart) {
         console.log("Not found Cart");
-        throw new Error("Not found Cart");
+        throw CustomError.createError({
+          name: "Not found Cart",
+          cause: generateNotFoundCartErrorInfo(),
+          message: "Error when trying to remove products from cart",
+          code: Errors.NOT_FOUND,
+        });
       }
 
       if (cart.products.length === 0) {
@@ -257,12 +320,22 @@ class CartManager {
     try {
       if (!mongoose.Types.ObjectId.isValid(idC)) {
         console.log(`Invalid cart ID - ${getLocaleTime()}`);
-        throw new Error("Invalid cart ID");
+        throw CustomError.createError({
+          name: "Invalid cart ID",
+          cause: generateInvalidIdCartErrorInfo(idC),
+          message: "Error when trying to remove product from cart",
+          code: Errors.INVALID_ID,
+        });
       }
 
       if (!mongoose.Types.ObjectId.isValid(idP)) {
         console.log(`Invalid product ID - ${getLocaleTime()}`);
-        throw new Error("Invalid product ID");
+        throw CustomError.createError({
+          name: "Invalid product ID",
+          cause: generateInvalidIdProductErrorInfo(idP),
+          message: "Error when trying to remove product from cart",
+          code: Errors.INVALID_ID,
+        });
       }
 
       const updatedCart = await CartModel.findByIdAndUpdate(idC, {
@@ -271,7 +344,12 @@ class CartManager {
 
       if (!updatedCart) {
         console.log(`Not found Cart - ${getLocaleTime()}`);
-        throw new Error("Not found Cart");
+        throw CustomError.createError({
+          name: "Not found Cart",
+          cause: generateNotFoundCartErrorInfo(),
+          message: "Error when trying to remove product from cart",
+          code: Errors.NOT_FOUND,
+        });
       }
 
       const productPosition = updatedCart.products.findIndex(
@@ -280,7 +358,12 @@ class CartManager {
 
       if (productPosition === -1) {
         console.log(`Not found Product - ${getLocaleTime()}`);
-        throw new Error("Not found Product");
+        throw CustomError.createError({
+          name: "Not found Product",
+          cause: generateNotFoundProductErrorInfo(),
+          message: "Error when trying to remove product from cart",
+          code: Errors.NOT_FOUND,
+        });
       }
 
       updatedCart.products.splice(productPosition, 1);

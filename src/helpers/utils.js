@@ -6,6 +6,7 @@ import { UserModel } from "../models/user.model.js";
 import { hashSync, compareSync, genSaltSync } from "bcrypt";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
+import { faker } from "@faker-js/faker";
 
 dotenv.config();
 
@@ -144,4 +145,44 @@ export const socketUserName = (cookiesSocket) => {
   }
 
   return userName;
+};
+
+//Nodemailer
+export const emailSender = async (transport, email, ticket) => {
+  const mailOptions = {
+    from: "Atlas Tech <javier_emperador@outlook.com>",
+    to: `${email}`,
+    subject: "Congratulations on your purchase",
+    html: `<h1>Congratulations</h1>
+          <p>Yor ticket id: ${ticket}<p/>`,
+  };
+
+  try {
+    const result = await transport.sendMail(mailOptions);
+
+    return result;
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+//Faker
+const categories = ["CPU", "GPU", "PSU", "RAM", "MOTHER"];
+
+const getRandomCategory = () => {
+  return categories[Math.floor(Math.random() * categories.length)];
+};
+
+export const productGenerator = () => {
+  return {
+    id: faker.database.mongodbObjectId(),
+    title: faker.commerce.productName(),
+    description: faker.commerce.productDescription(),
+    price: faker.commerce.price(),
+    thumbnail: faker.image.urlPicsumPhotos(),
+    code: faker.string.uuid(),
+    stock: faker.number.int({ min: 0, max: 100 }),
+    category: getRandomCategory(),
+    status: faker.datatype.boolean(),
+  };
 };

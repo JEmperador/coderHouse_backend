@@ -1,6 +1,15 @@
 import mongoose from "mongoose";
 import { ProductModel } from "../../models/product.model.js";
 import { getLocaleTime } from "../../helpers/utils.js";
+import CustomError from "../../helpers/errors/custom-error.js";
+import {
+  generateFieldProductErrorInfo,
+  generateInvalidIdProductErrorInfo,
+  generateNotFoundProductErrorInfo,
+  generateInvalidCodeProductErrorInfo,
+  generateCannotUpdateProductErrorInfo,
+} from "../../helpers/errors/info.js";
+import { Errors } from "../../helpers/errors/enum.js";
 
 class ProductManager {
   createProduct = async (product) => {
@@ -14,7 +23,12 @@ class ProductManager {
         !product.category
       ) {
         console.log(`All fields are required - ${getLocaleTime()}`);
-        throw new Error("All fields are required");
+        throw CustomError.createError({
+          name: "All fields are required",
+          cause: generateFieldProductErrorInfo(product),
+          message: "Error when trying to create a product",
+          code: Errors.ALL_FIELD_REQUIRED,
+        });
       }
 
       const validateCode = await ProductModel.findOne({ code: product.code });
@@ -25,7 +39,12 @@ class ProductManager {
             product.code
           } already exists - ${getLocaleTime()}`
         );
-        throw new Error(`Product with code ${product.code} already exists`);
+        throw CustomError.createError({
+          name: "Product with code already exists",
+          cause: generateInvalidCodeProductErrorInfo(product.code),
+          message: "Error when trying to create a product",
+          code: Errors.INVALID_CODE,
+        });
       }
 
       product.status = product.stock > 0 ? true : false;
@@ -57,14 +76,24 @@ class ProductManager {
     try {
       if (!mongoose.Types.ObjectId.isValid(idP)) {
         console.log(`Invalid product ID - ${getLocaleTime()}`);
-        throw new Error("Invalid product ID");
+        throw CustomError.createError({
+          name: "Invalid product ID",
+          cause: generateInvalidIdProductErrorInfo(idP),
+          message: "Error when trying to read a product",
+          code: Errors.INVALID_ID,
+        });
       }
 
       const product = await ProductModel.findById(idP);
 
       if (!product) {
         console.log(`Not found Product - ${getLocaleTime()}`);
-        throw new Error("Not found Product");
+        throw CustomError.createError({
+          name: "Not found Product",
+          cause: generateNotFoundProductErrorInfo(),
+          message: "Error when trying to read a product",
+          code: Errors.NOT_FOUND,
+        });
       }
 
       return product;
@@ -77,14 +106,24 @@ class ProductManager {
     try {
       if (!mongoose.Types.ObjectId.isValid(idP)) {
         console.log(`Invalid product ID - ${getLocaleTime()}`);
-        throw new Error("Invalid product ID");
+        throw CustomError.createError({
+          name: "Invalid product ID",
+          cause: generateInvalidIdProductErrorInfo(idP),
+          message: "Error when trying to update a product",
+          code: Errors.INVALID_ID,
+        });
       }
 
       if (props.hasOwnProperty("id") || props.hasOwnProperty("code")) {
         console.log(
           `Cannot update 'id' or 'code' property - ${getLocaleTime()}`
         );
-        throw new Error("Cannot update 'id' or 'code' property");
+        throw CustomError.createError({
+          name: "Cannot update 'id' or 'code' property",
+          cause: generateCannotUpdateProductErrorInfo(props._id, props.code),
+          message: "Error when trying to update a product",
+          code: Errors.NOT_FOUND,
+        });
       }
 
       if (props.hasOwnProperty("stock")) {
@@ -97,7 +136,12 @@ class ProductManager {
 
       if (!newProduct) {
         console.log(`Not found Product - ${getLocaleTime()}`);
-        throw new Error(`Not found Product`);
+        throw CustomError.createError({
+          name: "Not found Product",
+          cause: generateNotFoundProductErrorInfo(),
+          message: "Error when trying to update a product",
+          code: Errors.NOT_FOUND,
+        });
       }
 
       console.log(newProduct);
@@ -111,14 +155,24 @@ class ProductManager {
     try {
       if (!mongoose.Types.ObjectId.isValid(idP)) {
         console.log(`Invalid product ID - ${getLocaleTime()}`);
-        throw new Error("Invalid product ID");
+        throw CustomError.createError({
+          name: "Invalid product ID",
+          cause: generateInvalidIdProductErrorInfo(idP),
+          message: "Error when trying to delete a product",
+          code: Errors.INVALID_ID,
+        });
       }
 
       const productDeleted = await ProductModel.findByIdAndDelete(idP);
 
       if (!productDeleted) {
         console.log(`Not found Product - ${getLocaleTime()}`);
-        throw new Error("Not found Product");
+        throw CustomError.createError({
+          name: "Not found Product",
+          cause: generateNotFoundProductErrorInfo(),
+          message: "Error when trying to delete a product",
+          code: Errors.NOT_FOUND,
+        });
       }
 
       console.log(`Product removed - ${getLocaleTime()}`);
@@ -132,7 +186,12 @@ class ProductManager {
     try {
       if (!mongoose.Types.ObjectId.isValid(idP)) {
         console.log(`Invalid product ID - ${getLocaleTime()}`);
-        throw new Error("Invalid product ID");
+        throw CustomError.createError({
+          name: "Invalid product ID",
+          cause: generateInvalidIdProductErrorInfo(idP),
+          message: "Error when trying to delete a product",
+          code: Errors.INVALID_ID,
+        });
       }
 
       const updatedProduct = await ProductModel.findByIdAndUpdate(
@@ -143,7 +202,12 @@ class ProductManager {
 
       if (!updatedProduct) {
         console.log(`Not found Product - ${getLocaleTime()}`);
-        throw new Error("Not found Product");
+        throw CustomError.createError({
+          name: "Not found Product",
+          cause: generateNotFoundProductErrorInfo(),
+          message: "Error when trying to delete a product",
+          code: Errors.NOT_FOUND,
+        });
       }
 
       console.log(`Product removed - ${getLocaleTime()}`);
