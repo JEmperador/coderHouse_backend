@@ -80,11 +80,11 @@ export const updateCart = async (req, res, next) => {
 
     res.status(200).json("Product was added correctly");
   } catch (err) {
-    next(err)
+    next(err);
   }
 };
 
-export const physicalDeleteCart = async (req, res) => {
+export const physicalDeleteCart = async (req, res, next) => {
   const { cid } = req.params;
 
   try {
@@ -92,13 +92,7 @@ export const physicalDeleteCart = async (req, res) => {
 
     res.status(200).json(`Cart with id: ${cid} was removed`);
   } catch (err) {
-    if (err.message.includes("Invalid cart")) {
-      res.status(404).json(err.message);
-    } else if (err.message.includes("Not found")) {
-      res.status(404).json(err.message);
-    } else {
-      res.status(500).json(err);
-    }
+    next(err);
   }
 };
 
@@ -122,7 +116,7 @@ export const physicalDeleteProducts = async (req, res) => {
   }
 };
 
-export const physicalDeleteProductById = async (req, res) => {
+export const physicalDeleteProductById = async (req, res, next) => {
   const { cid, pid } = req.params;
 
   try {
@@ -130,16 +124,6 @@ export const physicalDeleteProductById = async (req, res) => {
 
     res.status(200).json(`Product with id: ${pid} has been removed`);
   } catch (err) {
-    if (err.message.includes("Invalid cart")) {
-      res.status(404).json(err.message);
-    } else if (err.message.includes("Invalid product")) {
-      res.status(404).json(err.message);
-    } else if (err.message.includes("Not found Cart")) {
-      res.status(404).json(err.message);
-    } else if (err.message.includes("Not found Product")) {
-      res.status(404).json(err.message);
-    } else {
-      res.status(500).json(err);
-    }
+    next(err);
   }
 };

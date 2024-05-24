@@ -47,7 +47,7 @@ export const checkRole = (allowedRoles) => (req, res, next) => {
 };
 
 export const handlerError = (err, req, res, next) => {
-  //console.log(err.cause);
+  console.log(err.cause);
   switch (err.code) {
     case Errors.ALL_FIELD_REQUIRED:
       res.status(400).json({ status: "error", error: err.name });
