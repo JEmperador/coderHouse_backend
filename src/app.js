@@ -8,6 +8,7 @@ import passport from "passport";
 import cookieParser from "cookie-parser";
 import { initializePassport } from "./configs/passport.config.js";
 import socketioHandler from "./helpers/socket.js";
+import { handlerError } from "./helpers/middlewares.js";
 
 const app = express();
 
@@ -37,6 +38,7 @@ app.use(passport.initialize());
 initializePassport();
 
 router(app);
+app.use(handlerError);
 
 const httpServer = app.listen(PORT, () => {
   console.log(`Server is running at: http://localhost:${PORT}`);

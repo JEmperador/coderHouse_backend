@@ -1,9 +1,8 @@
 import CartService from "../../services/cart.service.js";
 import { Router } from "express";
 import { passportCall } from "../../helpers/middlewares.js";
-import {
-  getTransport
-} from "../../configs/transport.config.js";
+import { getTransport } from "../../configs/transport.config.js";
+import { emailSender } from "../../helpers/utils.js";
 
 const cartService = new CartService();
 const router = Router();
@@ -42,13 +41,7 @@ router.get("/:cid/purchase", passportCall("jwt"), async (req, res) => {
 
     const transport = getTransport(buyer);
 
-    const result = await transport.sendMail({
-      from: "Atlas Tech <javier_emperador@outlook.com>",
-      to: `${buyer}`,
-      subject: "Congratulations on your purchase",
-      html: `<h1>Congratulations</h1>
-              <p>Yor ticket id: ${ticketId}<p/>`,
-    });
+    await emailSender(transport, buyer, ticketId);
 
     res.render("purchase", {
       title: "Atlas Tech | Checkout",
