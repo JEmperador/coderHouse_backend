@@ -3,7 +3,7 @@ import { generateToken } from "../helpers/utils.js";
 
 const userService = new UserService();
 
-export const createUser = async (req, res) => {
+export const createUser = async (req, res, next) => {
   const { first_name, last_name, email, age, password, social, role } =
     req.body;
 
@@ -20,13 +20,7 @@ export const createUser = async (req, res) => {
 
     res.status(201).json("User created");
   } catch (err) {
-    if (err.message.includes("All fields")) {
-      res.status(404).json(err.message);
-    } else if (err.message.includes("Email")) {
-      res.status(404).json(err.message);
-    } else {
-      res.status(500).json(err);
-    }
+    next(err);
   }
 };
 
@@ -40,7 +34,7 @@ export const readUsers = async (req, res) => {
   }
 };
 
-export const readUserByEmail = async (req, res) => {
+export const readUserByEmail = async (req, res, next) => {
   const { email } = req.params;
 
   try {
@@ -48,15 +42,11 @@ export const readUserByEmail = async (req, res) => {
 
     res.status(200).json(user);
   } catch (err) {
-    if (err.message.includes("User not")) {
-      res.status(404).json(err.message);
-    } else {
-      res.status(500).json(err);
-    }
+    next(err);
   }
 };
 
-export const updateUserPassword = async (req, res) => {
+export const updateUserPassword = async (req, res, next) => {
   const { email, password } = req.body;
 
   try {
@@ -67,32 +57,28 @@ export const updateUserPassword = async (req, res) => {
 
     res.status(200).json("Password reset");
   } catch (err) {
-    if (err.message.includes("Email")) {
-      res.status(404).json(err.message);
-    } else if (err.message.includes("Same password")) {
-      res.status(404).json(err.message);
-    } else {
-      res.status(500).json(err);
-    }
+    next(err);
   }
 };
 
-export const register = async (req, res) => {
+export const register = async (req, res, next) => {
   const { first_name, last_name, email, age, password, social, role } =
     req.body;
 
   try {
-    const user = await userService.createUser(
+    const user = {
       first_name,
       last_name,
       email,
       age,
       password,
       social,
-      role
-    );
+      role,
+    };
 
-    const token = generateToken({ id: user._id });
+    const newUser = await userService.createUser(user);
+
+    const token = generateToken({ id: newUser._id });
 
     res
       .cookie(process.env.COOKIE, token, {
@@ -105,15 +91,11 @@ export const register = async (req, res) => {
         token: token,
       });
   } catch (err) {
-    if (err.message.includes("Email")) {
-      res.status(401).json(err.message);
-    } else {
-      res.status(500).json(err);
-    }
+    next(err);
   }
 };
 
-export const login = async (req, res) => {
+export const login = async (req, res, next) => {
   const { email, password } = req.body;
 
   try {
@@ -135,17 +117,11 @@ export const login = async (req, res) => {
       })
       .json({ status: "success", message: "Successful login", token: token });
   } catch (err) {
-    if (err.message.includes("Invalid credentials")) {
-      res.status(401).json(err.message);
-    } else if (err.message.includes("Invalid password")) {
-      res.status(401).json(err.message);
-    } else {
-      res.status(500).json(err);
-    }
+    next(err);
   }
 };
 
-export const reset = async (req, res) => {
+export const reset = async (req, res, next) => {
   const { email, password } = req.body;
 
   try {
@@ -169,19 +145,7 @@ export const reset = async (req, res) => {
         token: token,
       });
   } catch (err) {
-    if (err.message.includes("Email")) {
-      res.status(404).json(err.message);
-    } else if (err.message.includes("Same password")) {
-      res.status(404).json(err.message);
-    } else if (err.message.includes("User")) {
-      res.status(401).json(err.message);
-    } else if (err.message.includes("Email")) {
-      res.status(401).json(err.message);
-    } else if (err.message.includes("Same")) {
-      res.status(401).json(err.message);
-    } else {
-      res.status(500).json(err);
-    }
+    next(err);
   }
 };
 

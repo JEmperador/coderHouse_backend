@@ -80,3 +80,28 @@ export const generateMessageEmptyChatErrorInfo = () => {
   return `Message cannot be empty.
     - Verify in your client that the chat exists.`;
 };
+
+//User
+export const generateFieldUserErrorInfo = (user) => {
+  return `One or more properties were incomplete or not valid.
+    List of required properties:
+    - first_name    : Needs to be a String, received ${user.first_name}
+    - last_name     : Needs to be a String, received ${user.last_name}
+    - email         : Needs to be a String, received ${user.email}
+    - age           : Needs to be a Number, received ${user.age}`;
+};
+
+export const generateInvalidEmailUserErrorInfo = (email) => {
+  return `Email: ${email} already exists.
+    - Choose another email.`;
+};
+
+export const generateNotFoundUserErrorInfo = () => {
+  return `Not found User email.
+    - Verify in your database that the user email exists.`;
+};
+
+export const generateSamePasswordUserErrorInfo = () => {
+  return `Same password.
+    - Choose another password.`;
+};

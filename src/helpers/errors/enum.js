@@ -11,4 +11,7 @@ export const Errors = {
   BUYER_MISSING: 7,
   //Chat
   MESSAGE_EMPTY: 8,
+  //User
+  INVALID_EMAIL: 9,
+  SAME_PASSWORD: 10,
 };
