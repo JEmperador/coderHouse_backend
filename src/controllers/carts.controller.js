@@ -12,7 +12,7 @@ export const createCart = async (req, res) => {
   }
 };
 
-export const createPurchase = async (req, res) => {
+export const createPurchase = async (req, res, next) => {
   let { cid } = req.params;
   let { buyer } = req.body;
 
@@ -21,17 +21,7 @@ export const createPurchase = async (req, res) => {
 
     res.status(201).json(purchase);
   } catch (err) {
-    if (err.message.includes("Invalid cart")) {
-      res.status(404).json(err.message);
-    } else if (err.message.includes("Not found Cart")) {
-      res.status(404).json(err.message);
-    } else if (err.message.includes("Buyer is")) {
-      res.status(404).json(err.message);
-    } else if (err.message.includes("This products")) {
-      res.status(404).json(err.message);
-    } else {
-      res.status(500).json(err);
-    }
+    next(err);
   }
 };
 
@@ -96,7 +86,7 @@ export const physicalDeleteCart = async (req, res, next) => {
   }
 };
 
-export const physicalDeleteProducts = async (req, res) => {
+export const physicalDeleteProducts = async (req, res, next) => {
   const { cid } = req.params;
 
   try {
@@ -104,15 +94,7 @@ export const physicalDeleteProducts = async (req, res) => {
 
     res.status(200).json(`Cart with id: ${cid} was emptied`);
   } catch (err) {
-    if (err.message.includes("Invalid cart")) {
-      res.status(404).json(err.message);
-    } else if (err.message.includes("Not found")) {
-      res.status(404).json(err.message);
-    } else if (err.message.includes("Cart is already")) {
-      res.status(404).json(err.message);
-    } else {
-      res.status(500).json(err);
-    }
+    next(err);
   }
 };
 

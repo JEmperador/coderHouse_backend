@@ -5,10 +5,12 @@ import ProductManager from "./productManager.js";
 import { getLocaleTime } from "../../helpers/utils.js";
 import CustomError from "../../helpers/errors/custom-error.js";
 import {
+  generateDatabaseErrorInfo,
   generateInvalidIdProductErrorInfo,
   generateNotFoundProductErrorInfo,
   generateInvalidIdCartErrorInfo,
   generateNotFoundCartErrorInfo,
+  generateBuyerMissingCartErrorInfo,
 } from "../../helpers/errors/info.js";
 import { Errors } from "../../helpers/errors/enum.js";
 
@@ -40,7 +42,12 @@ class CartManager {
 
       if (!purchase.buyer) {
         console.error(`Buyer is missing - ${getLocaleTime()}`);
-        throw new Error("Buyer is missing");
+        throw CustomError.createError({
+          name: "Buyer is missing",
+          cause: generateBuyerMissingCartErrorInfo(),
+          message: "Error when trying to create a purchase",
+          code: Errors.BUYER_MISSING,
+        });
       }
 
       //Products in Cart but not in Products
@@ -55,9 +62,6 @@ class CartManager {
       if (productsInCartButNotInProducts.length > 0) {
         console.error(
           `This products: ${productsInCartButNotInProducts} not exist - ${getLocaleTime()}`
-        );
-        throw new Error(
-          `This products: ${productsInCartButNotInProducts} not exist`
         );
       }
 
@@ -94,7 +98,12 @@ class CartManager {
           console.error(
             `An error occurred while updating the cart - ${getLocaleTime()}`
           );
-          throw new Error("An error occurred while updating the cart");
+          throw CustomError.createError({
+            name: "An error occurred while updating the cart",
+            cause: generateDatabaseErrorInfo(),
+            message: "Error when trying to update a purchase",
+            code: Errors.DB_ERROR,
+          });
         }
       });
 
@@ -298,11 +307,6 @@ class CartManager {
           message: "Error when trying to remove products from cart",
           code: Errors.NOT_FOUND,
         });
-      }
-
-      if (cart.products.length === 0) {
-        console.log(`Cart is already empty - ${getLocaleTime()}`);
-        throw new Error("Cart is already empty");
       }
 
       const productsDelete = await CartModel.findByIdAndUpdate(idC, {

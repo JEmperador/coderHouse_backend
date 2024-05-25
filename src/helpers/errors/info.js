@@ -1,3 +1,8 @@
+export const generateDatabaseErrorInfo = () => {
+  return `An error occurred while updating information
+    - Verify your connection to the database.`;
+};
+
 export const generateFieldProductErrorInfo = (product) => {
   return `One or more properties were incomplete or not valid.
     List of required properties:
@@ -32,13 +37,18 @@ export const generateCannotUpdateProductErrorInfo = (id, code) => {
 };
 
 export const generateInvalidIdCartErrorInfo = (id) => {
-    return `ID: ${id} is not valid.
-      List of requiered for ID:
-      - Length        : 24 character hexadecimal string.
-      - Format        : It must consist of characters ranging from 0 to 9 and from "a" to "f".`;
-  };
-  
-  export const generateNotFoundCartErrorInfo = () => {
-    return `Not found Product.
-      - Verify in your database that the product exists.`;
-  };
+  return `ID: ${id} is not valid.
+    List of requiered for ID:
+    - Length        : 24 character hexadecimal string.
+    - Format        : It must consist of characters ranging from 0 to 9 and from "a" to "f".`;
+};
+
+export const generateNotFoundCartErrorInfo = () => {
+  return `Not found Cart.
+    - Verify in your database that the product exists.`;
+};
+
+export const generateBuyerMissingCartErrorInfo = () => {
+  return `Not found Buyer.
+    - Verify in your database that the user exists.`;
+};

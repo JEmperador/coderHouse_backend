@@ -122,7 +122,7 @@ class ProductManager {
           name: "Cannot update 'id' or 'code' property",
           cause: generateCannotUpdateProductErrorInfo(props._id, props.code),
           message: "Error when trying to update a product",
-          code: Errors.NOT_FOUND,
+          code: Errors.CANNOT_UPDATE,
         });
       }
 

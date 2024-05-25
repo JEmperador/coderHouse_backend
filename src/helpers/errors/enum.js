@@ -5,4 +5,5 @@ export const Errors = {
   NOT_FOUND: 4,
   INVALID_CODE: 5,
   CANNOT_UPDATE: 6,
+  BUYER_MISSING: 7,
 };
