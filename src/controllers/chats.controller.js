@@ -2,7 +2,7 @@ import ChatService from "../services/chat.service.js";
 
 const chatService = new ChatService();
 
-export const createMessage = async (req, res) => {
+export const createMessage = async (req, res, next) => {
   const { user, message } = req.body;
 
   try {
@@ -10,11 +10,7 @@ export const createMessage = async (req, res) => {
 
     res.status(201).json("Message created successfully");
   } catch (err) {
-    if (err.message.includes("All fields")) {
-      res.status(400).json(err.message);
-    } else {
-      res.status(500).json(err);
-    }
+    next(err);
   }
 };
 
@@ -28,7 +24,7 @@ export const readMessages = async (req, res) => {
   }
 };
 
-export const updateMessage = async (req, res) => {
+export const updateMessage = async (req, res, next) => {
   const { mid } = req.params;
   const props = req.body;
 
@@ -37,48 +33,28 @@ export const updateMessage = async (req, res) => {
 
     res.status(200).json(updatedMessage);
   } catch (err) {
-    if (err.message.includes("Invalid message")) {
-      res.status(404).json(err.message);
-    } else if (err.message.includes("Message cannot")) {
-      res.status(404).json(err.message);
-    } else if (err.message.includes("Not found")) {
-      res.status(400).json(err.message);
-    } else {
-      res.status(500).json(err);
-    }
+    next(err);
   }
 };
 
-export const physicalDeleteMessage = async (req, res) => {
+export const physicalDeleteMessage = async (req, res, next) => {
   const { mid } = req.params;
   try {
     let result = await chatService.physicalDeleteMessage(mid);
 
     res.status(200).json(`Message with id: ${mid} was removed`);
   } catch (err) {
-    if (err.message.includes("Invalid message")) {
-      res.status(404).json(err.message);
-    } else if (err.message.includes("Not found")) {
-      res.status(404).json(err.message);
-    } else {
-      res.status(500).json(err);
-    }
+    next(err);
   }
 };
 
-export const logicalDeleteMessage = async (req, res) => {
+export const logicalDeleteMessage = async (req, res, next) => {
   const { mid } = req.params;
   try {
     let result = await chatService.logicalDeleteMessage(mid);
 
     res.status(200).json(`Message with id: ${mid} was removed`);
   } catch (err) {
-    if (err.message.includes("Invalid message")) {
-      res.status(404).json(err.message);
-    } else if (err.message.includes("Not found")) {
-      res.status(404).json(err.message);
-    } else {
-      res.status(500).json(err);
-    }
+    next(err);
   }
 };
