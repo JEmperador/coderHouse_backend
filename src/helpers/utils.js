@@ -174,6 +174,8 @@ const getRandomCategory = () => {
 };
 
 export const productGenerator = () => {
+  const stock = faker.number.int({ min: 0, max: 100 });
+
   return {
     id: faker.database.mongodbObjectId(),
     title: faker.commerce.productName(),
@@ -181,8 +183,8 @@ export const productGenerator = () => {
     price: faker.commerce.price(),
     thumbnail: faker.image.urlPicsumPhotos(),
     code: faker.string.uuid(),
-    stock: faker.number.int({ min: 0, max: 100 }),
+    stock: stock,
     category: getRandomCategory(),
-    status: faker.datatype.boolean(),
+    status: stock > 0,
   };
 };

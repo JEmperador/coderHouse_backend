@@ -2,13 +2,25 @@ import { TicketModel } from "../../models/ticket.model.js";
 import { v4 as uuidv4 } from "uuid";
 import { getLocaleTime } from "../../helpers/utils.js";
 import mongoose from "mongoose";
+import CustomError from "../../helpers/errors/custom-error.js";
+import {
+  generateFieldTicketErrorInfo,
+  generateInvalidIdTicketErrorInfo,
+  generateNotFoundTicketErrorInfo,
+} from "../../helpers/errors/info.js";
+import { Errors } from "../../helpers/errors/enum.js";
 
 class TicketManager {
   createTicket = async (ticket) => {
     try {
       if (!ticket.amount || !ticket.purchaser) {
         console.log(`All fields are required - ${getLocaleTime()}`);
-        throw new Error("All fields are required");
+        throw CustomError.createError({
+          name: "All fields are required",
+          cause: generateFieldTicketErrorInfo(ticket),
+          message: "Error when trying to create a ticket",
+          code: Errors.ALL_FIELD_REQUIRED,
+        });
       }
 
       const newTicket = {
@@ -42,7 +54,12 @@ class TicketManager {
     try {
       if (!mongoose.Types.ObjectId.isValid(idT)) {
         console.log(`Invalid ticket ID - ${getLocaleTime()}`);
-        throw new Error("Invalid ticket ID");
+        throw CustomError.createError({
+          name: "Invalid ticket ID",
+          cause: generateInvalidIdTicketErrorInfo(idT),
+          message: "Error when trying to delete a ticket",
+          code: Errors.INVALID_ID,
+        });
       }
 
       const updatedTicket = await TicketModel.findByIdAndUpdate(
@@ -53,7 +70,12 @@ class TicketManager {
 
       if (!updatedTicket) {
         console.log(`Not found Ticket - ${getLocaleTime()}`);
-        throw new Error("Not found Ticket");
+        throw CustomError.createError({
+          name: "Not found Ticket",
+          cause: generateNotFoundTicketErrorInfo(),
+          message: "Error when trying to detele a ticket",
+          code: Errors.NOT_FOUND,
+        });
       }
 
       console.log(`Ticket removed - ${getLocaleTime()}`);

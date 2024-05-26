@@ -105,3 +105,23 @@ export const generateSamePasswordUserErrorInfo = () => {
   return `Same password.
     - Choose another password.`;
 };
+
+//Ticket
+export const generateFieldTicketErrorInfo = (ticket) => {
+  return `One or more properties were incomplete or not valid.
+    List of required properties:
+    - amount         : Needs to be a Number, received ${ticket.amount}
+    - purchaser      : Needs to be a String, received ${ticket.purchaser}`;
+};
+
+export const generateInvalidIdTicketErrorInfo = (id) => {
+  return `ID: ${id} is not valid.
+    List of requiered for ID:
+    - Length        : 24 character hexadecimal string.
+    - Format        : It must consist of characters ranging from 0 to 9 and from "a" to "f".`;
+};
+
+export const generateNotFoundTicketErrorInfo = () => {
+  return `Not found Product.
+    - Verify in your database that the product exists.`;
+};
