@@ -2,6 +2,14 @@ import { UserModel } from "../../models/user.model.js";
 import { createHash, isValidPassword } from "../../helpers/utils.js";
 import CartManager from "./cartManager.js";
 import { getLocaleTime } from "../../helpers/utils.js";
+import CustomError from "../../helpers/errors/custom-error.js";
+import {
+  generateFieldUserErrorInfo,
+  generateInvalidEmailUserErrorInfo,
+  generateNotFoundUserErrorInfo,
+  generateSamePasswordUserErrorInfo,
+} from "../../helpers/errors/info.js";
+import { Errors } from "../../helpers/errors/enum.js";
 
 const cartManager = new CartManager();
 
@@ -10,7 +18,12 @@ class UserManager {
     try {
       if (!user.first_name || !user.last_name || !user.email || !user.age) {
         console.log("All fields are required");
-        throw new Error("All fields are required");
+        throw CustomError.createError({
+          name: "All fields are required",
+          cause: generateFieldUserErrorInfo(user),
+          message: "Error when trying to create a user",
+          code: Errors.ALL_FIELD_REQUIRED,
+        });
       }
 
       const validate = await UserModel.findOne({ email: user.email });
@@ -19,7 +32,12 @@ class UserManager {
         console.log(
           `Email ${user.email} is already in use - ${getLocaleTime()}`
         );
-        throw new Error(`Email ${user.email} is already in use`);
+        throw CustomError.createError({
+          name: "Email is already in use",
+          cause: generateInvalidEmailUserErrorInfo(user.email),
+          message: "Error when trying to create a user",
+          code: Errors.INVALID_EMAIL,
+        });
       }
 
       const cart = await cartManager.createCart();
@@ -54,7 +72,12 @@ class UserManager {
 
       if (!user) {
         console.log(`User not exist - ${getLocaleTime()}`);
-        throw new Error("User not exist");
+        throw CustomError.createError({
+          name: "Not found User",
+          cause: generateNotFoundUserErrorInfo(),
+          message: "Error when trying to read an user",
+          code: Errors.NOT_FOUND,
+        });
       }
 
       return user;
@@ -86,15 +109,25 @@ class UserManager {
       const user = await this.readUserByEmail(email);
 
       if (!user) {
-        console.log(`Email ${email} not exists - ${getLocaleTime()}`);
-        throw new Error(`Email ${email} not exists`);
+        console.log(`Not found User - ${getLocaleTime()}`);
+        throw CustomError.createError({
+          name: "Not found User",
+          cause: generateNotFoundUserErrorInfo(),
+          message: "Error when trying to update an user",
+          code: Errors.NOT_FOUND,
+        });
       }
 
       const samePassword = isValidPassword(password, user);
 
       if (samePassword) {
         console.log(`Same password - ${getLocaleTime()}`);
-        throw new Error("Same password");
+        throw CustomError.createError({
+          name: "Same password",
+          cause: generateSamePasswordUserErrorInfo(),
+          message: "Error when trying to update an user",
+          code: Errors.SAME_PASSWORD,
+        });
       }
 
       const userId = user._id;

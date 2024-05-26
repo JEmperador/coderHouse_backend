@@ -3,24 +3,8 @@ import { userDAO } from "../dao/factory.js";
 const dao = new userDAO();
 
 class UserService {
-  createUser = async (
-    first_name,
-    last_name,
-    email,
-    age,
-    password,
-    social,
-    role
-  ) => {
-    const newUser = await dao.createUser({
-      first_name,
-      last_name,
-      email,
-      age,
-      password,
-      social,
-      role,
-    });
+  createUser = async (user) => {
+    const newUser = await dao.createUser(user);
 
     return newUser;
   };
