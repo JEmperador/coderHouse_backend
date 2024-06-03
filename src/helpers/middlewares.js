@@ -2,6 +2,7 @@ import passport from "passport";
 import dotenv from "dotenv";
 import jwt from "jsonwebtoken";
 import { Errors } from "./errors/enum.js";
+import { logger } from "../configs/logger.config.js";
 
 dotenv.config();
 
@@ -64,4 +65,12 @@ export const handlerError = (err, req, res, next) => {
     default:
       res.status(500).json({ status: "error", error: "Unhandled error" });
   }
+};
+
+export const addLogger = (req, res, next) => {
+  req.logger = logger;
+  req.logger.http(
+    `${req.method} in ${req.url} - ${new Date().toLocaleTimeString()}`
+  );
+  next();
 };

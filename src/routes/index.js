@@ -5,7 +5,9 @@ import chatRouter from "./persistence/chats.routes.js";
 import userRouter from "./persistence/users.routes.js";
 import authenticationRouter from "./persistence/authentication.routes.js";
 import ticketRouter from "./persistence/ticket.routes.js";
+//Other
 import mockingProductsRouter from "./other/mockingproducts.routes.js";
+import loggerTestRouter from "./other/loggertest.routes.js";
 //Frontend
 import productsRouterView from "./views/products.view.js";
 import productsAdminRouterView from "./views/productsAdmin.view.js";
@@ -24,7 +26,9 @@ const router = (app) => {
   app.use("/api", userRouter);
   app.use("/api", authenticationRouter);
   app.use("/api", ticketRouter);
+  //Other
   app.use("/api", mockingProductsRouter);
+  app.use("/api", loggerTestRouter);
   //Frontend
   app.use("/products", checkRole(["user"]), productsRouterView);
   app.use("/productsAdmin", checkRole(["admin"]), productsAdminRouterView);
