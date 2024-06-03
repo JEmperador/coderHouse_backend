@@ -11,7 +11,25 @@ import {
 } from "../../helpers/errors/info.js";
 import { Errors } from "../../helpers/errors/enum.js";
 
+/**
+ * Represents a Product
+ * @typedef {Object} Product
+ * @property {string} title
+ * @property {string} description
+ * @property {number} price
+ * @property {string} thumbnail
+ * @property {string} code
+ * @property {number} stock
+ * @property {string} category
+ * @property {boolean} status
+ */
+
 class ProductManager {
+  /**
+   * Create a product
+   * @param {Product} product
+   * @returns {Promise<boolean>}
+   */
   createProduct = async (product) => {
     try {
       if (

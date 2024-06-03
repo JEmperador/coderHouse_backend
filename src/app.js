@@ -9,6 +9,7 @@ import cookieParser from "cookie-parser";
 import { initializePassport } from "./configs/passport.config.js";
 import socketioHandler from "./helpers/socket.js";
 import { handlerError } from "./helpers/middlewares.js";
+import { addLogger } from "./helpers/middlewares.js";
 
 const app = express();
 
@@ -36,6 +37,8 @@ app.set("views", "./src/views");
 app.use(cookieParser());
 app.use(passport.initialize());
 initializePassport();
+
+app.use(addLogger);
 
 router(app);
 app.use(handlerError);
