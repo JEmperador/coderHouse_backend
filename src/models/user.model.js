@@ -25,6 +25,10 @@ const userSchema = new mongoose.Schema({
     enum: enumRole,
     default: "user",
   },
+  resetToken: {
+    token: String,
+    expiresAt: Date,
+  },
 });
 
 mongoose.set("strictQuery", false);

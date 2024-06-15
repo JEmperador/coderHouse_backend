@@ -117,15 +117,21 @@ export const cookieExists = (req, options) => {
 };
 
 //General
-export function getLocaleTime() {
+export const getLocaleTime = () => {
   const time = new Date().toLocaleTimeString();
   return time;
-}
+};
 
-export function getLocaleDateTime() {
+export const getLocaleDateTime = () => {
   const dateTime = new Date().toLocaleString();
   return dateTime;
-}
+};
+
+export const generateRandomNumber = () => {
+  const randomNumber = Math.floor(10000 + Math.random() * 90000).toString();
+
+  return randomNumber;
+};
 
 //JWT
 export const generateToken = (user) => {
@@ -179,14 +185,16 @@ export const emailSenderPurchase = async (transport, email, ticket) => {
   }
 };
 
-export const emailSenderResetPassword = async (transport, email, token) => {
+export const emailSenderResetPassword = async (transport, email, token, number) => {
   const mailOptions = {
     from: "Atlas Tech <javier_emperador@outlook.com>",
     to: `${email}`,
     subject: "Password reset request",
-    html: `<h1>Password reset</h1>
-          <p>If you did not request to reset your password, please do not open the link<p/>
-          <a href="http://localhost:3000/afterResetRequest/${token}">reset<a/>`,
+    html: `<h1>Password reset request</h1>
+          <p>You will be prompted for the following code to reset your password</p>
+          <h1>${number}</h1>
+          <p>If you did not request to reset your password, please ignore this email.</p>
+          <a href="http://localhost:3000/afterResetRequest/${token}">Reset your password</a>`,
   };
 
   try {

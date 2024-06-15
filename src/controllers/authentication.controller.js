@@ -1,6 +1,10 @@
 import dotenv from "dotenv";
 import UserService from "../services/user.service.js";
-import { emailSenderResetPassword, generateToken } from "../helpers/utils.js";
+import {
+  emailSenderResetPassword,
+  generateRandomNumber,
+  generateToken,
+} from "../helpers/utils.js";
 import { getTransport } from "../configs/transport.config.js";
 
 dotenv.config();
@@ -74,10 +78,22 @@ export const login = async (req, res) => {
 };
 
 export const resetWithoutLoggedUser = async (req, res) => {
-  const { emailHidden, password } = req.body;
+  const { emailHidden, password, code } = req.body;
 
   try {
     const user = await userService.readUserByEmail(emailHidden);
+
+    const userResetToken = user.resetToken;
+    const userResetTokenTime = userResetToken.expiresAt;
+    const now = new Date();
+
+    if (!userResetToken || userResetToken.token !== code) {
+      return res.status(404).json({ message: "Invalid Code" });
+    }
+
+    if (now > userResetTokenTime) {
+      return res.redirect("/resetRequest");
+    }
 
     const newUserPassword = await userService.updateUserPassword(
       emailHidden,
@@ -137,7 +153,7 @@ export const resetWithLoggedUser = async (req, res) => {
 
     if (req?.cookies[process.env.COOKIE]) {
       res.clearCookie(process.env.COOKIE, { secure: true });
-  
+
       res.status(200).redirect("/");
     }
   } catch (err) {
@@ -159,14 +175,20 @@ export const resetRequest = async (req, res, next) => {
 
     const tokenEmail = generateToken(userEmail);
 
-    res.cookie(process.env.COOKIE, tokenEmail, {
-      maxAge: 60 * 60,
-      httpOnly: true,
-    });
+    const randomNumber = generateRandomNumber();
 
-    const transport = getTransport(email)
+    const expiresAt = new Date(Date.now() + 3600000);
 
-    await emailSenderResetPassword(transport, email, tokenEmail)
+    user.resetToken = {
+      token: randomNumber,
+      expiresAt,
+    };
+
+    user.save();
+
+    const transport = getTransport(email);
+
+    await emailSenderResetPassword(transport, email, tokenEmail, randomNumber);
 
     res.redirect("/emailSend");
   } catch (err) {
