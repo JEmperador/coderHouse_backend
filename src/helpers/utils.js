@@ -117,21 +117,40 @@ export const cookieExists = (req, options) => {
 };
 
 //General
-export function getLocaleTime() {
+export const getLocaleTime = () => {
   const time = new Date().toLocaleTimeString();
   return time;
-}
+};
 
-export function getLocaleDateTime() {
+export const getLocaleDateTime = () => {
   const dateTime = new Date().toLocaleString();
   return dateTime;
-}
+};
+
+export const generateRandomNumber = () => {
+  const randomNumber = Math.floor(10000 + Math.random() * 90000).toString();
+
+  return randomNumber;
+};
 
 //JWT
 export const generateToken = (user) => {
   const token = jwt.sign({ user }, process.env.SECRET_JWT, { expiresIn: "2h" });
 
   return token;
+};
+
+export const emailTokenExtractor = async (val) => {
+  let email = "";
+  jwt.verify(val, process.env.SECRET_JWT, (err, decoded) => {
+    if (err) {
+      console.log("Nop, tkn invalido");
+    }
+
+    email = decoded.user;
+  });
+
+  return email;
 };
 
 //Socket
@@ -148,13 +167,34 @@ export const socketUserName = (cookiesSocket) => {
 };
 
 //Nodemailer
-export const emailSender = async (transport, email, ticket) => {
+export const emailSenderPurchase = async (transport, email, ticket) => {
   const mailOptions = {
     from: "Atlas Tech <javier_emperador@outlook.com>",
     to: `${email}`,
     subject: "Congratulations on your purchase",
     html: `<h1>Congratulations</h1>
           <p>Yor ticket id: ${ticket}<p/>`,
+  };
+
+  try {
+    const result = await transport.sendMail(mailOptions);
+
+    return result;
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+export const emailSenderResetPassword = async (transport, email, token, number) => {
+  const mailOptions = {
+    from: "Atlas Tech <javier_emperador@outlook.com>",
+    to: `${email}`,
+    subject: "Password reset request",
+    html: `<h1>Password reset request</h1>
+          <p>You will be prompted for the following code to reset your password</p>
+          <h1>${number}</h1>
+          <p>If you did not request to reset your password, please ignore this email.</p>
+          <a href="http://localhost:3000/afterResetRequest/${token}">Reset your password</a>`,
   };
 
   try {

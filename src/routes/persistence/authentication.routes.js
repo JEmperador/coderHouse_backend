@@ -4,7 +4,9 @@ import dotenv from "dotenv";
 import {
   register,
   login,
-  reset,
+  resetWithoutLoggedUser,
+  resetWithLoggedUser,
+  resetRequest,
   logout,
 } from "../../controllers/authentication.controller.js";
 
@@ -16,7 +18,11 @@ router.post("/v3/authentication/register", register);
 
 router.post("/v3/authentication/login", login);
 
-router.post("/v3/authentication/reset", reset);
+router.post("/v3/authentication/resetWithoutLoggedUser", resetWithoutLoggedUser);
+
+router.post("/v3/authentication/resetWithLoggedUser", resetWithLoggedUser);
+
+router.post("/v3/authentication/resetRequest", resetRequest);
 
 router.get("/v3/authentication/logout", logout);
 

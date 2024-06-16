@@ -93,7 +93,9 @@ class UserManager {
       if (!user) {
         console.log("Invalid credentials");
         throw new Error("Invalid credentials");
-      } else if (!isValidPassword(password, user)) {
+      }
+
+      if (!isValidPassword(password, user)) {
         console.log("Invalid password");
         throw new Error("Invalid password");
       }

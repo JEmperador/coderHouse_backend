@@ -1,6 +1,11 @@
 import { Router } from "express";
 import { passportCall } from "../../helpers/middlewares.js";
 import ProfileDTO from "../../dto/profile.dto.js";
+import { emailTokenExtractor } from "../../helpers/utils.js";
+
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const router = Router();
 
@@ -20,24 +25,48 @@ router.get("/register", (req, res) => {
   }
 });
 
-router.get(
-  "/profile",
-  passportCall("jwt"),
-  (req, res) => {
-    const user = req.user.user;
+router.get("/profile", passportCall("jwt"), (req, res) => {
+  const user = req.user.user;
 
-    const profile = new ProfileDTO(user)
+  const profile = new ProfileDTO(user);
 
-    res.render("profile", {
-      title: "Atlas Tech - Profile",
-      profile: profile,
-      req: req,
-    });
+  res.render("profile", {
+    title: "Atlas Tech - Profile",
+    profile: profile,
+    req: req,
+  });
+});
+
+router.get("/resetRequest", (req, res) => {
+  res.render("resetRequest", {
+    title: "Atlas Tech - Reset Password Request",
+    req: req,
+  });
+});
+
+router.get("/afterResetRequest/:token", async (req, res) => {
+  const { token } = req.params;
+
+  let email = "";
+  try {
+    email = await emailTokenExtractor(token);
+  } catch (err) {
+    console.log(err);
   }
-);
+
+  res.render("afterResetRequest", {
+    title: "Atlas Tech - Reset password",
+    req: req,
+    email: email,
+  });
+});
 
 router.get("/reset", (req, res) => {
   res.render("reset", { title: "Atlas Tech - Reset password", req: req });
+});
+
+router.get("/emailSend", (req, res) => {
+  res.render("emailSend", { title: "Atlas Tech - Email send", req: req });
 });
 
 export default router;

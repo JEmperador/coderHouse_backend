@@ -2,7 +2,7 @@ import CartService from "../../services/cart.service.js";
 import { Router } from "express";
 import { passportCall } from "../../helpers/middlewares.js";
 import { getTransport } from "../../configs/transport.config.js";
-import { emailSender } from "../../helpers/utils.js";
+import { emailSenderPurchase } from "../../helpers/utils.js";
 
 const cartService = new CartService();
 const router = Router();
@@ -41,7 +41,7 @@ router.get("/:cid/purchase", passportCall("jwt"), async (req, res) => {
 
     const transport = getTransport(buyer);
 
-    await emailSender(transport, buyer, ticketId);
+    await emailSenderPurchase(transport, buyer, ticketId);
 
     res.render("purchase", {
       title: "Atlas Tech | Checkout",
