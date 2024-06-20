@@ -11,8 +11,9 @@
             <p class="card-title">{{category}} - {{title}}</p>
         </div>
         <div class="p-3" style="display: flex; justify-content: space-between;">
-            <a href="/products/{{id}}" class="btn btn-primary">Info</a>
+            <a href="/products/{{id}}" class="btn btn-primary" hidden>Info</a>
             <div class="delete">
+                <p class="publicationOwner" hidden>{{owner}}</p>
                 <button class="btn btn-primary delete" id={{id}}>
                     Delete
                 </button>

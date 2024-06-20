@@ -15,6 +15,11 @@ formCreate.addEventListener("submit", (e) => {
   const stock = Number(document.querySelector("input[name=stock]").value);
   const category = document.querySelector("input[name=category]").value;
 
+  const ownerEmail = document.getElementById("owner").innerText;
+  const role = document.getElementById("role").innerText;
+
+  console.log("se supone desde el front", ownerEmail, role);
+
   const product = {
     title,
     description,
@@ -23,7 +28,11 @@ formCreate.addEventListener("submit", (e) => {
     code,
     stock,
     category,
+    status: stock > 0 ? true : false,
+    owner: role === "premium" ? ownerEmail : "admin",
   };
+
+  console.log("se supone desde el front 2", product.owner);
 
   socket.emit("client:newProduct", product);
 
@@ -35,8 +44,20 @@ formDelete.addEventListener("submit", (e) => {
   e.preventDefault();
 
   const id = document.querySelector("input[name=id]").value;
+  const publicationOwner = document.getElementById("publicationOwner").innerText;
+  const loggedUser = document.getElementById("owner").innerText;
 
-  socket.emit("client:deleteProduct", id);
+  console.log("desde el front", publicationOwner, loggedUser);
+
+  if (publicationOwner === loggedUser) {
+    socket.emit("client:deleteProduct", id);
+  } else {
+    Swal.fire({
+      icon: "error",
+      title: "Oops...",
+      text: "You do not have permissions to remove this product",
+    });
+  }
 
   formDelete.reset();
 });
@@ -46,7 +67,22 @@ document.addEventListener("click", (event) => {
   if (event.target.classList.contains("delete")) {
     const id = event.target.getAttribute("id");
 
-    socket.emit("client:deleteProduct", id);
+    const card = event.target.closest(".card");
+
+    const publicationOwner = card.querySelector(".publicationOwner").innerText;
+    const loggedUser = document.getElementById("owner").innerText;
+    const loggedRole = document.getElementById("role").innerText;
+
+
+    if (publicationOwner === loggedUser && loggedRole === "premium") {
+      socket.emit("client:deleteProduct", id);
+    } else {
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "You do not have permissions to remove this product",
+      });
+    }
   }
 });
 
@@ -66,8 +102,9 @@ socket.on("server:list", (data) => {
                 <p class="card-title">${content.category} - ${content.title}</p>
             </div>
             <div class="p-3" style="display: flex; justify-content: space-between;">
-                <a href="/products/${content._id}" class="btn btn-primary">Info</a>
+                <a href="/products/${content._id}" class="btn btn-primary" hidden>Info</a>
                 <div class="delete">
+                    <p class="publicationOwner" hidden>${content.owner}</p>
                     <button class="btn btn-primary delete" id=${content._id}>
                         Delete
                     </button>

@@ -32,6 +32,12 @@ class UserService {
 
     return newUserPassword;
   };
+
+  updateUserRole = async (email) => {
+    const newUserRole = await dao.updateUserRole(email);
+
+    return newUserRole;
+  };
 }
 
 export default UserService;

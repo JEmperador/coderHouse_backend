@@ -47,9 +47,10 @@
         <td>{{this.description}}</td>
         <td>{{this.price}}U$D</td>
         <td>{{this.stock}}</td>
-        <td>
+        <td class="buttonBox">
             <div id="add" style="display: flex; justify-content: space-evenly;">
                 <a class="btn btn-primary" href="/products/{{id}}" role="button">Info</a>
+                <p class="publicationOwner" hidden>{{this.owner}}</p>
                 <button id={{this.id}} class="btn btn-success add">Add</button>
             </div>
         </td>

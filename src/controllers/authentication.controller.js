@@ -88,7 +88,7 @@ export const resetWithoutLoggedUser = async (req, res) => {
     const now = new Date();
 
     if (!userResetToken || userResetToken.token !== code) {
-      return res.status(404).json({ message: "Invalid Code" });
+      return res.status(404).json("Invalid Code");
     }
 
     if (now > userResetTokenTime) {
@@ -161,7 +161,7 @@ export const resetWithLoggedUser = async (req, res) => {
   }
 };
 
-export const resetRequest = async (req, res, next) => {
+export const resetRequest = async (req, res) => {
   const { email } = req.body;
 
   try {
@@ -192,7 +192,7 @@ export const resetRequest = async (req, res, next) => {
 
     res.redirect("/emailSend");
   } catch (err) {
-    next(err);
+    res.status(500).json(err);
   }
 };
 

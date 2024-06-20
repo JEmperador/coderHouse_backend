@@ -1,5 +1,5 @@
 import handlebars from "express-handlebars";
-import { isEmptyArray, cookieExists } from "../helpers/utils.js";
+import { cookieExists } from "../helpers/utils.js";
 
 const hbs = handlebars.create({
   runtimeOptions: {
@@ -7,7 +7,6 @@ const hbs = handlebars.create({
     allowProtoMethodsByDefault: true,
   },
   helpers: {
-    isEmptyArray: isEmptyArray,
     cookieExists: cookieExists,
   },
 });

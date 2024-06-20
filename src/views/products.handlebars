@@ -3,6 +3,8 @@
 <h1 class="text-center m-5">Products</h1>
 
 <p id="cartId" hidden>{{req.user.user.cartId}}</p>
+<p id="owner" hidden>{{req.user.user.email}}</p>
+<p id="role" hidden>{{req.user.user.role}}</p>
 
 <div style="display: flex; flex-direction: column; justify-content: center; width: 100%; padding: 0px 100px">
     {{>table}}

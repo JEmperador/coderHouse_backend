@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 const usersCollections = "users";
 
 const enumSocial = ["Local", "GitHub", "Google"];
-const enumRole = ["user", "admin"];
+const enumRole = ["user", "premium", "admin"];
 
 const userSchema = new mongoose.Schema({
   first_name: String,

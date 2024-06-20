@@ -92,22 +92,6 @@ export async function readData(path) {
 }
 
 //Handlebars
-export const isEmptyArray = (array, options) => {
-  if (Array.isArray(array) && array.length === 0) {
-    return options.fn(this);
-  } else {
-    return options.inverse(this);
-  }
-};
-
-export const isSessionStarted = (req, options) => {
-  if (req.session.login === true) {
-    return options.fn(this);
-  } else {
-    return options.inverse(this);
-  }
-};
-
 export const cookieExists = (req, options) => {
   if (req?.cookies[process.env.COOKIE]) {
     return options.fn(this);
@@ -142,9 +126,12 @@ export const generateToken = (user) => {
 
 export const emailTokenExtractor = async (val) => {
   let email = "";
+
   jwt.verify(val, process.env.SECRET_JWT, (err, decoded) => {
     if (err) {
+      email = "";
       console.log("Nop, tkn invalido");
+      return;
     }
 
     email = decoded.user;
@@ -185,7 +172,12 @@ export const emailSenderPurchase = async (transport, email, ticket) => {
   }
 };
 
-export const emailSenderResetPassword = async (transport, email, token, number) => {
+export const emailSenderResetPassword = async (
+  transport,
+  email,
+  token,
+  number
+) => {
   const mailOptions = {
     from: "Atlas Tech <javier_emperador@outlook.com>",
     to: `${email}`,

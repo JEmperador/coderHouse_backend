@@ -24,6 +24,8 @@ router.post("/v3/authentication/resetWithLoggedUser", resetWithLoggedUser);
 
 router.post("/v3/authentication/resetRequest", resetRequest);
 
+//router.post("/v3/authentication/changeRole", );
+
 router.get("/v3/authentication/logout", logout);
 
 //GitHub
