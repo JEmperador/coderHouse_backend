@@ -48,17 +48,18 @@ router.get("/afterResetRequest/:token", async (req, res) => {
   const { token } = req.params;
 
   let email = "";
-  try {
-    email = await emailTokenExtractor(token);
-  } catch (err) {
-    console.log(err);
-  }
 
-  res.render("afterResetRequest", {
-    title: "Atlas Tech - Reset password",
-    req: req,
-    email: email,
-  });
+  email = await emailTokenExtractor(token);
+
+  if (email === "") {
+    res.redirect("/resetRequest");
+  } else {
+    res.render("afterResetRequest", {
+      title: "Atlas Tech - Reset password",
+      req: req,
+      email: email,
+    });
+  }
 });
 
 router.get("/reset", (req, res) => {

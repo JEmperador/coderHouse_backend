@@ -11,7 +11,8 @@ class ProductService {
     code,
     stock,
     category,
-    status
+    status,
+    owner
   ) => {
     const newProduct = await dao.createProduct({
       title,
@@ -22,6 +23,7 @@ class ProductService {
       stock,
       category,
       status,
+      owner,
     });
 
     return "Product was created successfully";
@@ -46,17 +48,13 @@ class ProductService {
   };
 
   physicalDeleteProduct = async (idP) => {
-    const physicalDeletedProduct = await dao.physicalDeleteProduct(
-      idP
-    );
+    const physicalDeletedProduct = await dao.physicalDeleteProduct(idP);
 
     return "Product removed";
   };
 
   logicalDeleteProduct = async (idP) => {
-    const logicalDeletedProduct = await dao.logicalDeleteProduct(
-      idP
-    );
+    const logicalDeletedProduct = await dao.logicalDeleteProduct(idP);
 
     return "Product removed";
   };

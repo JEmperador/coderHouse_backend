@@ -8,6 +8,7 @@ import {
   register,
   reset,
   updateUserPassword,
+  updateUserRole,
 } from "../../controllers/users.controller.js";
 
 const router = Router();
@@ -19,6 +20,8 @@ router.get("/v3/users", readUsers);
 router.get("/v3/users/:email", readUserByEmail);
 
 router.put("/v3/users", updateUserPassword);
+
+router.put("/v3/users/:email", updateUserRole);
 
 router.post("/v3/register", register);
 

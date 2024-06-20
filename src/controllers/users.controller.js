@@ -61,6 +61,19 @@ export const updateUserPassword = async (req, res, next) => {
   }
 };
 
+export const updateUserRole = async (req, res, next) => {
+  console.log("HOLAAA");
+  const { email } = req.params;
+
+  try {
+    const newUserRole = await userService.updateUserRole(email);
+
+    res.status(200).json("Changed role");
+  } catch (err) {
+    next(err);
+  }
+};
+
 export const register = async (req, res, next) => {
   const { first_name, last_name, email, age, password, social, role } =
     req.body;

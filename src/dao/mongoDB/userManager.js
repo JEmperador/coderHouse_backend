@@ -150,6 +150,41 @@ class UserManager {
       throw err;
     }
   };
+
+  updateUserRole = async (email) => {
+    try {
+      const user = await this.readUserByEmail(email);
+
+      if (!user) {
+        console.log(`Not found User - ${getLocaleTime()}`);
+        throw CustomError.createError({
+          name: "Not found User",
+          cause: generateNotFoundUserErrorInfo(),
+          message: "Error when trying to update an user",
+          code: Errors.NOT_FOUND,
+        });
+      }
+
+      const newRole = user.role === "user" ? "premium" : "user";
+
+      const userId = user._id;
+
+      const userNewRole = await UserModel.findByIdAndUpdate(
+        userId,
+        {
+          role: newRole,
+        },
+        {
+          new: true,
+        }
+      );
+
+      console.log(`Changed role - ${getLocaleTime()}`);
+      return userNewRole;
+    } catch (err) {
+      throw err;
+    }
+  };
 }
 
 export default UserManager;

@@ -19,7 +19,7 @@ export default function socketioHandler(httpServer) {
     //Recibe del front - Creacion de producto
     socket.on("client:newProduct", async (data) => {
       try {
-        const { title, description, price, code, stock, category } = data;
+        const { title, description, price, code, stock, category, status, owner } = data;
 
         const thumbnail = data.thumbnail.lenght > 0 ? data.thumbnail : "";
 
@@ -31,6 +31,8 @@ export default function socketioHandler(httpServer) {
           code,
           stock,
           category,
+          status,
+          owner,
         );
 
         //Envia el back
