@@ -1,0 +1,163 @@
+openapi: 3.0.1
+info:
+  title: Products.
+  description: Swagger Documentation for products of Atlas Tech.
+servers:
+  - url: http://localhost:3000
+paths:
+  /api/v3/products:
+    post:
+      summary: Create a new product.
+      tags:
+        - Products
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Product"
+      responses:
+        "201":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/resposeCreateProductMessage"
+    get:
+      summary: Get all products.
+      tags:
+        - Products
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Product"
+                  products:
+                    type: array
+  /api/v3/products/{pid}:
+    get:
+      summary: Get a product by ID.
+      tags:
+        - Products
+      parameters:
+        - in: path
+          name: pid
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Product"
+    put:
+      summary: Update a product by ID.
+      tags:
+        - Products
+      parameters:
+        - in: path
+          name: pid
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Product"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Product"
+  /api/v3/products/physical/{pid}:
+    delete:
+      summary: Delete a physical product from the DB by ID.
+      tags:
+        - Products
+      parameters:
+        - in: path
+          name: pid
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/resposeDeleteProductMessage"
+  /api/v3/products/logical/{pid}:
+    delete:
+      summary: Delete a logical product from the DB by ID.
+      tags:
+        - Products
+      parameters:
+        - in: path
+          name: pid
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/resposeDeleteProductMessage"
+components:
+  schemas:
+    Product:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        price:
+          type: number
+        thumbnail:
+          type: string
+        code:
+          type: string
+        stock:
+          type: number
+        category:
+          type: string
+        status:
+          type: boolean
+        owner:
+          type: string
+      required:
+        - title
+        - description
+        - price
+        - thumbnail
+        - stock
+        - category
+        - owner
+    resposeCreateProductMessage:
+      type: object
+      properties:
+        message:
+          type: object
+          example: Product created successfully
+    resposeDeleteProductMessage:
+      type: object
+      properties:
+        message:
+          type: object
+          example: Product with id ${pid} was removed

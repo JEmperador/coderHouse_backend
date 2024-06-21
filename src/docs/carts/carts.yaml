@@ -1,0 +1,182 @@
+openapi: 3.0.1
+info:
+  title: Carts.
+  description: Swagger Documentation for carts of Atlas Tech.
+servers:
+  - url: http://localhost:3000
+paths:
+  /api/v3/carts:
+    post:
+      summary: Create a new cart.
+      tags:
+        - Carts
+      responses:
+        "201":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/resposeCreateCartMessage"
+
+    get:
+      summary: Get all carts.
+      tags:
+        - Carts
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Cart"
+                  carts:
+                    type: array
+
+  /api/v3/carts/{cid}:
+    get:
+      summary: Get a cart by ID.
+      tags:
+        - Carts
+      parameters:
+        - in: path
+          name: cid
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Cart"
+
+    delete:
+      summary: Delete cart by ID.
+      tags:
+        - Carts
+      parameters:
+        - in: path
+          name: cid
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/resposeDeleteCartMessage"
+
+  /api/v3/carts/{cid}/product/{pid}:
+    post:
+      summary: Add a product to cart.
+      tags:
+        - Carts
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/resposeAddProductToCartMessage"
+  
+  /api/v3/carts/{cid}/products:
+    delete:
+      summary: Delete all products from cart by ID.
+      tags:
+        - Carts
+      parameters:
+        - in: path
+          name: cid
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/resposeDeleteAllProductsOnCartMessage"
+
+  /api/v3/carts/{cid}/products/{pid}:
+    delete:
+      summary: Delete a product by ID from the cart by ID.
+      tags:
+        - Carts
+      parameters:
+        - in: path
+          nameCart: cid
+          required: true
+        - in: path
+          nameProduct: pid
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/resposeDeleteOneProductOnCartMessage"
+components:
+  schemas:
+    Product:
+      type: object
+      properties:
+        _id:
+          type: string    
+    Products:
+      type: object
+      properties:
+        product:
+          type: string
+        quantity:
+          type: number
+    Cart:
+      type: object
+      properties:
+        _id:
+          type: string
+        products:
+          type: array
+          items:
+            $ref: '#/components/schemas/Products'
+    resposeCreateCartMessage:
+      type: object
+      properties:
+        message:
+          type: object
+          example: New Cart created
+    resposeAddProductToCartMessage:
+      type: object
+      properties:
+        message:
+          type: object
+          example: Product was added correctly
+    resposeDeleteCartMessage:
+      type: object
+      properties:
+        message:
+          type: object
+          example: Cart with id ${cid} was removed
+    resposeDeleteAllProductsOnCartMessage:
+      type: object
+      properties:
+        message:
+          type: object
+          example: Cart with id ${cid} was emptied
+    resposeDeleteOneProductOnCartMessage:
+      type: object
+      properties:
+        message:
+          type: object
+          example: Product with id ${pid} has been removed
