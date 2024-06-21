@@ -10,6 +10,8 @@ import { initializePassport } from "./configs/passport.config.js";
 import socketioHandler from "./helpers/socket.js";
 import { handlerError } from "./helpers/middlewares.js";
 import { addLogger } from "./helpers/middlewares.js";
+import { specs } from "./configs/swagger.config.js";
+import swaggerUIExpress from "swagger-ui-express";
 
 const app = express();
 
@@ -28,6 +30,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use(morgan("dev"));
+
+app.use("/apidocs", swaggerUIExpress.serve, swaggerUIExpress.setup(specs))
 
 app.use("/static", express.static("./src/public"));
 app.engine("handlebars", hbs.engine);
