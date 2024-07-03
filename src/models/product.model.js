@@ -11,7 +11,14 @@ const productSchema = new mongoose.Schema({
   price: { type: Number, required: true },
   thumbnail: String,
   code: { type: String, unique: true, index: true, required: true },
-  stock: { type: Number, required: true },
+  stock: {
+    type: Number,
+    required: true,
+    validate: {
+      validator: Number.isInteger,
+      message: "{VALUE} is not an integer value",
+    },
+  },
   category: { type: String, index: true, enum: enumCategories, required: true },
   status: Boolean,
   owner: { type: String, required: true, default: "admin" },

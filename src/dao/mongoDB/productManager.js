@@ -67,13 +67,13 @@ class ProductManager {
 
       product.status = product.stock > 0 ? true : false;
 
-      await ProductModel.create(product);
+      const result = await ProductModel.create(product);
 
       console.log(`Product was loaded successfully - ${getLocaleTime()}`);
 
       const Reproducts = await this.readProducts();
 
-      return true;
+      return result;
     } catch (err) {
       throw err;
     }
@@ -162,7 +162,6 @@ class ProductManager {
         });
       }
 
-      console.log(newProduct);
       return newProduct;
     } catch (err) {
       throw err;

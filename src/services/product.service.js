@@ -26,7 +26,7 @@ class ProductService {
       owner,
     });
 
-    return "Product was created successfully";
+    return newProduct;
   };
 
   readProducts = async (limit) => {

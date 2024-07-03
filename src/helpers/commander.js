@@ -4,7 +4,7 @@ const program = new Command();
 
 program.option(
   "--mode <mode>",
-  "Switch between production and development databases",
+  "Switch between production, test and development databases",
   "prod"
 );
 
