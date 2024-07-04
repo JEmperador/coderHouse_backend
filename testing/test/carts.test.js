@@ -1,6 +1,6 @@
-import Cart from "../src/dao/mongoDB/cartManager.js";
-import Product from "../src/dao/mongoDB/productManager.js";
-import { assert, expect } from "../src/configs/test.config.js";
+import Cart from "../../src/dao/mongoDB/cartManager.js";
+import Product from "../../src/dao/mongoDB/productManager.js";
+import { assert, expect } from "../../src/configs/test.config.js";
 import mongoose from "mongoose";
 
 describe("Testing Carts DAO", () => {

@@ -1,5 +1,5 @@
-import User from "../src/dao/mongoDB/userManager.js";
-import { assert, expect } from "../src/configs/test.config.js";
+import User from "../../src/dao/mongoDB/userManager.js";
+import { assert, expect } from "../../src/configs/test.config.js";
 import mongoose from "mongoose";
 
 describe("Testing Users DAO", () => {

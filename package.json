@@ -8,10 +8,9 @@
     "start": "node src/app.js --mode prod",
     "test": "nodemon src/app.js --mode test",
     "dev": "nodemon src/app.js --mode dev",
-    "test-product": "mocha test/products.test.js  --mode test",
-    "test-cart": "mocha test/carts.test.js  --mode test",
-    "supertest": "mocha test/supertest/authentication.super.test.js --mode test",
-    "supertest-product": "mocha test/supertest/products.super.test.js --mode test"
+    "testing-products": "mocha test/testing/products.test.js  --mode test",
+    "testing-carts": "mocha test/testing/carts.test.js  --mode test",
+    "supertesting-authentication": "mocha test/supertest/authentication.super.test.js --mode test"
   },
   "author": "JEmperador",
   "license": "ISC",
