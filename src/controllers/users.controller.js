@@ -62,7 +62,6 @@ export const updateUserPassword = async (req, res, next) => {
 };
 
 export const updateUserRole = async (req, res, next) => {
-  console.log("HOLAAA");
   const { email } = req.params;
 
   try {

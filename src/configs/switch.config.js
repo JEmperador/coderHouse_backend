@@ -4,7 +4,7 @@ import program from "../helpers/commander.js";
 const { mode } = program.opts();
 
 dotenv.config({
-  path: mode === "prod" ? "./.env.prod" : "./.env.dev",
+  path: mode === "prod" ? "./.env.prod" : mode === "test" ? "./.env.test" : "./.env.dev",
 });
 
 const configSwitch = {
