@@ -18,8 +18,6 @@ formCreate.addEventListener("submit", (e) => {
   const ownerEmail = document.getElementById("owner").innerText;
   const role = document.getElementById("role").innerText;
 
-  console.log("se supone desde el front", ownerEmail, role);
-
   const product = {
     title,
     description,
@@ -31,8 +29,6 @@ formCreate.addEventListener("submit", (e) => {
     status: stock > 0 ? true : false,
     owner: role === "premium" ? ownerEmail : "admin",
   };
-
-  console.log("se supone desde el front 2", product.owner);
 
   socket.emit("client:newProduct", product);
 
@@ -46,8 +42,6 @@ formDelete.addEventListener("submit", (e) => {
   const id = document.querySelector("input[name=id]").value;
   const publicationOwner = document.getElementById("publicationOwner").innerText;
   const loggedUser = document.getElementById("owner").innerText;
-
-  console.log("desde el front", publicationOwner, loggedUser);
 
   if (publicationOwner === loggedUser) {
     socket.emit("client:deleteProduct", id);

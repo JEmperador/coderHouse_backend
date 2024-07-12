@@ -1,6 +1,7 @@
 import {
   createCart,
   createPurchase,
+  mercadopago,
   physicalDeleteCart,
   physicalDeleteProductById,
   physicalDeleteProducts,
@@ -16,6 +17,8 @@ const router = Router();
 router.post("/v3/carts", createCart);
 
 router.post("/v3/carts/:cid/purchase", createPurchase);
+
+router.post("/v3/carts/create-preference", mercadopago);
 
 router.get("/v3/carts", readCarts);
 

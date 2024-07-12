@@ -23,8 +23,6 @@ document.addEventListener("click", (event) => {
     const loggedUser = document.getElementById("owner").innerText;
     const loggedRole = document.getElementById("role").innerText;
 
-    console.log("desde el front", publicationOwner, loggedUser);
-
     if (publicationOwner === loggedUser) {
       Swal.fire({
         icon: "error",

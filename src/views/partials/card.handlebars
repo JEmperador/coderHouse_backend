@@ -25,11 +25,16 @@
         {{/each}}
     </ul>
 </div>
-<div style="width: 875px;" class="mt-3">
-    <p><b>Total:</b> ${{amount}}</p>
-</div>
 {{#if products}}
 <div style="width: 875px;" class="mt-3">
+    <div style="display: flex">
+        <b>Total:</b><p style="margin-left: 5px" id="amount">{{amount}}</p><p>U$D</p>
+    </div>
+</div>
+
+<div style="width: 875px;" class="mt-3">
     <a href="{{id}}/purchase" type="button" class="btn btn-success">Purchase</a>
+    <button id="checkout-btn" class="btn btn-primary" hidden>Purchase</button>
+    <div id="wallet_container"></div>
 </div>
 {{/if}}

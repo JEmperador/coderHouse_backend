@@ -1,13 +1,14 @@
 const socket = io();
 
 const cartId = document.getElementById("cartId").innerText;
+const amount = document.getElementById("amount").innerText;
 
 //Envia el front
 document.addEventListener("click", (event) => {
   if (event.target.classList.contains("delete")) {
     const id = event.target.getAttribute("id");
 
-    socket.emit("client:deleteProductOnCart", {id, cartId});
+    socket.emit("client:deleteProductOnCart", { id, cartId });
   }
 });
 
@@ -47,4 +48,51 @@ socket.on("server:error", (data) => {
     title: "Oops...",
     text: `${data}`,
   });
+});
+
+//Mercadopago
+const mp = new MercadoPago("APP_USR-40cc352a-7405-4a2f-9c44-31619a0b1f89", {
+  locale: "es-AR",
+});
+
+const createCheckoutButton = (preferenceId) => {
+  const bricksBuilder = mp.bricks();
+
+  const renderComponent = async () => {
+    if (window.checkoutButton) window.checkoutButton.unmount();
+    await bricksBuilder.create("wallet", "wallet_container", {
+      initialization: {
+        preferenceId: preferenceId,
+      },
+    });
+  };
+
+  renderComponent();
+};
+
+document.getElementById("checkout-btn").addEventListener("click", async () => {
+  try {
+    const orderData = {
+      title: "Total order",
+      quantity: 1,
+      price: amount,
+    };
+
+    const response = await fetch(
+      "http://localhost:3000/api/v3/carts/create-preference",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(orderData),
+      }
+    );
+
+    const preference = await response.json();
+
+    createCheckoutButton(preference.id);
+  } catch (err) {
+    alert("Algo salio mal");
+  }
 });
