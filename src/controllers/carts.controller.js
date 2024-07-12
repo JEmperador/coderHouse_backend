@@ -1,4 +1,6 @@
 import CartService from "../services/cart.service.js";
+import { Preference } from "mercadopago";
+import { client } from "../configs/mercadopago.config.js";
 
 const cartService = new CartService();
 
@@ -22,6 +24,37 @@ export const createPurchase = async (req, res, next) => {
     res.status(201).json(purchase);
   } catch (err) {
     next(err);
+  }
+};
+
+export const mercadopago = async (req, res) => {
+  try {
+    const body = {
+      items: [
+        {
+          title: req.body.title,
+          quantity: Number(req.body.quantity),
+          unit_price: Number(req.body.price),
+          currency_id: "ARS",
+        },
+      ],
+      back_urls: {
+        success: "https://www.mercadolibre.com.ar",
+        failure: "https://www.mercadolibre.com.ar",
+        pending: "https://www.mercadolibre.com.ar",
+      },
+      auto_return: "approved",
+    };
+
+    const preference = new Preference(client);
+    const result = await preference.create({ body });
+
+    res.json({
+      id: result.id,
+    });
+
+  } catch (err) {
+    res.status(500).json(err);
   }
 };
 

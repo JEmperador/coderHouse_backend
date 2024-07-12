@@ -40,25 +40,6 @@ describe("Testing for Atlas Tech web app", () => {
     });
   });
 
-  /* describe("Testing for User reset password: ", () => {
-    it("Endpoint POST /api/v3/reset", async () => {
-      let mockUser = {
-        email: "leonel_elmaskpo@gmail.com",
-        password: "4321",
-      };
-
-      const { statusCode, ok, _body } = await requester
-        .post("/api/v3/reset")
-        .send(mockUser);
-
-      console.log(_body);
-
-      expect(_body.status).to.equal("success");
-      expect(_body.message).to.be.equal("Successful reset password");
-      expect(_body.token).to.be.a("string");
-    });
-  }); */
-
   describe("Testing for User logout: ", () => {
     it("Endpoint POST /api/v3/logout", async () => {
       const { statusCode, ok, _body } = await requester.get("/api/v3/logout");

@@ -18,8 +18,6 @@ describe("Testing for Atlas Tech web app", () => {
           .post("/api/v3/products")
           .send(mockProduct);
   
-        // console.log(_body);
-  
         // expect(statusCode).to.be.equal(201);
         // expect(_body.status).to.be.equal("success");
         // expect(ok).to.be.true;
@@ -28,8 +26,6 @@ describe("Testing for Atlas Tech web app", () => {
   
       it("Endpoint GET /api/v3/products", async () => {
         const { statusCode, ok, _body } = await requester.get("/api/v3/products");
-  
-        // console.log(_body);
   
         // expect(statusCode).to.be.equal(200);
         // expect(_body.status).to.be.equal("success");
@@ -40,8 +36,6 @@ describe("Testing for Atlas Tech web app", () => {
       it("Endpoint GET /api/v3/products/:pid", async () => {
         const productId = "6685d39cd4000bd70225bbda" //AQUI COLOCAR UN ID YA EXISTENTE
         const { statusCode, ok, _body } = await requester.get(`/api/v3/products/${productId}`);
-  
-        // console.log(_body);
   
         // expect(statusCode).to.be.equal(200);
         // expect(_body.status).to.be.equal("success");
