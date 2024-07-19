@@ -38,6 +38,12 @@ class UserService {
 
     return newUserRole;
   };
+
+  updateUserLastConnection = async (email) => {
+    const userLastConnection = await dao.updateUserLastConnection(email);
+
+    return userLastConnection;
+  };
 }
 
 export default UserService;

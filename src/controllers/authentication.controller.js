@@ -1,7 +1,9 @@
 import dotenv from "dotenv";
 import UserService from "../services/user.service.js";
 import {
+  cookieExtractor,
   emailSenderResetPassword,
+  emailTokenExtractor,
   generateRandomNumber,
   generateToken,
 } from "../helpers/utils.js";
@@ -60,6 +62,8 @@ export const login = async (req, res) => {
 
     const token = generateToken(loginUser);
 
+    const lastConnection = await userService.updateUserLastConnection(email);
+
     res.cookie(process.env.COOKIE, token, {
       maxAge: 60 * 60 * 2000,
       httpOnly: true,
@@ -67,6 +71,7 @@ export const login = async (req, res) => {
 
     res.redirect("/profile");
   } catch (err) {
+    console.log(err);
     if (err.message.includes("Invalid credentials")) {
       res.status(401).json(err.message);
     } else if (err.message.includes("Invalid password")) {
@@ -198,6 +203,12 @@ export const resetRequest = async (req, res) => {
 
 export const logout = async (req, res) => {
   if (req?.cookies[process.env.COOKIE]) {
+    const token = cookieExtractor(req)
+
+    const email = await emailTokenExtractor(token)
+
+    const lastConnection = await userService.updateUserLastConnection(email);
+
     res.clearCookie(process.env.COOKIE, { secure: true });
 
     res.status(200).redirect("/");
