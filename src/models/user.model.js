@@ -29,6 +29,10 @@ const userSchema = new mongoose.Schema({
     token: String,
     expiresAt: Date,
   },
+  last_connection: {
+    type: Date,
+    default: null,
+  },
 });
 
 mongoose.set("strictQuery", false);

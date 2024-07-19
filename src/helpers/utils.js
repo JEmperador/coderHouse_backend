@@ -129,12 +129,11 @@ export const emailTokenExtractor = async (val) => {
 
   jwt.verify(val, process.env.SECRET_JWT, (err, decoded) => {
     if (err) {
-      email = "";
       console.log("Nop, tkn invalido");
       return;
     }
 
-    email = decoded.user;
+    email = decoded.user.email;
   });
 
   return email;
