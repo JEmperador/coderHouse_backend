@@ -4,26 +4,9 @@ import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import { UserModel } from "../models/user.model.js";
 import { hashSync, compareSync, genSaltSync } from "bcrypt";
-import { fileURLToPath } from "url";
-import { dirname } from "path";
 import { faker } from "@faker-js/faker";
 
 dotenv.config();
-
-//Multer
-const __filename = fileURLToPath(import.meta.url);
-export const __dirname = dirname(__filename);
-
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, __dirname + "/public/img");
-  },
-  filename: (req, file, cb) => {
-    cb(null, file.originalname);
-  },
-});
-
-export const uploader = multer({ storage });
 
 //Bcrypt
 export const createHash = (password) => {

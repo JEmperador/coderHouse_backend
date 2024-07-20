@@ -33,6 +33,12 @@ const userSchema = new mongoose.Schema({
     type: Date,
     default: null,
   },
+  documents: [
+    {
+      name: String,
+      reference: String,
+    },
+  ],
 });
 
 mongoose.set("strictQuery", false);
