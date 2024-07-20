@@ -24,6 +24,50 @@ export const createUser = async (req, res, next) => {
   }
 };
 
+export const uploadDocuments = async (req, res, next) => {
+  const { email } = req.params;
+  const uploadedDocuments = req.files;
+
+  try {
+    const user = await userService.readUserByEmail(email);
+
+    if (uploadedDocuments) {
+      if (uploadedDocuments.document) {
+        user.documents = user.documents.concat(
+          uploadedDocuments.document.map((doc) => ({
+            name: doc.originalname,
+            reference: doc.path,
+          }))
+        );
+      }
+
+      if (uploadedDocuments.products) {
+        user.documents = user.documents.concat(
+          uploadedDocuments.products.map((doc) => ({
+            name: doc.originalname,
+            reference: doc.path,
+          }))
+        );
+      }
+
+      if (uploadedDocuments.profile) {
+        user.documents = user.documents.concat(
+          uploadedDocuments.profile.map((doc) => ({
+            name: doc.originalname,
+            reference: doc.path,
+          }))
+        );
+      }
+    }
+
+    const result = user.save();
+
+    res.status(200).json("User document updated");
+  } catch (err) {
+    next(err);
+  }
+};
+
 export const readUsers = async (req, res) => {
   try {
     const users = await userService.readUsers();

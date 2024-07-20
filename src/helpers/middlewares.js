@@ -3,6 +3,9 @@ import dotenv from "dotenv";
 import jwt from "jsonwebtoken";
 import { Errors } from "./errors/enum.js";
 import { logger } from "../configs/logger.config.js";
+import multer from "multer";
+import { fileURLToPath } from "url";
+import { dirname, join } from "path";
 
 dotenv.config();
 
@@ -74,3 +77,25 @@ export const addLogger = (req, res, next) => {
   );
   next();
 };
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+const folderMap = {
+  profile: join(__dirname, "src/uploads/profiles"),
+  products: join(__dirname, "src/uploads/products"),
+  document: join(__dirname, "src/uploads/documents"),
+};
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    const destinationFolder =
+      folderMap[file.fieldname] || join(__dirname, "src/uploads/others");
+    cb(null, destinationFolder);
+  },
+  filename: (req, file, cb) => {
+    cb(null, file.originalname);
+  },
+});
+
+export const uploader = multer({ storage });
