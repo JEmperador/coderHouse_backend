@@ -9,6 +9,7 @@ import {
   reset,
   updateUserPassword,
   updateUserRole,
+  uploadDocuments,
 } from "../../controllers/users.controller.js";
 import { uploader } from "../../helpers/middlewares.js";
 
@@ -16,7 +17,15 @@ const router = Router();
 
 router.post("/v3/users", createUser);
 
-router.post("/v3/users/:email/documents", uploader.fields([{ name: "document" }, { name: "products" }, { name: "profile" }]));
+router.post(
+  "/v3/users/:email/documents",
+  uploader.fields([
+    { name: "document" },
+    { name: "products" },
+    { name: "profile" },
+  ]),
+  uploadDocuments
+);
 
 router.get("/v3/users", readUsers);
 
@@ -33,6 +42,5 @@ router.post("/v3/register", register);
 router.post("/v3/login", login);
 
 router.post("/v3/reset", reset);
-
 
 export default router;
