@@ -1,9 +1,10 @@
-import multer from "multer";
 import fs from "fs";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import { UserModel } from "../models/user.model.js";
 import { hashSync, compareSync, genSaltSync } from "bcrypt";
+import { fileURLToPath } from "url";
+import { dirname } from "path";
 import { faker } from "@faker-js/faker";
 
 dotenv.config();
@@ -99,6 +100,9 @@ export const generateRandomNumber = () => {
 
   return randomNumber;
 };
+
+const __filename = fileURLToPath(import.meta.url);
+export const __dirname = dirname(__filename);
 
 //JWT
 export const generateToken = (user) => {

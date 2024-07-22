@@ -26,16 +26,14 @@
         </li>
     </ul>
     <br>
-    {{!-- <div style="display: flex; justify-content: center; margin-top: 20px">
-        <form action="/api/v3/users/{{profile.email}}" method="put">
-            <button type="submit" class="btn btn-primary mb-4">Change role</button>
-        </form>
-
-        <a href="/api/v3/users/{{profile.email}}">Change role</a>
-    </div> --}}
     <div style="display: flex; justify-content: center">
         <a href="/reset">Reset password</a>
     </div>
     <br>
+    {{#if profile.isAdmin}}
+    <a class="btn btn-primary" style="width: 100%;" href="#">Users</a>
+    {{/if}}
+    <hr>
     <a class="btn btn-primary" style="width: 100%;" href="/api/v3/authentication/logout">Logout</a>
+
 </div>

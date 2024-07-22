@@ -6,6 +6,7 @@ class ProfileDTO {
         this.email = email,
         this.role = role,
         this.fullName = `${last_name}, ${first_name}`
+        this.isAdmin = role === "admin" ? true : false;
     }
 }
 

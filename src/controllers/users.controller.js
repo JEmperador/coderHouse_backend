@@ -111,7 +111,23 @@ export const updateUserRole = async (req, res, next) => {
   try {
     const newUserRole = await userService.updateUserRole(email);
 
+    if (!newUserRole) {
+      res.status(400).json("Missing documentation");
+    }
+
     res.status(200).json("Changed role");
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const physicalDeleteUser = async (req, res, next) => {
+  const { uid } = req.params;
+
+  try {
+    let result = await userService.physicalDeleteUser(uid);
+
+    res.status(204).json("User deleted")
   } catch (err) {
     next(err);
   }

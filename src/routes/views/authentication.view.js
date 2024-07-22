@@ -30,6 +30,8 @@ router.get("/profile", passportCall("jwt"), (req, res) => {
 
   const profile = new ProfileDTO(user);
 
+  console.log(profile.isAdmin);
+
   res.render("profile", {
     title: "Atlas Tech - Profile",
     profile: profile,
