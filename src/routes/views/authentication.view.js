@@ -13,7 +13,7 @@ router.get("/", (req, res) => {
   if (req?.cookies[process.env.COOKIE]) {
     res.redirect("/profile");
   } else {
-    res.render("login", { title: "Atlas Tech - Login", req: req });
+    res.render("login", { title: "Atlas Tech | Login", req: req });
   }
 });
 
@@ -21,7 +21,7 @@ router.get("/register", (req, res) => {
   if (req?.cookies[process.env.COOKIE]) {
     res.redirect("/profile");
   } else {
-    res.render("register", { title: "Atlas Tech - Register", req: req });
+    res.render("register", { title: "Atlas Tech | Register", req: req });
   }
 });
 
@@ -30,18 +30,25 @@ router.get("/profile", passportCall("jwt"), (req, res) => {
 
   const profile = new ProfileDTO(user);
 
-  console.log(profile.isAdmin);
-
   res.render("profile", {
-    title: "Atlas Tech - Profile",
+    title: "Atlas Tech | Profile",
     profile: profile,
+    req: req,
+  });
+});
+
+router.get("/profile/admin-panel", passportCall("jwt"), (req, res) => {
+  const user = 
+
+  res.render("admin-panel", {
+    title: "Atlas Tech | Admin Panel",
     req: req,
   });
 });
 
 router.get("/resetRequest", (req, res) => {
   res.render("resetRequest", {
-    title: "Atlas Tech - Reset Password Request",
+    title: "Atlas Tech | Reset Password Request",
     req: req,
   });
 });
@@ -57,7 +64,7 @@ router.get("/afterResetRequest/:token", async (req, res) => {
     res.redirect("/resetRequest");
   } else {
     res.render("afterResetRequest", {
-      title: "Atlas Tech - Reset password",
+      title: "Atlas Tech | Reset password",
       req: req,
       email: email,
     });
@@ -65,11 +72,11 @@ router.get("/afterResetRequest/:token", async (req, res) => {
 });
 
 router.get("/reset", (req, res) => {
-  res.render("reset", { title: "Atlas Tech - Reset password", req: req });
+  res.render("reset", { title: "Atlas Tech | Reset password", req: req });
 });
 
 router.get("/emailSend", (req, res) => {
-  res.render("emailSend", { title: "Atlas Tech - Email send", req: req });
+  res.render("emailSend", { title: "Atlas Tech | Email send", req: req });
 });
 
 export default router;

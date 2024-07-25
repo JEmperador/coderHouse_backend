@@ -184,6 +184,28 @@ export const emailSenderResetPassword = async (
   }
 };
 
+export const emailSenderDeleteProduct = async (
+  transport,
+  email,
+  product,
+) => {
+  const mailOptions = {
+    from: "Atlas Tech <j4v1113r@gmail.com>",
+    to: `${email}`,
+    subject: "Product deleted",
+    html: `<h1>Product deleted</h1>
+          <p>Product: <b>${product.title}</b> with code: <b>${product.code}</b> was deleted</p>`,
+  };
+
+  try {
+    const result = await transport.sendMail(mailOptions);
+
+    return result;
+  } catch (err) {
+    console.log(err);
+  }
+};
+
 //Faker
 const categories = ["CPU", "GPU", "PSU", "RAM", "MOTHER"];
 

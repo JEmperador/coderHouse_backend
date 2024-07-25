@@ -40,11 +40,16 @@ formDelete.addEventListener("submit", (e) => {
   e.preventDefault();
 
   const id = document.querySelector("input[name=id]").value;
-  const publicationOwner = document.getElementById("publicationOwner").innerText;
-  const loggedUser = document.getElementById("owner").innerText;
 
-  if (publicationOwner === loggedUser) {
-    socket.emit("client:deleteProduct", id);
+  const publicationOwner = card.querySelector(".publicationOwner").innerText;
+  const loggedUser = document.getElementById("owner").innerText;
+  const loggedRole = document.getElementById("role").innerText;
+
+  if (
+    (publicationOwner === loggedUser && loggedRole === "premium") ||
+    (publicationOwner === "admin" && loggedRole === "admin")
+  ) {
+    socket.emit("client:deleteProduct", { id, loggedUser });
   } else {
     Swal.fire({
       icon: "error",
@@ -67,9 +72,11 @@ document.addEventListener("click", (event) => {
     const loggedUser = document.getElementById("owner").innerText;
     const loggedRole = document.getElementById("role").innerText;
 
-
-    if (publicationOwner === loggedUser && loggedRole === "premium") {
-      socket.emit("client:deleteProduct", id);
+    if (
+      (publicationOwner === loggedUser && loggedRole === "premium") ||
+      loggedRole === "admin"
+    ) {
+      socket.emit("client:deleteProduct", { id, publicationOwner });
     } else {
       Swal.fire({
         icon: "error",

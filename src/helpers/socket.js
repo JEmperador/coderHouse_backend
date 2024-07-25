@@ -1,8 +1,9 @@
 import { Server } from "socket.io";
-import { socketUserName } from "./utils.js";
+import { emailSenderDeleteProduct, socketUserName } from "./utils.js";
 import ProductService from "../services/product.service.js";
 import CartService from "../services/cart.service.js";
 import ChatService from "../services/chat.service.js";
+import { getTransport } from "../configs/transport.config.js";
 
 const productService = new ProductService();
 const cartService = new CartService();
@@ -19,7 +20,16 @@ export default function socketioHandler(httpServer) {
     //Recibe del front - Creacion de producto
     socket.on("client:newProduct", async (data) => {
       try {
-        const { title, description, price, code, stock, category, status, owner } = data;
+        const {
+          title,
+          description,
+          price,
+          code,
+          stock,
+          category,
+          status,
+          owner,
+        } = data;
 
         const thumbnail = data.thumbnail.lenght > 0 ? data.thumbnail : "";
 
@@ -32,7 +42,7 @@ export default function socketioHandler(httpServer) {
           stock,
           category,
           status,
-          owner,
+          owner
         );
 
         //Envia el back
@@ -50,11 +60,17 @@ export default function socketioHandler(httpServer) {
     //Recibe del front - Eliminacion de producto
     socket.on("client:deleteProduct", async (data) => {
       try {
-        const id = data;
+        const { id, publicationOwner } = data;
+
+        const product = await productService.readProductById(id);
+
+        const transport = getTransport(publicationOwner);
 
         const logicalDeleteProduct = await productService.logicalDeleteProduct(
           id
         );
+
+        await emailSenderDeleteProduct(transport, publicationOwner, product)
 
         //Envia el back
         const products = await productService.readProducts();

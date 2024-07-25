@@ -6,7 +6,11 @@
                 <div style="width: 10px; background-color: #ffd700">
                 </div>
                 <div style="display: flex;">
-                    <img src={{product.thumbnail}} alt="img - {{product.thumbnail}}" width="150px">
+                    {{#if product.thumbnail}}
+                    <img src={{product.thumbnail}} width="150px" alt="img - {{product.thumbnail}}">
+                    {{else}}
+                    <img src="https://i.ibb.co/zsQdBNc/200x200.gif" width="150px" alt="img - no img">
+                    {{/if}}
                     <div style="display: flex; justify-content: space-between">
                         <div style="display: flex; flex-direction: column">
                             <h5 class="m-0">{{product.category}} - {{product.title}}</h5>
