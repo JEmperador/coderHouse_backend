@@ -1,13 +1,15 @@
 import { Server } from "socket.io";
-import { emailSenderDeleteProduct, socketUserName } from "./utils.js";
+import { emailSenderDeleteProduct, emailSenderDeleteUser, socketUserName } from "./utils.js";
 import ProductService from "../services/product.service.js";
 import CartService from "../services/cart.service.js";
 import ChatService from "../services/chat.service.js";
+import UserService from "../services/user.service.js";
 import { getTransport } from "../configs/transport.config.js";
 
 const productService = new ProductService();
 const cartService = new CartService();
 const chatService = new ChatService();
+const userService = new UserService();
 
 export default function socketioHandler(httpServer) {
   const io = new Server(httpServer);
@@ -70,7 +72,7 @@ export default function socketioHandler(httpServer) {
           id
         );
 
-        await emailSenderDeleteProduct(transport, publicationOwner, product)
+        await emailSenderDeleteProduct(transport, publicationOwner, product);
 
         //Envia el back
         const products = await productService.readProducts();
@@ -118,6 +120,26 @@ export default function socketioHandler(httpServer) {
         //Envia el back
         const cart = await cartService.readCartById(cid);
         io.emit("server:add", cart);
+      } catch (err) {
+        io.emit("server:error", err.message);
+      }
+    });
+
+    //Recibe del front - Eliminacion de producto
+    socket.on("client:deleteUser", async (data) => {
+      try {
+        const { id, userEmail } = data;
+
+        const transport = getTransport(userEmail);
+
+        const physicalDeleteUser = await userService.physicalDeleteUser(id);
+
+        await emailSenderDeleteUser(transport, userEmail);
+
+        //Envia el back
+        const listUsers = await userService.readUsers();
+
+        io.emit("server:list-users", listUsers);
       } catch (err) {
         io.emit("server:error", err.message);
       }

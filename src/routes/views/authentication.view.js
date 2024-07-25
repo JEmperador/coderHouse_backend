@@ -1,11 +1,13 @@
+import dotenv from "dotenv";
 import { Router } from "express";
 import { passportCall } from "../../helpers/middlewares.js";
 import ProfileDTO from "../../dto/profile.dto.js";
 import { emailTokenExtractor } from "../../helpers/utils.js";
-
-import dotenv from "dotenv";
+import UserService from "../../services/user.service.js";
 
 dotenv.config();
+
+const userService = new UserService();
 
 const router = Router();
 
@@ -37,13 +39,20 @@ router.get("/profile", passportCall("jwt"), (req, res) => {
   });
 });
 
-router.get("/profile/admin-panel", passportCall("jwt"), (req, res) => {
-  const user = 
+router.get("/profile/admin-panel", passportCall("jwt"), async (req, res) => {
+  try {
+    const users = await userService.readUsers();
 
-  res.render("admin-panel", {
-    title: "Atlas Tech | Admin Panel",
-    req: req,
-  });
+    res.render("admin-panel", {
+      title: "Atlas Tech | Admin Panel",
+      users: users,
+      req: req,
+    });
+  } catch (err) {
+    
+  }
+  
+  
 });
 
 router.get("/resetRequest", (req, res) => {

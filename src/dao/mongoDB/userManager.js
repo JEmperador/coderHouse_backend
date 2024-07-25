@@ -10,6 +10,7 @@ import {
   generateSamePasswordUserErrorInfo,
 } from "../../helpers/errors/info.js";
 import { Errors } from "../../helpers/errors/enum.js";
+import mongoose from "mongoose";
 
 const cartManager = new CartManager();
 

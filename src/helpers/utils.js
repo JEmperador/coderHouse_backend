@@ -164,6 +164,8 @@ export const emailSenderResetPassword = async (
   token,
   number
 ) => {
+  const PORT = process.env.PORT ? `:${process.env.PORT}` : ""
+
   const mailOptions = {
     from: "Atlas Tech <javier_emperador@outlook.com>",
     to: `${email}`,
@@ -172,7 +174,7 @@ export const emailSenderResetPassword = async (
           <p>You will be prompted for the following code to reset your password</p>
           <h1>${number}</h1>
           <p>If you did not request to reset your password, please ignore this email.</p>
-          <a href="http://localhost:3000/afterResetRequest/${token}">Reset your password</a>`,
+          <a href="${process.env.API_BASE_URL}${PORT}/afterResetRequest/${token}">Reset your password</a>`,
   };
 
   try {
@@ -195,6 +197,27 @@ export const emailSenderDeleteProduct = async (
     subject: "Product deleted",
     html: `<h1>Product deleted</h1>
           <p>Product: <b>${product.title}</b> with code: <b>${product.code}</b> was deleted</p>`,
+  };
+
+  try {
+    const result = await transport.sendMail(mailOptions);
+
+    return result;
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+export const emailSenderDeleteUser = async (
+  transport,
+  email,
+) => {
+  const mailOptions = {
+    from: "Atlas Tech <j4v1113r@gmail.com>",
+    to: `${email}`,
+    subject: "User deleted",
+    html: `<h1>User deleted</h1>
+          <p>Your user was deleted by the admin</p>`,
   };
 
   try {
