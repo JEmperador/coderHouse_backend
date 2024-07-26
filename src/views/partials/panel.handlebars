@@ -7,43 +7,45 @@
         <ul class="list-group list-group-flush">
             <li class="list-group-item">
                 <div>
-                    <b>First Name:</b>
-                    {{first_name}} {{last_name}}
+                    <b>Name:</b>
+                    {{this.fullName}}
                 </div>
             </li>
             <li class="list-group-item">
                 <div>
                     <b>Email:</b>
-                    {{email}}
-                    <p class="email" hidden>{{email}}</p>
+                    {{this.email}}
+                    <p class="email" hidden>{{this.email}}</p>
                 </div>
             </li>
             <li class="list-group-item">
                 <div>
                     <b>Social:</b>
-                    {{social}}
+                    {{this.social}}
                 </div>
             </li>
             <li class="list-group-item">
                 <div>
                     <b>Role:</b>
-                    {{role}}
-                    <p class="role" hidden>{{role}}</p>
+                    {{this.role}}
+                    <p class="role" hidden>{{this.role}}</p>
                 </div>
             </li>
         </ul>
+        {{#if this.noAdmin}}
         <div class="p-3" style="display: flex; justify-content: space-between;">
             <div class="delete">
-                <button class="btn btn-danger delete" id={{id}}>
+                <button class="btn btn-danger delete" id={{this.id}}>
                     Delete
                 </button>
             </div>
             <div class="change">
-                <button class="btn btn-warning change" id={{id}}>
+                <button class="btn btn-warning change" id={{this.id}}>
                     Change Role
                 </button>
             </div>
         </div>
+        {{/if}}
     </div>
     {{/each}}
 </div>

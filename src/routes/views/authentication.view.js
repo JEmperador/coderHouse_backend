@@ -43,16 +43,16 @@ router.get("/profile/admin-panel", passportCall("jwt"), async (req, res) => {
   try {
     const users = await userService.readUsers();
 
+    const usersDTO = users.map((user) => new ProfileDTO(user))
+
     res.render("admin-panel", {
       title: "Atlas Tech | Admin Panel",
-      users: users,
+      users: usersDTO,
       req: req,
     });
   } catch (err) {
-    
+    res.status(500).json(err);
   }
-  
-  
 });
 
 router.get("/resetRequest", (req, res) => {

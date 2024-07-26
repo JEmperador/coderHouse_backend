@@ -6,6 +6,7 @@ import CustomError from "../../helpers/errors/custom-error.js";
 import {
   generateFieldUserErrorInfo,
   generateInvalidEmailUserErrorInfo,
+  generateInvalidIdUserErrorInfo,
   generateNotFoundUserErrorInfo,
   generateSamePasswordUserErrorInfo,
 } from "../../helpers/errors/info.js";
@@ -239,9 +240,9 @@ class UserManager {
         );
         throw CustomError.createError({
           name: "Invalid user ID",
-          cause: generateInvalidEmailUserErrorInfo(idU),
+          cause: generateInvalidIdUserErrorInfo(idU),
           message: "Error when trying to delete a user",
-          code: Errors.INVALID_EMAIL,
+          code: Errors.INVALID_ID,
         });
       }
 

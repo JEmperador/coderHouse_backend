@@ -125,7 +125,7 @@ export default function socketioHandler(httpServer) {
       }
     });
 
-    //Recibe del front - Eliminacion de producto
+    //Recibe del front - Eliminacion de usuario
     socket.on("client:deleteUser", async (data) => {
       try {
         const { id, userEmail } = data;
