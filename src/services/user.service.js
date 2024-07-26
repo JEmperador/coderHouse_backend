@@ -44,6 +44,12 @@ class UserService {
 
     return userLastConnection;
   };
+
+  physicalDeleteUser = async (idU) => {
+    const physicalDeleteUser = await dao.physicalDeleteUser(idU);
+
+    return "User removed";
+  };
 }
 
 export default UserService;

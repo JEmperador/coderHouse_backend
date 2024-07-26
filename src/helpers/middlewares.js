@@ -4,11 +4,11 @@ import jwt from "jsonwebtoken";
 import { Errors } from "./errors/enum.js";
 import { logger } from "../configs/logger.config.js";
 import multer from "multer";
-import { fileURLToPath } from "url";
-import { dirname, join } from "path";
+import { promises as fs } from "fs";
 
 dotenv.config();
 
+//Passport
 export const passportCall = (strategy) => {
   return async (req, res, next) => {
     passport.authenticate(strategy, (err, user, info) => {
@@ -29,6 +29,7 @@ export const passportCall = (strategy) => {
   };
 };
 
+//Check
 export const checkRole = (allowedRoles) => (req, res, next) => {
   const token = req.cookies[process.env.COOKIE];
 
@@ -50,6 +51,7 @@ export const checkRole = (allowedRoles) => (req, res, next) => {
   }
 };
 
+//Errors
 export const handlerError = (err, req, res, next) => {
   console.log(err.cause);
   switch (err.code) {
@@ -70,6 +72,7 @@ export const handlerError = (err, req, res, next) => {
   }
 };
 
+//Loggers
 export const addLogger = (req, res, next) => {
   req.logger = logger;
   req.logger.http(
@@ -78,24 +81,35 @@ export const addLogger = (req, res, next) => {
   next();
 };
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
+//Multer
 const folderMap = {
-  profile: join(__dirname, "src/uploads/profiles"),
-  products: join(__dirname, "src/uploads/products"),
-  document: join(__dirname, "src/uploads/documents"),
+  profile: "src/uploads/profiles",
+  products: "src/uploads/products",
+  document: "src/uploads/documents",
 };
 
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
+  destination: async (req, file, cb) => {
     const destinationFolder =
-      folderMap[file.fieldname] || join(__dirname, "src/uploads/others");
+      folderMap[file.fieldname] || folderMap["document"];
+
+    try {
+      await fs.access(destinationFolder);
+    } catch (err) {
+      await fs.mkdir(destinationFolder, { recursive: true });
+    }
+
     cb(null, destinationFolder);
   },
   filename: (req, file, cb) => {
-    cb(null, file.originalname);
+    const fileExt = file.originalname.split(".").pop();
+    const fileName = `${file.originalname
+      .split(".")
+      .slice(0, -1)
+      .join(".")}-${new Date().toISOString().replace(/:/g, "-")}.${fileExt}`;
+
+    cb(null, fileName);
   },
 });
 
-export const uploader = multer({ storage });
+export const uploader = multer({ storage: storage });

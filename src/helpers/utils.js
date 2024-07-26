@@ -1,9 +1,10 @@
-import multer from "multer";
 import fs from "fs";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import { UserModel } from "../models/user.model.js";
 import { hashSync, compareSync, genSaltSync } from "bcrypt";
+import { fileURLToPath } from "url";
+import { dirname } from "path";
 import { faker } from "@faker-js/faker";
 
 dotenv.config();
@@ -100,6 +101,9 @@ export const generateRandomNumber = () => {
   return randomNumber;
 };
 
+const __filename = fileURLToPath(import.meta.url);
+export const __dirname = dirname(__filename);
+
 //JWT
 export const generateToken = (user) => {
   const token = jwt.sign({ user }, process.env.SECRET_JWT, { expiresIn: "2h" });
@@ -160,6 +164,8 @@ export const emailSenderResetPassword = async (
   token,
   number
 ) => {
+  const PORT = process.env.PORT ? `:${process.env.PORT}` : ""
+
   const mailOptions = {
     from: "Atlas Tech <javier_emperador@outlook.com>",
     to: `${email}`,
@@ -168,7 +174,71 @@ export const emailSenderResetPassword = async (
           <p>You will be prompted for the following code to reset your password</p>
           <h1>${number}</h1>
           <p>If you did not request to reset your password, please ignore this email.</p>
-          <a href="http://localhost:3000/afterResetRequest/${token}">Reset your password</a>`,
+          <a href="${process.env.API_BASE_URL}${PORT}/afterResetRequest/${token}">Reset your password</a>`,
+  };
+
+  try {
+    const result = await transport.sendMail(mailOptions);
+
+    return result;
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+export const emailSenderDeleteProduct = async (
+  transport,
+  email,
+  product,
+) => {
+  const mailOptions = {
+    from: "Atlas Tech <j4v1113r@gmail.com>",
+    to: `${email}`,
+    subject: "Product deleted",
+    html: `<h1>Product deleted</h1>
+          <p>Product: <b>${product.title}</b> with code: <b>${product.code}</b> was deleted</p>`,
+  };
+
+  try {
+    const result = await transport.sendMail(mailOptions);
+
+    return result;
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+export const emailSenderDeleteUser = async (
+  transport,
+  email,
+) => {
+  const mailOptions = {
+    from: "Atlas Tech <j4v1113r@gmail.com>",
+    to: `${email}`,
+    subject: "User deleted",
+    html: `<h1>User deleted</h1>
+          <p>Your user was deleted by the admin</p>`,
+  };
+
+  try {
+    const result = await transport.sendMail(mailOptions);
+
+    return result;
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+export const emailSenderUpdateRoleUser = async (
+  transport,
+  email,
+) => {
+  const mailOptions = {
+    from: "Atlas Tech <j4v1113r@gmail.com>",
+    to: `${email}`,
+    subject: "Update role",
+    html: `<h1>Update role</h1>
+          <p>Your user was updated role by the admin</p>`,
   };
 
   try {

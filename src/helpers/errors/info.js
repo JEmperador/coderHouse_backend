@@ -91,6 +91,13 @@ export const generateFieldUserErrorInfo = (user) => {
     - age           : Needs to be a Number, received ${user.age}`;
 };
 
+export const generateInvalidIdUserErrorInfo = (id) => {
+  return `ID: ${id} is not valid.
+    List of requiered for ID:
+    - Length        : 24 character hexadecimal string.
+    - Format        : It must consist of characters ranging from 0 to 9 and from "a" to "f".`;
+};
+
 export const generateInvalidEmailUserErrorInfo = (email) => {
   return `Email: ${email} already exists.
     - Choose another email.`;
@@ -104,6 +111,14 @@ export const generateNotFoundUserErrorInfo = () => {
 export const generateSamePasswordUserErrorInfo = () => {
   return `Same password.
     - Choose another password.`;
+};
+
+export const generateNoDocumentationUserErrorInfo = () => {
+  return `Missing documentation.
+    Must add:
+    - Identificacion.
+    - Comprobante de domicilio.
+    - Comprobante de estado de cuenta.`;
 };
 
 //Ticket

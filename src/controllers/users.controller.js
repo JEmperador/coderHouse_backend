@@ -34,10 +34,16 @@ export const uploadDocuments = async (req, res, next) => {
     if (uploadedDocuments) {
       if (uploadedDocuments.document) {
         user.documents = user.documents.concat(
-          uploadedDocuments.document.map((doc) => ({
-            name: doc.originalname,
-            reference: doc.path,
-          }))
+          uploadedDocuments.document.map((doc) => {
+            const fileNameWithoutExt = doc.originalname
+              .split(".")
+              .slice(0, -1)
+              .join(".");
+            return {
+              name: fileNameWithoutExt,
+              reference: doc.path,
+            };
+          })
         );
       }
 
@@ -60,10 +66,11 @@ export const uploadDocuments = async (req, res, next) => {
       }
     }
 
-    const result = user.save();
+    const result = await user.save();
 
     res.status(200).json("User document updated");
   } catch (err) {
+    console.log(err);
     next(err);
   }
 };
@@ -111,7 +118,23 @@ export const updateUserRole = async (req, res, next) => {
   try {
     const newUserRole = await userService.updateUserRole(email);
 
+    if (!newUserRole) {
+      res.status(400).json("Missing documentation");
+    }
+
     res.status(200).json("Changed role");
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const physicalDeleteUser = async (req, res, next) => {
+  const { uid } = req.params;
+
+  try {
+    let result = await userService.physicalDeleteUser(uid);
+
+    res.status(204).json("User deleted");
   } catch (err) {
     next(err);
   }

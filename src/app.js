@@ -48,7 +48,7 @@ router(app);
 app.use(handlerError);
 
 const httpServer = app.listen(PORT, () => {
-  console.log(`Server is running at: http://localhost:${PORT}`);
+  console.log(`Server is running on port ${PORT}`);
 });
 
 socketioHandler(httpServer);

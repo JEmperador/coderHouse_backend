@@ -6,10 +6,13 @@ import CustomError from "../../helpers/errors/custom-error.js";
 import {
   generateFieldUserErrorInfo,
   generateInvalidEmailUserErrorInfo,
+  generateInvalidIdUserErrorInfo,
+  generateNoDocumentationUserErrorInfo,
   generateNotFoundUserErrorInfo,
   generateSamePasswordUserErrorInfo,
 } from "../../helpers/errors/info.js";
 import { Errors } from "../../helpers/errors/enum.js";
+import mongoose from "mongoose";
 
 const cartManager = new CartManager();
 
@@ -44,7 +47,7 @@ class UserManager {
 
       user.password = createHash(user.password);
       user.cartId = cart._id;
-      user.role = user.email == "adminCoder@coder.com" ? "admin" : "user";
+      user.role = user.email.includes("admin") ? "admin" : "user";
 
       const newUser = await UserModel.create(user);
 
@@ -165,6 +168,22 @@ class UserManager {
         });
       }
 
+      const requiredDocumentation = ["identification", "proofOfAddress", "proofOfAccountStatus"];
+
+      const userDocuments = user.documents.map(doc => doc.name);
+
+      const hasDocumentation = requiredDocumentation.every(doc => userDocuments.includes(doc))
+
+      if (!hasDocumentation) {
+        console.log(`Missing documentation - ${getLocaleTime()}`);
+        throw CustomError.createError({
+          name: "Missing documentation",
+          cause: generateNoDocumentationUserErrorInfo(),
+          message: "Error when trying to update an user",
+          code: Errors.NO_DOCUMENTATION,
+        });
+      }
+
       const newRole = user.role === "user" ? "premium" : "user";
 
       const userId = user._id;
@@ -213,6 +232,41 @@ class UserManager {
       );
 
       console.log(`Set last connection - ${getLocaleTime()}`);
+      return true;
+    } catch (err) {
+      throw err;
+    }
+  };
+
+  physicalDeleteUser = async (idU) => {
+    try {
+      if (!mongoose.Types.ObjectId.isValid(idU)) {
+        console.log(
+          `Invalid user ID - ${getLocaleTime()}`
+        );
+        throw CustomError.createError({
+          name: "Invalid user ID",
+          cause: generateInvalidIdUserErrorInfo(idU),
+          message: "Error when trying to delete a user",
+          code: Errors.INVALID_ID,
+        });
+      }
+
+      const user = await UserModel.findById(idU);
+
+      if (!user) {
+        console.log(`User not exist - ${getLocaleTime()}`);
+        throw CustomError.createError({
+          name: "Not found User",
+          cause: generateNotFoundUserErrorInfo(),
+          message: "Error when trying to read an user",
+          code: Errors.NOT_FOUND,
+        });
+      }
+
+      const userDelete = await UserModel.findByIdAndDelete(idU)
+
+      console.log(`User removed - ${getLocaleTime()}`);
       return true;
     } catch (err) {
       throw err;

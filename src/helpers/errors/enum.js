@@ -14,4 +14,5 @@ export const Errors = {
   //User
   INVALID_EMAIL: 9,
   SAME_PASSWORD: 10,
+  NO_DOCUMENTATION: 11
 };

@@ -1,5 +1,7 @@
 import dotenv from "dotenv";
 import mongoose from "mongoose";
+import { deleteInactiveUsers } from "../jobs/deleteInactiveUsers.js";
+import cron from "node-cron";
 import configSwitch from "../configs/switch.config.js";
 const { mongo_user, mongo_pass, mongo_cluster, mongo_app, mongo_db } =
   configSwitch;
@@ -13,6 +15,16 @@ class MongoDB {
   constructor() {
     mongoose.connect(url, {
       dbName: mongo_db,
+      serverSelectionTimeoutMS: 60000,
+    });
+
+    this.setupCronJobs();
+  }
+
+  setupCronJobs() {
+    cron.schedule("0 0 * * *", () => {
+      console.log("Running scheduled task");
+      deleteInactiveUsers();
     });
   }
 
