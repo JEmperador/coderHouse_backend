@@ -7,6 +7,7 @@ import {
   generateFieldUserErrorInfo,
   generateInvalidEmailUserErrorInfo,
   generateInvalidIdUserErrorInfo,
+  generateNoDocumentationUserErrorInfo,
   generateNotFoundUserErrorInfo,
   generateSamePasswordUserErrorInfo,
 } from "../../helpers/errors/info.js";
@@ -167,7 +168,7 @@ class UserManager {
         });
       }
 
-      const requiredDocumentation = ["Identificacion", "Comprobante de domicilio", "Comprobante de estado de cuenta"];
+      const requiredDocumentation = ["identification", "proofOfAddress", "proofOfAccountStatus"];
 
       const userDocuments = user.documents.map(doc => doc.name);
 
@@ -175,7 +176,12 @@ class UserManager {
 
       if (!hasDocumentation) {
         console.log(`Missing documentation - ${getLocaleTime()}`);
-        return false;
+        throw CustomError.createError({
+          name: "Missing documentation",
+          cause: generateNoDocumentationUserErrorInfo(),
+          message: "Error when trying to update an user",
+          code: Errors.NO_DOCUMENTATION,
+        });
       }
 
       const newRole = user.role === "user" ? "premium" : "user";

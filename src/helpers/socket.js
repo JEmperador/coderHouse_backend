@@ -1,5 +1,10 @@
 import { Server } from "socket.io";
-import { emailSenderDeleteProduct, emailSenderDeleteUser, socketUserName } from "./utils.js";
+import {
+  emailSenderDeleteProduct,
+  emailSenderDeleteUser,
+  emailSenderUpdateRoleUser,
+  socketUserName,
+} from "./utils.js";
 import ProductService from "../services/product.service.js";
 import CartService from "../services/cart.service.js";
 import ChatService from "../services/chat.service.js";
@@ -135,6 +140,26 @@ export default function socketioHandler(httpServer) {
         const physicalDeleteUser = await userService.physicalDeleteUser(id);
 
         await emailSenderDeleteUser(transport, userEmail);
+
+        //Envia el back
+        const listUsers = await userService.readUsers();
+
+        io.emit("server:list-users", listUsers);
+      } catch (err) {
+        io.emit("server:error", err.message);
+      }
+    });
+
+    //Recibe del front - Actualizacion de role de usuario
+    socket.on("client:updateUser", async (data) => {
+      try {
+        const { id, userEmail } = data;
+
+        const transport = getTransport(userEmail);
+
+        const physicalDeleteUser = await userService.updateUserRole(userEmail);
+
+        await emailSenderUpdateRoleUser(transport, userEmail);
 
         //Envia el back
         const listUsers = await userService.readUsers();

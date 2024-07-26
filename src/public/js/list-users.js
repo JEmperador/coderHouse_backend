@@ -22,6 +22,28 @@ document.addEventListener("click", (event) => {
   }
 });
 
+//Envia el front
+document.addEventListener("click", (event) => {
+  if (event.target.classList.contains("change")) {
+    const id = event.target.getAttribute("id");
+
+    const card = event.target.closest(".card");
+
+    const userEmail = card.querySelector(".email").innerText;
+    const userRole = card.querySelector(".role").innerText;
+
+    if (userRole !== "admin") {
+      socket.emit("client:updateUser", {id, userEmail});
+    } else {
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Missing documentation",
+      });
+    }
+  }
+});
+
 //Respuesta del back
 socket.on("server:list-users", (data) => {
   const divList = document.getElementById("list-users");
@@ -58,18 +80,20 @@ socket.on("server:list-users", (data) => {
                     </div>
                 </li>
             </ul>
-            <div class="p-3" style="display: flex; justify-content: space-between;">
-                <div class="delete">
-                    <button class="btn btn-danger delete" id=${content.id}>
-                        Delete
-                    </button>
-                </div>
-                <div class="change">
-                    <button class="btn btn-warning change" id=${content.id}>
-                        Change Role
-                    </button>
-                </div>
-            </div>
+            ${content.noAdmin ? `
+              <div class="p-3" style="display: flex; justify-content: space-between;">
+                  <div class="delete">
+                      <button class="btn btn-danger delete" id="${content.id}">
+                          Delete
+                      </button>
+                  </div>
+                  <div class="change">
+                      <button class="btn btn-warning change" id="${content.id}">
+                          Change Role
+                      </button>
+                  </div>
+              </div>
+            ` : ''}
         </div>    
       `;
   });

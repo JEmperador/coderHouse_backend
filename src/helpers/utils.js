@@ -229,6 +229,27 @@ export const emailSenderDeleteUser = async (
   }
 };
 
+export const emailSenderUpdateRoleUser = async (
+  transport,
+  email,
+) => {
+  const mailOptions = {
+    from: "Atlas Tech <j4v1113r@gmail.com>",
+    to: `${email}`,
+    subject: "Update role",
+    html: `<h1>Update role</h1>
+          <p>Your user was updated role by the admin</p>`,
+  };
+
+  try {
+    const result = await transport.sendMail(mailOptions);
+
+    return result;
+  } catch (err) {
+    console.log(err);
+  }
+};
+
 //Faker
 const categories = ["CPU", "GPU", "PSU", "RAM", "MOTHER"];
 

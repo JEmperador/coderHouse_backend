@@ -9,7 +9,7 @@ class ProfileDTO {
         this.social = social,
         this.fullName = `${last_name}, ${first_name}`
         this.isAdmin = role === "admin" ? true : false;
-        this.noAdmin = role === "admin" ? false : true;
+        this.noAdmin = role !== "admin" ? true : false;
     }
 }
 

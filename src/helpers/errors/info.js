@@ -113,6 +113,14 @@ export const generateSamePasswordUserErrorInfo = () => {
     - Choose another password.`;
 };
 
+export const generateNoDocumentationUserErrorInfo = () => {
+  return `Missing documentation.
+    Must add:
+    - Identificacion.
+    - Comprobante de domicilio.
+    - Comprobante de estado de cuenta.`;
+};
+
 //Ticket
 export const generateFieldTicketErrorInfo = (ticket) => {
   return `One or more properties were incomplete or not valid.
